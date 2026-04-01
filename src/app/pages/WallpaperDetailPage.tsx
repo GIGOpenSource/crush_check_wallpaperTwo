@@ -1,0 +1,301 @@
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router';
+import { BottomNav } from '../components/BottomNav';
+import { WallpaperGrid } from '../components/WallpaperGrid';
+import { mockWallpapers, mockComments, currentUser } from '../mockData';
+import {
+  Download,
+  Heart,
+  Share2,
+  Eye,
+  Calendar,
+  Image as ImageIcon,
+  User,
+  ChevronLeft,
+  MessageCircle,
+  Flag,
+  Bookmark
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export default function WallpaperDetailPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const wallpaper = mockWallpapers.find((w) => w.id === id);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showShareSheet, setShowShareSheet] = useState(false);
+
+  if (!wallpaper) {
+    return (
+      <div className="min-h-screen flex items-center justify-center max-w-md mx-auto">
+        <p className="text-gray-500">Wallpaper not found</p>
+      </div>
+    );
+  }
+
+  const relatedWallpapers = mockWallpapers
+    .filter((w) => w.id !== id && w.tags.some((tag) => wallpaper.tags.includes(tag)))
+    .slice(0, 6);
+
+  const handleDownload = () => {
+    // Simulate download
+    alert('Download started!');
+  };
+
+  const handleShare = () => {
+    setShowShareSheet(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
+        <div className="flex items-center justify-between p-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
+          >
+            <ChevronLeft size={24} className="text-gray-900" />
+          </button>
+          <button
+            onClick={() => setIsFavorited(!isFavorited)}
+            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
+          >
+            <Bookmark
+              size={20}
+              className={isFavorited ? 'text-yellow-500 fill-yellow-500' : 'text-gray-900'}
+            />
+          </button>
+        </div>
+      </header>
+
+      {/* Full-screen Wallpaper */}
+      <div className="relative w-full aspect-[9/16]">
+        <img
+          src={wallpaper.imageUrl}
+          alt={wallpaper.title}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="bg-white">
+        {/* Title and Uploader */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
+          <Link
+            to={`/profile/${wallpaper.uploader.id}`}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <User size={16} />
+            <span className="text-sm">{wallpaper.uploader.username}</span>
+          </Link>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 px-4 py-4 border-b border-gray-200">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <Eye size={18} />
+              <span className="text-lg font-semibold">{formatNumber(wallpaper.views)}</span>
+            </div>
+            <p className="text-xs text-gray-500">Views</p>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <Download size={18} />
+              <span className="text-lg font-semibold">{formatNumber(wallpaper.downloads)}</span>
+            </div>
+            <p className="text-xs text-gray-500">Downloads</p>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <Heart size={18} />
+              <span className="text-lg font-semibold">{formatNumber(wallpaper.likes)}</span>
+            </div>
+            <p className="text-xs text-gray-500">Likes</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="px-4 py-4 flex gap-3 border-b border-gray-200">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleDownload}
+            className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2"
+          >
+            <Download size={20} />
+            Download
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsLiked(!isLiked)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${
+              isLiked
+                ? 'bg-red-50 border-red-500 text-red-500'
+                : 'bg-white border-gray-300 text-gray-600'
+            }`}
+          >
+            <Heart size={20} className={isLiked ? 'fill-red-500' : ''} />
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleShare}
+            className="w-12 h-12 bg-white border-2 border-gray-300 text-gray-600 rounded-full flex items-center justify-center"
+          >
+            <Share2 size={20} />
+          </motion.button>
+        </div>
+
+        {/* Wallpaper Details */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Details</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Resolution</span>
+              <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">File Size</span>
+              <span className="text-gray-900 font-medium">{wallpaper.fileSize}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Aspect Ratio</span>
+              <span className="text-gray-900 font-medium">{wallpaper.aspectRatio}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Upload Date</span>
+              <span className="text-gray-900 font-medium">
+                {new Date(wallpaper.uploadDate).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Tags</h3>
+          <div className="flex flex-wrap gap-2">
+            {wallpaper.tags.map((tag) => (
+              <Link
+                key={tag}
+                to={`/tag/${tag}`}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors"
+              >
+                #{tag}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Comments */}
+        <div className="px-4 py-4 border-b border-gray-200">
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center justify-between w-full mb-3"
+          >
+            <h3 className="text-sm font-semibold text-gray-900">
+              Comments ({mockComments.length})
+            </h3>
+            <MessageCircle size={20} className="text-gray-500" />
+          </button>
+          
+          <AnimatePresence>
+            {showComments && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="space-y-4 overflow-hidden"
+              >
+                {mockComments.map((comment) => (
+                  <div key={comment.id} className="flex gap-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium text-gray-900">
+                          {comment.user.username}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(comment.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-1">{comment.content}</p>
+                      <button className="text-xs text-gray-500 hover:text-gray-700">
+                        {comment.likes} likes
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Related Wallpapers */}
+        <div className="py-4">
+          <div className="px-4 mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">Related Wallpapers</h3>
+          </div>
+          <WallpaperGrid wallpapers={relatedWallpapers} />
+        </div>
+      </div>
+
+      {/* Share Bottom Sheet */}
+      <AnimatePresence>
+        {showShareSheet && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowShareSheet(false)}
+              className="fixed inset-0 bg-black/50 z-50"
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6"
+            >
+              <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Share Wallpaper</h3>
+              <div className="grid grid-cols-4 gap-4 mb-4">
+                {['Copy Link', 'Twitter', 'Facebook', 'WhatsApp'].map((option) => (
+                  <button
+                    key={option}
+                    className="flex flex-col items-center gap-2"
+                    onClick={() => setShowShareSheet(false)}
+                  >
+                    <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
+                      <Share2 size={24} className="text-gray-600" />
+                    </div>
+                    <span className="text-xs text-gray-600">{option}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowShareSheet(false)}
+                className="w-full py-3 bg-gray-100 text-gray-700 rounded-full font-medium"
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <BottomNav />
+    </div>
+  );
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
+  return num.toString();
+}
