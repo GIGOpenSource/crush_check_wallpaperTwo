@@ -6,6 +6,18 @@ import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../util
 
 const PAGE_SIZE = 20;
 
+type PlatformKey = 'PC' | 'PHONE';
+
+type HomePopularSnapshot = {
+  wallpapers: Wallpaper[];
+  page: number;
+  hasMore: boolean;
+  ready: boolean;
+};
+
+/** 跨路由保留首页热门列表，避免从详情返回时重复请求首屏 */
+const homePopularCache: Partial<Record<PlatformKey, HomePopularSnapshot>> = {};
+
 function mergeDedupe(prev: Wallpaper[], batch: Wallpaper[]): Wallpaper[] {
   const ids = new Set(prev.map((w) => w.id));
   const out = [...prev];
@@ -25,20 +37,42 @@ function mapResponse(raw: unknown): Wallpaper[] {
 
 export function useHomePopularWallpapers() {
   const { viewMode } = useView();
-  const platform = viewMode === 'mobile' ? 'PHONE' : 'PC';
+  const platform: PlatformKey = viewMode === 'mobile' ? 'PHONE' : 'PC';
 
-  const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [wallpapers, setWallpapers] = useState<Wallpaper[]>(() => {
+    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
+    return homePopularCache[plat]?.wallpapers ?? [];
+  });
+  const [loading, setLoading] = useState(() => {
+    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
+    return !homePopularCache[plat]?.ready;
+  });
   const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(() => {
+    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
+    return homePopularCache[plat]?.hasMore ?? true;
+  });
   const [error, setError] = useState(false);
 
-  const pageRef = useRef(1);
+  const pageRef = useRef(
+    homePopularCache[viewMode === 'mobile' ? 'PHONE' : 'PC']?.page ?? 1,
+  );
   const fetchingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  /** 首屏 / 切换 PC·手机时重置并拉第一页 */
+  /** 有缓存则恢复；无缓存或切换 platform 时拉第一页 */
   useEffect(() => {
+    const cached = homePopularCache[platform];
+    if (cached?.ready) {
+      pageRef.current = cached.page;
+      setWallpapers(cached.wallpapers);
+      setHasMore(cached.hasMore);
+      setError(false);
+      setLoading(false);
+      fetchingRef.current = false;
+      return;
+    }
+
     let cancelled = false;
     pageRef.current = 1;
     setWallpapers([]);
@@ -56,8 +90,15 @@ export function useHomePopularWallpapers() {
       .then((raw) => {
         if (cancelled) return;
         const mapped = mapResponse(raw);
+        const nextHasMore = mapped.length >= PAGE_SIZE;
         setWallpapers(mapped);
-        setHasMore(mapped.length >= PAGE_SIZE);
+        setHasMore(nextHasMore);
+        homePopularCache[platform] = {
+          wallpapers: mapped,
+          page: 1,
+          hasMore: nextHasMore,
+          ready: true,
+        };
       })
       .catch(() => {
         if (cancelled) return;
@@ -94,11 +135,30 @@ export function useHomePopularWallpapers() {
         const mapped = mapResponse(raw);
         if (mapped.length === 0) {
           setHasMore(false);
+          setWallpapers((prev) => {
+            homePopularCache[platform] = {
+              ready: true,
+              wallpapers: prev,
+              page: pageRef.current,
+              hasMore: false,
+            };
+            return prev;
+          });
           return;
         }
+        const hasMoreNext = mapped.length >= PAGE_SIZE;
         pageRef.current = nextPage;
-        setWallpapers((prev) => mergeDedupe(prev, mapped));
-        setHasMore(mapped.length >= PAGE_SIZE);
+        setWallpapers((prev) => {
+          const merged = mergeDedupe(prev, mapped);
+          homePopularCache[platform] = {
+            ready: true,
+            wallpapers: merged,
+            page: nextPage,
+            hasMore: hasMoreNext,
+          };
+          return merged;
+        });
+        setHasMore(hasMoreNext);
       })
       .catch(() => {
         setHasMore(false);
