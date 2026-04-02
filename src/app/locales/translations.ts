@@ -14,6 +14,7 @@ export const translations = {
       loading: '加载中...',
       viewAll: '查看全部',
       noResults: '未找到结果',
+      loadFailed: '加载失败，请稍后重试',
     },
     
     // Navigation
@@ -215,6 +216,7 @@ export const translations = {
       loading: 'Loading...',
       viewAll: 'View All',
       noResults: 'No results found',
+      loadFailed: 'Failed to load. Please try again.',
     },
     
     nav: {
@@ -408,6 +410,7 @@ export const translations = {
       loading: '読み込み中...',
       viewAll: 'すべて表示',
       noResults: '結果が見つかりません',
+      loadFailed: '読み込みに失敗しました。しばらくしてからお試しください。',
     },
     
     nav: {
@@ -601,6 +604,7 @@ export const translations = {
       loading: '로딩 중...',
       viewAll: '모두 보기',
       noResults: '결과를 찾을 수 없습니다',
+      loadFailed: '불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
     },
     
     nav: {
@@ -794,6 +798,7 @@ export const translations = {
       loading: 'Cargando...',
       viewAll: 'Ver todo',
       noResults: 'No se encontraron resultados',
+      loadFailed: 'Error al cargar. Inténtalo de nuevo más tarde.',
     },
     
     nav: {
@@ -987,6 +992,7 @@ export const translations = {
       loading: 'Chargement...',
       viewAll: 'Voir tout',
       noResults: 'Aucun résultat trouvé',
+      loadFailed: 'Échec du chargement. Veuillez réessayer plus tard.',
     },
     
     nav: {

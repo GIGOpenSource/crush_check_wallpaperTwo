@@ -1,5 +1,11 @@
 // Type definitions for the wallpaper sharing platform
 
+/** 壁纸详情标签：展示用 name，跳转/列表请求 tag_id 用 id */
+export interface WallpaperTag {
+  id: string;
+  name: string;
+}
+
 export interface Wallpaper {
   id: string;
   title: string;
@@ -8,7 +14,7 @@ export interface Wallpaper {
   fileSize: string;
   uploadDate: string;
   uploader: User;
-  tags: string[];
+  tags: WallpaperTag[];
   views: number;
   downloads: number;
   likes: number;
@@ -45,8 +51,14 @@ export interface Comment {
 }
 
 export interface Tag {
-  id: string;
+  /** 接口 tag：壁纸列表 tag_id、路由 /tag/:tagId 使用此值，勿用 id 代替 */
+  tag: string;
+  /** 可选记录 id，仅展示/调试；请求与跳转一律用 tag */
+  id?: string;
+  /** 搜索/兼容字段，勿直接当主标题（主标题用 navName） */
   name: string;
+  /** 接口 nav_name，标签页与详情标题展示 */
+  navName?: string;
   description?: string;
   wallpaperCount: number;
 }

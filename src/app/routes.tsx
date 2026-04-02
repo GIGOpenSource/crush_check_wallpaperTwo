@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
     element: <TagsPage />
   },
   {
-    path: '/tag/:tagName',
+    path: '/tag/:tagId',
     element: <TagDetailPage />
   },
   {

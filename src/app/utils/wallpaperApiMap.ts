@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../api/request';
-import type { User, Wallpaper } from '../types';
+import type { User, Wallpaper, WallpaperTag } from '../types';
 
 const listUploaderPlaceholder: User = {
   id: '0',
@@ -102,11 +102,20 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
   imageUrl = resolveMediaUrl(imageUrl);
 
   const tagsRaw = item.tags;
-  const tags: string[] = [];
+  const tags: WallpaperTag[] = [];
   if (Array.isArray(tagsRaw)) {
     for (const t of tagsRaw) {
-      if (typeof t === 'string') tags.push(t);
-      else if (t && typeof t === 'object' && 'name' in t) tags.push(String((t as { name: unknown }).name));
+      if (typeof t === 'string') {
+        const s = t.trim();
+        if (s) tags.push({ id: s, name: s });
+      } else if (t && typeof t === 'object') {
+        const o = t as Record<string, unknown>;
+        const name = pickStr(o, ['name', 'nav_name', 'label', 'title', 'tag_name']).trim();
+        const id = pickStr(o, ['id', 'tag_id', 'pk']).trim();
+        if (id && name) tags.push({ id, name });
+        else if (id) tags.push({ id, name: id });
+        else if (name) tags.push({ id: name, name });
+      }
     }
   }
 

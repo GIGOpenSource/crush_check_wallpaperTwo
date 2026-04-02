@@ -8,6 +8,7 @@ import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
+import { getTagDisplayName } from '../utils/tagDisplay';
 
 interface Filters {
   resolution: string[];
@@ -37,7 +38,11 @@ export default function SearchPage() {
     const matchesQuery =
       !query ||
       wallpaper.title.toLowerCase().includes(query.toLowerCase()) ||
-      wallpaper.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase()));
+      wallpaper.tags.some(
+        (tag) =>
+          tag.name.toLowerCase().includes(query.toLowerCase()) ||
+          tag.id.toLowerCase().includes(query.toLowerCase()),
+      );
 
     const matchesResolution =
       filters.resolution.length === 0 || filters.resolution.includes(wallpaper.resolution);
@@ -51,9 +56,14 @@ export default function SearchPage() {
     return matchesQuery && matchesResolution && matchesAspectRatio && matchesPurity;
   });
 
-  const suggestedTags = mockTags.filter((tag) =>
-    tag.name.toLowerCase().includes(query.toLowerCase())
-  ).slice(0, 5);
+  const suggestedTags = mockTags
+    .filter((tag) => {
+      const q = query.toLowerCase();
+      return (
+        getTagDisplayName(tag).toLowerCase().includes(q) || tag.name.toLowerCase().includes(q)
+      );
+    })
+    .slice(0, 5);
 
   const resolutionOptions = ['3840x2160', '2560x1440', '1920x1080'];
   const aspectRatioOptions = ['16:9', '21:9', '9:16'];
@@ -103,11 +113,21 @@ export default function SearchPage() {
             <div className="flex flex-wrap gap-2">
               {suggestedTags.map((tag) => (
                 <button
-                  key={tag.id}
-                  onClick={() => navigate(`/tag/${tag.name}`)}
+                  key={tag.tag}
+                  onClick={() =>
+                    navigate(`/tag/${encodeURIComponent(tag.tag)}`, {
+                      state: {
+                        tagMeta: {
+                          name: getTagDisplayName(tag) || tag.name,
+                          wallpaperCount: tag.wallpaperCount,
+                          description: tag.description,
+                        },
+                      },
+                    })
+                  }
                   className="px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full hover:bg-blue-100"
                 >
-                  #{tag.name}
+                  #{getTagDisplayName(tag) || tag.name}
                 </button>
               ))}
             </div>

@@ -76,3 +76,14 @@ export function guessLike(wallpaper_id: string | number) {
     params: { wallpaper_id },
   });
 }
+
+/** 导航标签列表 */
+export type NavigationTagListParams = {
+  currentPage: number;
+  pageSize: number;
+  isHot: boolean;
+};
+
+export function getNavigationTags(params: NavigationTagListParams) {
+  return http.get<WallpaperListResponse>('/api/wallpapers/navigation_tag/', { params });
+}

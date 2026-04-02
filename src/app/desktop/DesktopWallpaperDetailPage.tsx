@@ -292,11 +292,16 @@ export default function DesktopWallpaperDetailPage() {
                   <div className="flex flex-wrap gap-2">
                     {wallpaper.tags.map((tag) => (
                       <Link
-                        key={tag}
-                        to={`/tag/${tag}`}
+                        key={tag.id}
+                        to={`/tag/${encodeURIComponent(tag.id)}`}
+                        state={{
+                          tagMeta: {
+                            name: tag.name,
+                          },
+                        }}
                         className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm rounded-lg transition-colors"
                       >
-                        #{tag}
+                        #{tag.name}
                       </Link>
                     ))}
                   </div>

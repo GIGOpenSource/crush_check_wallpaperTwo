@@ -35,7 +35,11 @@ export default function DesktopSearchPage() {
     const matchesQuery =
       !query ||
       wallpaper.title.toLowerCase().includes(query.toLowerCase()) ||
-      wallpaper.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase()));
+      wallpaper.tags.some(
+        (tag) =>
+          tag.name.toLowerCase().includes(query.toLowerCase()) ||
+          tag.id.toLowerCase().includes(query.toLowerCase()),
+      );
 
     const matchesResolution =
       filters.resolution.length === 0 || filters.resolution.includes(wallpaper.resolution);

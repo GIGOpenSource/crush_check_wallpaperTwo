@@ -1,4 +1,8 @@
-import { Wallpaper, User, Badge, Tag, Comment } from './types';
+import { Wallpaper, User, Badge, Tag, Comment, type WallpaperTag } from './types';
+
+function tagsFromSlugs(slugs: string[]): WallpaperTag[] {
+  return slugs.map((name) => ({ id: name, name }));
+}
 
 // Mock user data
 export const currentUser: User = {
@@ -26,7 +30,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '4.2 MB',
     uploadDate: '2026-03-25',
     uploader: currentUser,
-    tags: ['abstract', 'colorful', 'gradient', 'digital-art'],
+    tags: tagsFromSlugs(['abstract', 'colorful', 'gradient', 'digital-art']),
     views: 15234,
     downloads: 3421,
     likes: 892,
@@ -43,7 +47,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '3.8 MB',
     uploadDate: '2026-03-24',
     uploader: { ...currentUser, username: 'NaturePhotog', id: '2' },
-    tags: ['nature', 'landscape', 'mountains', 'scenic'],
+    tags: tagsFromSlugs(['nature', 'landscape', 'mountains', 'scenic']),
     views: 23451,
     downloads: 5678,
     likes: 1234,
@@ -60,7 +64,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '2.1 MB',
     uploadDate: '2026-03-23',
     uploader: { ...currentUser, username: 'MinimalDesign', id: '3' },
-    tags: ['minimalist', 'dark', 'waves', 'simple'],
+    tags: tagsFromSlugs(['minimalist', 'dark', 'waves', 'simple']),
     views: 18765,
     downloads: 4321,
     likes: 987,
@@ -77,7 +81,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '5.6 MB',
     uploadDate: '2026-03-22',
     uploader: { ...currentUser, username: 'SpaceExplorer', id: '4' },
-    tags: ['space', 'galaxy', 'stars', 'cosmic'],
+    tags: tagsFromSlugs(['space', 'galaxy', 'stars', 'cosmic']),
     views: 34567,
     downloads: 8901,
     likes: 2345,
@@ -94,7 +98,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '4.5 MB',
     uploadDate: '2026-03-21',
     uploader: { ...currentUser, username: 'UrbanShots', id: '5' },
-    tags: ['city', 'skyline', 'night', 'urban', 'lights'],
+    tags: tagsFromSlugs(['city', 'skyline', 'night', 'urban', 'lights']),
     views: 28901,
     downloads: 6543,
     likes: 1567,
@@ -111,7 +115,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '6.1 MB',
     uploadDate: '2026-03-20',
     uploader: { ...currentUser, username: 'OceanVibes', id: '6' },
-    tags: ['ocean', 'waves', 'sunset', 'beach', 'nature'],
+    tags: tagsFromSlugs(['ocean', 'waves', 'sunset', 'beach', 'nature']),
     views: 41234,
     downloads: 9876,
     likes: 2789,
@@ -128,7 +132,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '3.9 MB',
     uploadDate: '2026-03-19',
     uploader: { ...currentUser, username: 'MountainClimber', id: '7' },
-    tags: ['mountain', 'snow', 'peak', 'winter', 'nature'],
+    tags: tagsFromSlugs(['mountain', 'snow', 'peak', 'winter', 'nature']),
     views: 19876,
     downloads: 4567,
     likes: 1098,
@@ -145,7 +149,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '5.3 MB',
     uploadDate: '2026-03-18',
     uploader: { ...currentUser, username: 'BeachLover', id: '8' },
-    tags: ['beach', 'tropical', 'paradise', 'ocean', 'vacation'],
+    tags: tagsFromSlugs(['beach', 'tropical', 'paradise', 'ocean', 'vacation']),
     views: 36789,
     downloads: 8234,
     likes: 2156,
@@ -162,7 +166,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '2.8 MB',
     uploadDate: '2026-03-17',
     uploader: { ...currentUser, username: 'PatternMaster', id: '9' },
-    tags: ['geometric', 'pattern', 'abstract', 'design', 'modern'],
+    tags: tagsFromSlugs(['geometric', 'pattern', 'abstract', 'design', 'modern']),
     views: 22345,
     downloads: 5432,
     likes: 1345,
@@ -179,7 +183,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '6.7 MB',
     uploadDate: '2026-03-16',
     uploader: { ...currentUser, username: 'ForestWalker', id: '10' },
-    tags: ['forest', 'trees', 'sunlight', 'nature', 'green'],
+    tags: tagsFromSlugs(['forest', 'trees', 'sunlight', 'nature', 'green']),
     views: 31456,
     downloads: 7234,
     likes: 1876,
@@ -196,7 +200,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '4.9 MB',
     uploadDate: '2026-03-15',
     uploader: { ...currentUser, username: 'CyberPunk2077', id: '11' },
-    tags: ['neon', 'cyberpunk', 'futuristic', 'lights', 'urban'],
+    tags: tagsFromSlugs(['neon', 'cyberpunk', 'futuristic', 'lights', 'urban']),
     views: 45678,
     downloads: 11234,
     likes: 3456,
@@ -213,7 +217,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '3.4 MB',
     uploadDate: '2026-03-14',
     uploader: { ...currentUser, username: 'DesertNomad', id: '12' },
-    tags: ['desert', 'sand', 'dunes', 'nature', 'minimalist'],
+    tags: tagsFromSlugs(['desert', 'sand', 'dunes', 'nature', 'minimalist']),
     views: 17890,
     downloads: 4123,
     likes: 987,
@@ -230,7 +234,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '5.8 MB',
     uploadDate: '2026-03-13',
     uploader: { ...currentUser, username: 'AuroraChaser', id: '13' },
-    tags: ['aurora', 'northern-lights', 'night', 'nature', 'sky'],
+    tags: tagsFromSlugs(['aurora', 'northern-lights', 'night', 'nature', 'sky']),
     views: 52341,
     downloads: 13456,
     likes: 4567,
@@ -247,7 +251,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '4.7 MB',
     uploadDate: '2026-03-12',
     uploader: { ...currentUser, username: 'SpringLover', id: '14' },
-    tags: ['cherry-blossom', 'spring', 'flowers', 'nature', 'pink'],
+    tags: tagsFromSlugs(['cherry-blossom', 'spring', 'flowers', 'nature', 'pink']),
     views: 38765,
     downloads: 8901,
     likes: 2345,
@@ -264,7 +268,7 @@ export const mockWallpapers: Wallpaper[] = [
     fileSize: '7.2 MB',
     uploadDate: '2026-03-11',
     uploader: { ...currentUser, username: 'WaterfallHunter', id: '15' },
-    tags: ['waterfall', 'nature', 'green', 'scenic', 'water'],
+    tags: tagsFromSlugs(['waterfall', 'nature', 'green', 'scenic', 'water']),
     views: 44567,
     downloads: 10123,
     likes: 3012,
@@ -277,14 +281,14 @@ export const mockWallpapers: Wallpaper[] = [
 
 // Mock tags
 export const mockTags: Tag[] = [
-  { id: 't1', name: 'nature', description: 'Natural landscapes and scenery', wallpaperCount: 1245 },
-  { id: 't2', name: 'abstract', description: 'Abstract and digital art', wallpaperCount: 892 },
-  { id: 't3', name: 'space', description: 'Space, galaxies, and cosmic scenes', wallpaperCount: 567 },
-  { id: 't4', name: 'city', description: 'Urban and city landscapes', wallpaperCount: 423 },
-  { id: 't5', name: 'minimalist', description: 'Clean and simple designs', wallpaperCount: 789 },
-  { id: 't6', name: 'mountains', description: 'Mountain landscapes', wallpaperCount: 356 },
-  { id: 't7', name: 'ocean', description: 'Ocean and beach scenes', wallpaperCount: 445 },
-  { id: 't8', name: 'cyberpunk', description: 'Futuristic and neon aesthetics', wallpaperCount: 234 }
+  { tag: 'nature', id: 't1', name: 'nature', navName: 'Nature', description: 'Natural landscapes and scenery', wallpaperCount: 1245 },
+  { tag: 'abstract', id: 't2', name: 'abstract', navName: 'Abstract', description: 'Abstract and digital art', wallpaperCount: 892 },
+  { tag: 'space', id: 't3', name: 'space', navName: 'Space', description: 'Space, galaxies, and cosmic scenes', wallpaperCount: 567 },
+  { tag: 'city', id: 't4', name: 'city', navName: 'City', description: 'Urban and city landscapes', wallpaperCount: 423 },
+  { tag: 'minimalist', id: 't5', name: 'minimalist', navName: 'Minimalist', description: 'Clean and simple designs', wallpaperCount: 789 },
+  { tag: 'mountains', id: 't6', name: 'mountains', navName: 'Mountains', description: 'Mountain landscapes', wallpaperCount: 356 },
+  { tag: 'ocean', id: 't7', name: 'ocean', navName: 'Ocean', description: 'Ocean and beach scenes', wallpaperCount: 445 },
+  { tag: 'cyberpunk', id: 't8', name: 'cyberpunk', navName: 'Cyberpunk', description: 'Futuristic and neon aesthetics', wallpaperCount: 234 }
 ];
 
 // Mock comments

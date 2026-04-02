@@ -1,37 +1,56 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useMemo, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { mockWallpapers, mockTags } from '../mockData';
+import type { Tag } from '../types';
+import type { TagDetailLocationState } from '../types/tagDetailNav';
 import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-react';
-import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTagWallpapersList } from '../hooks/useTagWallpapersList';
 
 type SortOption = 'relevance' | 'date' | 'views' | 'downloads';
 
 export default function DesktopTagDetailPage() {
   const { t } = useLanguage();
-  const { tagName } = useParams();
+  const { tagId: tagIdParam } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
 
-  const tag = mockTags.find((tg) => tg.name === tagName);
-  const tagWallpapers = mockWallpapers.filter((w) => w.tags.includes(tagName || ''));
+  const state = location.state as TagDetailLocationState | null;
+  const meta = state?.tagMeta;
 
-  const sortedWallpapers = [...tagWallpapers].sort((a, b) => {
+  const decodedId = tagIdParam ? decodeURIComponent(tagIdParam).trim() : '';
+
+  const { wallpapers, total, loading, loadingMore, error, sentinelRef, listNavBase } =
+    useTagWallpapersList(decodedId || undefined);
+
+  const displayTag: Tag | null = decodedId
+    ? {
+        tag: decodedId,
+        name: meta?.name ?? decodedId,
+        description: meta?.description,
+        wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
+      }
+    : null;
+
+  const sortedWallpapers = useMemo(() => {
+    const list = [...wallpapers];
     switch (sortBy) {
       case 'date':
-        return new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime();
+        return list.sort(
+          (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
+        );
       case 'views':
-        return b.views - a.views;
+        return list.sort((a, b) => b.views - a.views);
       case 'downloads':
-        return b.downloads - a.downloads;
+        return list.sort((a, b) => b.downloads - a.downloads);
       default:
-        return 0;
+        return list;
     }
-  });
+  }, [wallpapers, sortBy]);
 
-  if (!tag) {
+  if (!displayTag) {
     return (
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />
@@ -54,36 +73,36 @@ export default function DesktopTagDetailPage() {
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
-        {/* Header */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-4 mb-4">
                 <button
+                  type="button"
                   onClick={() => navigate(-1)}
                   className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <ChevronLeft size={24} className="text-gray-900" />
                 </button>
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">#{tag.name}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">#{displayTag.name}</h1>
                   <p className="text-gray-600 mt-1">
-                    {formatNumber(tag.wallpaperCount)} {t.tags.wallpapers}
+                    {formatNumber(displayTag.wallpaperCount)} {t.tags.wallpapers}
                   </p>
                 </div>
               </div>
 
-              {tag.description && (
-                <p className="text-gray-600 mb-4">{tag.description}</p>
+              {displayTag.description && (
+                <p className="text-gray-600 mb-4">{displayTag.description}</p>
               )}
 
-              {/* Sort Options */}
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <span className="text-sm font-medium text-gray-700">{t.tags.sortBy}</span>
                 {sortOptions.map((option) => {
                   const Icon = option.icon;
                   return (
                     <button
+                      type="button"
                       key={option.value}
                       onClick={() => setSortBy(option.value)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -104,9 +123,13 @@ export default function DesktopTagDetailPage() {
 
         <div className="px-8 py-8">
           <div className="max-w-7xl mx-auto">
-            {sortedWallpapers.length > 0 ? (
-              <DesktopWallpaperGrid wallpapers={sortedWallpapers} columns={4} />
-            ) : (
+            {loading && wallpapers.length === 0 && (
+              <p className="text-center text-gray-500 py-20">{t.common.loading}</p>
+            )}
+            {error && wallpapers.length === 0 && !loading && (
+              <p className="text-center text-red-500 py-20">{t.common.loadFailed}</p>
+            )}
+            {!loading && !error && sortedWallpapers.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <SlidersHorizontal size={40} className="text-gray-400" />
@@ -114,6 +137,19 @@ export default function DesktopTagDetailPage() {
                 <p className="text-xl text-gray-500 mb-2">{t.searchPage.noWallpapersFound}</p>
                 <p className="text-gray-400">{t.tags.noWallpapersWithTag}</p>
               </div>
+            )}
+            {sortedWallpapers.length > 0 && (
+              <>
+                <DesktopWallpaperGrid
+                  wallpapers={sortedWallpapers}
+                  columns={4}
+                  listNavBase={listNavBase}
+                />
+                {loadingMore && (
+                  <p className="text-center text-sm text-gray-500 py-6">{t.common.loading}</p>
+                )}
+                <div ref={sentinelRef} className="h-10" aria-hidden />
+              </>
             )}
           </div>
         </div>
