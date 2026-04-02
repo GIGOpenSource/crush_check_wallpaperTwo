@@ -32,6 +32,16 @@ function pickNum(obj: Record<string, unknown>, keys: string[], fallback = 0): nu
   return fallback;
 }
 
+/** 详情/列表分辨率：优先用接口宽高拼成「宽x高」，否则回退 resolution / size 字段 */
+function resolutionFromItem(item: Record<string, unknown>): string {
+  const w = pickNum(item, ['width', 'w', 'img_width', 'image_width']);
+  const h = pickNum(item, ['height', 'h', 'img_height', 'image_height']);
+  if (w > 0 && h > 0) {
+    return `${w}x${h}`;
+  }
+  return pickStr(item, ['resolution', 'size']) || '—';
+}
+
 function resolveMediaUrl(url: string): string {
   if (!url) return '';
   if (url.startsWith('http')) return url;
@@ -106,7 +116,7 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
     id,
     title,
     imageUrl,
-    resolution: pickStr(item, ['resolution', 'size']) || '—',
+    resolution: resolutionFromItem(item),
     fileSize: pickStr(item, ['fileSize', 'file_size', 'size_label']) || '—',
     uploadDate: pickStr(item, ['uploadDate', 'upload_date', 'created_at', 'create_time']) || '',
     uploader: mapUserFromApi(uploader),

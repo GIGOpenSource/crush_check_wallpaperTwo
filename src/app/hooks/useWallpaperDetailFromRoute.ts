@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router';
 import { getWallpaperByListPosition } from '../../api/wallpaper';
 import { mockWallpapers } from '../mockData';
 import type { Wallpaper } from '../types';
-import { parseWallpaperListNav } from '../types/wallpaperListNav';
+import { resolveWallpaperListNav } from '../types/wallpaperListNav';
 import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
 
 export function useWallpaperDetailFromRoute() {
@@ -18,7 +18,7 @@ export function useWallpaperDetailFromRoute() {
   useEffect(() => {
     if (!id) return;
     let cancelled = false;
-    const parsed = parseWallpaperListNav(location.state);
+    const parsed = resolveWallpaperListNav(location.state, location.search);
 
     if (parsed) {
       setLoading(true);
@@ -55,7 +55,7 @@ export function useWallpaperDetailFromRoute() {
     setWallpaper(w ?? null);
     setLoading(false);
     setError(!w);
-  }, [id, location.state]);
+  }, [id, location.state, location.search]);
 
   return { wallpaper, loading, error };
 }

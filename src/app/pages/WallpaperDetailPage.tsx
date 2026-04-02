@@ -1,3 +1,4 @@
+import { App } from 'antd';
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
@@ -6,7 +7,10 @@ import { mockComments, currentUser } from '../mockData';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
+import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
+import { copyTextToClipboard, openWallpaperShareChannel } from '../utils/wallpaperShareActions';
 import { tpl } from '../utils/format';
+import { downloadWallpaperImage } from '../utils/downloadWallpaperImage';
 import {
   Download,
   Heart,
@@ -23,15 +27,18 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function WallpaperDetailPage() {
+  const { message } = App.useApp();
   const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
+  const shareUrl = useWallpaperDetailShareUrl();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   if (loading) {
     return (
@@ -55,8 +62,19 @@ export default function WallpaperDetailPage() {
     );
   }
 
-  const handleDownload = () => {
-    alert(t.wallpaperDetail.downloadStarted);
+  const handleDownload = async () => {
+    if (downloading || !wallpaper.imageUrl) return;
+    setDownloading(true);
+    try {
+      const result = await downloadWallpaperImage(wallpaper.imageUrl, wallpaper.title);
+      if (result === 'opened-tab') {
+        alert(t.wallpaperDetail.downloadOpenInNewTab);
+      } else if (result === 'failed') {
+        alert(t.wallpaperDetail.downloadFailed);
+      }
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const handleShare = () => {
@@ -139,10 +157,11 @@ export default function WallpaperDetailPage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handleDownload}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2"
+            disabled={downloading}
+            className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
           >
             <Download size={20} />
-            {t.wallpaperDetail.download}
+            {downloading ? t.common.loading : t.wallpaperDetail.download}
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -298,8 +317,22 @@ export default function WallpaperDetailPage() {
                 ).map(([key, label]) => (
                   <button
                     key={key}
+                    type="button"
                     className="flex flex-col items-center gap-2"
-                    onClick={() => setShowShareSheet(false)}
+                    onClick={async () => {
+                      if (!shareUrl) return;
+                      if (key === 'copy') {
+                        const ok = await copyTextToClipboard(shareUrl);
+                        if (ok) message.success(t.wallpaperDetail.linkCopied);
+                      } else if (key === 'tw') {
+                        openWallpaperShareChannel('twitter', shareUrl);
+                      } else if (key === 'fb') {
+                        openWallpaperShareChannel('facebook', shareUrl);
+                      } else if (key === 'wa') {
+                        openWallpaperShareChannel('whatsapp', shareUrl);
+                      }
+                      setShowShareSheet(false);
+                    }}
                   >
                     <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
                       <Share2 size={24} className="text-gray-600" />

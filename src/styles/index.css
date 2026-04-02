@@ -2,6 +2,36 @@
 @import './tailwind.css';
 @import './theme.css';
 
+/*
+ * antd <App> 根节点会为子树设置 font/color，影响左侧桌面导航等非 antd 区域。
+ * 取消向下覆盖，侧栏等仍用页面原有（Tailwind）样式；Message 等浮层自带样式不受影响。
+ */
+.ant-app {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+/*
+ * 桌面侧栏：antd 等会对全局 a 使用主题蓝，Tailwind text-black 压不住。
+ * 未选中强制黑字（图标随 currentColor），选中蓝字 + 浅蓝底。
+ */
+.desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link {
+  text-decoration: none !important;
+}
+.desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link:not([data-active='true']) {
+  color: #374151 !important; /* gray-700，灰黑 */
+  background-color: transparent !important;
+}
+.desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link:not([data-active='true']):hover {
+  color: #374151 !important;
+}
+.desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link[data-active='true'] {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+}
+
 /* Custom utility classes */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
