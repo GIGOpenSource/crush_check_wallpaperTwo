@@ -7,6 +7,7 @@ import SearchPage from './wrappers/SearchPage';
 import ProfilePage from './wrappers/ProfilePage';
 import UploadPage from './wrappers/UploadPage';
 import SettingsPage from './wrappers/SettingsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -51,13 +52,6 @@ export const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">404</h1>
-          <p className="text-gray-600">Page not found</p>
-        </div>
-      </div>
-    )
+    element: <NotFoundPage />
   }
 ]);

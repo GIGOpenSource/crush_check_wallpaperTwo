@@ -6,6 +6,7 @@ import { mockComments, currentUser } from '../mockData';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
+import { tpl } from '../utils/format';
 import {
   Download,
   Heart,
@@ -55,8 +56,7 @@ export default function WallpaperDetailPage() {
   }
 
   const handleDownload = () => {
-    // Simulate download
-    alert('Download started!');
+    alert(t.wallpaperDetail.downloadStarted);
   };
 
   const handleShare = () => {
@@ -116,21 +116,21 @@ export default function WallpaperDetailPage() {
               <Eye size={18} />
               <span className="text-lg font-semibold">{formatNumber(wallpaper.views)}</span>
             </div>
-            <p className="text-xs text-gray-500">Views</p>
+            <p className="text-xs text-gray-500">{t.wallpaperDetail.views}</p>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
               <Download size={18} />
               <span className="text-lg font-semibold">{formatNumber(wallpaper.downloads)}</span>
             </div>
-            <p className="text-xs text-gray-500">Downloads</p>
+            <p className="text-xs text-gray-500">{t.wallpaperDetail.downloads}</p>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
               <Heart size={18} />
               <span className="text-lg font-semibold">{formatNumber(wallpaper.likes)}</span>
             </div>
-            <p className="text-xs text-gray-500">Likes</p>
+            <p className="text-xs text-gray-500">{t.wallpaperDetail.likes}</p>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default function WallpaperDetailPage() {
             className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2"
           >
             <Download size={20} />
-            Download
+            {t.wallpaperDetail.download}
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -166,22 +166,22 @@ export default function WallpaperDetailPage() {
 
         {/* Wallpaper Details */}
         <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Details</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.details}</h3>
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">Resolution</span>
+              <span className="text-gray-500">{t.wallpaperDetail.resolution}</span>
               <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">File Size</span>
+              <span className="text-gray-500">{t.wallpaperDetail.fileSize}</span>
               <span className="text-gray-900 font-medium">{wallpaper.fileSize}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">Aspect Ratio</span>
+              <span className="text-gray-500">{t.wallpaperDetail.aspectRatio}</span>
               <span className="text-gray-900 font-medium">{wallpaper.aspectRatio}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">Upload Date</span>
+              <span className="text-gray-500">{t.wallpaperDetail.uploadDate}</span>
               <span className="text-gray-900 font-medium">
                 {new Date(wallpaper.uploadDate).toLocaleDateString()}
               </span>
@@ -191,7 +191,7 @@ export default function WallpaperDetailPage() {
 
         {/* Tags */}
         <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Tags</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.tagsHeading}</h3>
           <div className="flex flex-wrap gap-2">
             {wallpaper.tags.map((tag) => (
               <Link
@@ -212,7 +212,7 @@ export default function WallpaperDetailPage() {
             className="flex items-center justify-between w-full mb-3"
           >
             <h3 className="text-sm font-semibold text-gray-900">
-              Comments ({mockComments.length})
+              {t.wallpaperDetail.comments} ({mockComments.length})
             </h3>
             <MessageCircle size={20} className="text-gray-500" />
           </button>
@@ -239,7 +239,7 @@ export default function WallpaperDetailPage() {
                       </div>
                       <p className="text-sm text-gray-700 mb-1">{comment.content}</p>
                       <button className="text-xs text-gray-500 hover:text-gray-700">
-                        {comment.likes} likes
+                        {tpl(t.wallpaperDetail.commentLikes, { n: comment.likes })}
                       </button>
                     </div>
                   </div>
@@ -284,18 +284,27 @@ export default function WallpaperDetailPage() {
               className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6"
             >
               <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Share Wallpaper</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {t.wallpaperDetail.shareWallpaper}
+              </h3>
               <div className="grid grid-cols-4 gap-4 mb-4">
-                {['Copy Link', 'Twitter', 'Facebook', 'WhatsApp'].map((option) => (
+                {(
+                  [
+                    ['copy', t.wallpaperDetail.copyLink],
+                    ['tw', t.wallpaperDetail.shareTwitter],
+                    ['fb', t.wallpaperDetail.shareFacebook],
+                    ['wa', t.wallpaperDetail.shareWhatsApp],
+                  ] as const
+                ).map(([key, label]) => (
                   <button
-                    key={option}
+                    key={key}
                     className="flex flex-col items-center gap-2"
                     onClick={() => setShowShareSheet(false)}
                   >
                     <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
                       <Share2 size={24} className="text-gray-600" />
                     </div>
-                    <span className="text-xs text-gray-600">{option}</span>
+                    <span className="text-xs text-gray-600">{label}</span>
                   </button>
                 ))}
               </div>
@@ -303,7 +312,7 @@ export default function WallpaperDetailPage() {
                 onClick={() => setShowShareSheet(false)}
                 className="w-full py-3 bg-gray-100 text-gray-700 rounded-full font-medium"
               >
-                Cancel
+                {t.common.cancel}
               </button>
             </motion.div>
           </>

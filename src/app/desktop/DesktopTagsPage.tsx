@@ -4,8 +4,10 @@ import { DesktopSidebar } from '../components/DesktopSidebar';
 import { mockTags } from '../mockData';
 import { Search, TrendingUp, Hash, Grid3x3 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function DesktopTagsPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTags = mockTags.filter((tag) =>
@@ -23,7 +25,7 @@ export default function DesktopTagsPage() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">Browse Tags</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">{t.tags.browseTags}</h1>
               <div className="max-w-2xl relative">
                 <Search
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -33,7 +35,7 @@ export default function DesktopTagsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search tags..."
+                  placeholder={t.tags.searchTags}
                   className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
                 />
               </div>
@@ -47,7 +49,7 @@ export default function DesktopTagsPage() {
             <section>
               <div className="flex items-center gap-2 mb-6">
                 <TrendingUp size={24} className="text-blue-600" />
-                <h2 className="text-2xl font-bold text-gray-900">Trending Tags</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t.tags.trendingTags}</h2>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {popularTags.map((tag, index) => (
@@ -76,7 +78,7 @@ export default function DesktopTagsPage() {
                         <p className="text-2xl font-bold text-blue-600">
                           {formatNumber(tag.wallpaperCount)}
                         </p>
-                        <p className="text-sm text-gray-500">wallpapers</p>
+                        <p className="text-sm text-gray-500">{t.tags.wallpapers}</p>
                       </div>
                     </Link>
                   </motion.div>
@@ -88,7 +90,7 @@ export default function DesktopTagsPage() {
             <section>
               <div className="flex items-center gap-2 mb-6">
                 <Grid3x3 size={24} className="text-gray-700" />
-                <h2 className="text-2xl font-bold text-gray-900">All Tags</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t.tags.allTags}</h2>
               </div>
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <div className="flex flex-wrap gap-3">

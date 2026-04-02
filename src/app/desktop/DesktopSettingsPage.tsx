@@ -37,8 +37,6 @@ export default function DesktopSettingsPage() {
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
   ];
 
-  const currentLanguage = languageOptions.find(lang => lang.code === language);
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <DesktopSidebar />
@@ -64,7 +62,7 @@ export default function DesktopSettingsPage() {
             {/* Account Settings */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Account Settings</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t.settings.accountSettings}</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
@@ -73,8 +71,8 @@ export default function DesktopSettingsPage() {
                       <User size={24} className="text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">Profile Settings</h3>
-                      <p className="text-sm text-gray-500">Update your profile information</p>
+                      <h3 className="font-semibold text-gray-900">{t.settings.profileSettings}</h3>
+                      <p className="text-sm text-gray-500">{t.settings.profileSettingsDesc}</p>
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-gray-400" />
@@ -86,8 +84,8 @@ export default function DesktopSettingsPage() {
                       <Shield size={24} className="text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">Privacy & Security</h3>
-                      <p className="text-sm text-gray-500">Manage your privacy settings</p>
+                      <h3 className="font-semibold text-gray-900">{t.settings.privacySecurity}</h3>
+                      <p className="text-sm text-gray-500">{t.settings.privacySecurityDesc}</p>
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-gray-400" />
@@ -98,7 +96,7 @@ export default function DesktopSettingsPage() {
             {/* Appearance */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Appearance</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t.settings.appearance}</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 <div className="px-6 py-4 flex items-center justify-between">
@@ -111,9 +109,11 @@ export default function DesktopSettingsPage() {
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">Dark Mode</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {isDarkMode ? t.settings.darkMode : t.settings.lightMode}
+                      </h3>
                       <p className="text-sm text-gray-500">
-                        {isDarkMode ? 'Dark theme enabled' : 'Light theme enabled'}
+                        {isDarkMode ? t.settings.themeDarkEnabled : t.settings.themeLightEnabled}
                       </p>
                     </div>
                   </div>
@@ -137,7 +137,7 @@ export default function DesktopSettingsPage() {
             {/* Language */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Language</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t.settings.language}</h2>
               </div>
               <div className="px-6 py-6">
                 <div className="grid grid-cols-3 gap-3">
@@ -169,14 +169,14 @@ export default function DesktopSettingsPage() {
             {/* Notifications */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Notifications</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t.settings.notifications}</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 {[
-                  { key: 'likes', label: 'Likes', description: 'When someone likes your wallpaper' },
-                  { key: 'comments', label: 'Comments', description: 'When someone comments on your wallpaper' },
-                  { key: 'follows', label: 'New Followers', description: 'When someone follows you' },
-                  { key: 'uploads', label: 'Upload Notifications', description: 'Updates about your uploads' },
+                  { key: 'likes' as const, label: t.settings.notificationLikes, description: t.settings.notificationLikesDesc },
+                  { key: 'comments' as const, label: t.settings.notificationComments, description: t.settings.notificationCommentsDesc },
+                  { key: 'follows' as const, label: t.settings.notificationFollows, description: t.settings.notificationFollowsDesc },
+                  { key: 'uploads' as const, label: t.settings.notificationUploads, description: t.settings.notificationUploadsDesc },
                 ].map((item) => (
                   <div key={item.key} className="px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -214,7 +214,7 @@ export default function DesktopSettingsPage() {
             {/* About */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">About</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t.settings.about}</h2>
               </div>
               <div className="divide-y divide-gray-100">
                 <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
@@ -223,8 +223,8 @@ export default function DesktopSettingsPage() {
                       <HelpCircle size={24} className="text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">Help & Support</h3>
-                      <p className="text-sm text-gray-500">Get help and contact support</p>
+                      <h3 className="font-semibold text-gray-900">{t.settings.helpSupport}</h3>
+                      <p className="text-sm text-gray-500">{t.settings.helpSupportDesc}</p>
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-gray-400" />
@@ -236,8 +236,8 @@ export default function DesktopSettingsPage() {
                       <Palette size={24} className="text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">About WallHaven</h3>
-                      <p className="text-sm text-gray-500">Learn more about our platform</p>
+                      <h3 className="font-semibold text-gray-900">{t.settings.aboutApp}</h3>
+                      <p className="text-sm text-gray-500">{t.settings.aboutAppDesc}</p>
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-gray-400" />
@@ -248,7 +248,7 @@ export default function DesktopSettingsPage() {
             {/* Danger Zone */}
             <section className="bg-white rounded-2xl border-2 border-red-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-red-200">
-                <h2 className="text-xl font-bold text-red-600">Danger Zone</h2>
+                <h2 className="text-xl font-bold text-red-600">{t.settings.dangerZone}</h2>
               </div>
               <div className="px-6 py-4">
                 <motion.button
@@ -256,15 +256,15 @@ export default function DesktopSettingsPage() {
                   className="flex items-center gap-3 px-6 py-3 bg-red-50 border-2 border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors"
                 >
                   <LogOut size={20} />
-                  <span>Log Out</span>
+                  <span>{t.settings.logOut}</span>
                 </motion.button>
               </div>
             </section>
 
             {/* Version Info */}
             <div className="text-center py-4">
-              <p className="text-sm text-gray-400">WallHaven v1.0.0</p>
-              <p className="text-xs text-gray-400 mt-1">© 2026 WallHaven. All rights reserved.</p>
+              <p className="text-sm text-gray-400">{t.settings.appVersion}</p>
+              <p className="text-xs text-gray-400 mt-1">{t.settings.copyright}</p>
             </div>
           </div>
         </div>

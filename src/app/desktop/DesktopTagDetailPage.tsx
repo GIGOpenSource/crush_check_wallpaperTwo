@@ -5,15 +5,17 @@ import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { mockWallpapers, mockTags } from '../mockData';
 import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type SortOption = 'relevance' | 'date' | 'views' | 'downloads';
 
 export default function DesktopTagDetailPage() {
+  const { t } = useLanguage();
   const { tagName } = useParams();
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
 
-  const tag = mockTags.find((t) => t.name === tagName);
+  const tag = mockTags.find((tg) => tg.name === tagName);
   const tagWallpapers = mockWallpapers.filter((w) => w.tags.includes(tagName || ''));
 
   const sortedWallpapers = [...tagWallpapers].sort((a, b) => {
@@ -34,17 +36,17 @@ export default function DesktopTagDetailPage() {
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">Tag not found</p>
+          <p className="text-gray-500">{t.tags.tagNotFound}</p>
         </div>
       </div>
     );
   }
 
-  const sortOptions: { value: SortOption; label: string; icon: any }[] = [
-    { value: 'relevance', label: 'Relevance', icon: SlidersHorizontal },
-    { value: 'date', label: 'Latest', icon: Calendar },
-    { value: 'views', label: 'Most Viewed', icon: Eye },
-    { value: 'downloads', label: 'Most Downloaded', icon: Download }
+  const sortOptions: { value: SortOption; label: string; icon: typeof SlidersHorizontal }[] = [
+    { value: 'relevance', label: t.tags.relevance, icon: SlidersHorizontal },
+    { value: 'date', label: t.tags.latest, icon: Calendar },
+    { value: 'views', label: t.tags.mostViewed, icon: Eye },
+    { value: 'downloads', label: t.tags.mostDownloaded, icon: Download },
   ];
 
   return (
@@ -66,7 +68,7 @@ export default function DesktopTagDetailPage() {
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold text-gray-900">#{tag.name}</h1>
                   <p className="text-gray-600 mt-1">
-                    {formatNumber(tag.wallpaperCount)} wallpapers
+                    {formatNumber(tag.wallpaperCount)} {t.tags.wallpapers}
                   </p>
                 </div>
               </div>
@@ -77,7 +79,7 @@ export default function DesktopTagDetailPage() {
 
               {/* Sort Options */}
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-700">Sort by:</span>
+                <span className="text-sm font-medium text-gray-700">{t.tags.sortBy}</span>
                 {sortOptions.map((option) => {
                   const Icon = option.icon;
                   return (
@@ -109,8 +111,8 @@ export default function DesktopTagDetailPage() {
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <SlidersHorizontal size={40} className="text-gray-400" />
                 </div>
-                <p className="text-xl text-gray-500 mb-2">No wallpapers found</p>
-                <p className="text-gray-400">No wallpapers with this tag yet</p>
+                <p className="text-xl text-gray-500 mb-2">{t.searchPage.noWallpapersFound}</p>
+                <p className="text-gray-400">{t.tags.noWallpapersWithTag}</p>
               </div>
             )}
           </div>

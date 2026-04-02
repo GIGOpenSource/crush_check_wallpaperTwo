@@ -6,6 +6,8 @@ import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { mockWallpapers } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { tpl } from '../utils/format';
 
 interface Filters {
   resolution: string[];
@@ -14,6 +16,7 @@ interface Filters {
 }
 
 export default function DesktopSearchPage() {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(initialQuery);
@@ -82,7 +85,7 @@ export default function DesktopSearchPage() {
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-4 mb-4">
-                <h1 className="text-2xl font-bold text-gray-900">Search Wallpapers</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{t.searchPage.searchWallpapers}</h1>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -92,7 +95,7 @@ export default function DesktopSearchPage() {
                   }`}
                 >
                   <SlidersHorizontal size={20} />
-                  <span className="font-medium">Filters</span>
+                  <span className="font-medium">{t.searchPage.filters}</span>
                   {activeFilterCount > 0 && (
                     <span className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
                       {activeFilterCount}
@@ -121,20 +124,22 @@ export default function DesktopSearchPage() {
                   >
                     <div className="bg-white rounded-xl p-6 shadow-sm sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-gray-900">Filters</h3>
+                        <h3 className="font-bold text-gray-900">{t.searchPage.filters}</h3>
                         {activeFilterCount > 0 && (
                           <button
                             onClick={clearFilters}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                           >
-                            Clear all
+                            {t.searchPage.clearAll}
                           </button>
                         )}
                       </div>
 
                       {/* Resolution */}
                       <div className="mb-6">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-3">Resolution</h4>
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          {t.searchPage.resolution}
+                        </h4>
                         <div className="space-y-2">
                           {resolutionOptions.map((res) => (
                             <button
@@ -154,7 +159,9 @@ export default function DesktopSearchPage() {
 
                       {/* Aspect Ratio */}
                       <div className="mb-6">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-3">Aspect Ratio</h4>
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          {t.searchPage.aspectRatio}
+                        </h4>
                         <div className="space-y-2">
                           {aspectRatioOptions.map((ratio) => (
                             <button
@@ -175,7 +182,7 @@ export default function DesktopSearchPage() {
                       {/* Purity */}
                       <div>
                         <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                          Content Rating
+                          {t.searchPage.contentRating}
                         </h4>
                         <div className="space-y-2">
                           {purityOptions.map((purity) => (
@@ -188,7 +195,7 @@ export default function DesktopSearchPage() {
                                   : 'hover:bg-gray-100 text-gray-700'
                               }`}
                             >
-                              {purity}
+                              {t.purity[purity]}
                             </button>
                           ))}
                         </div>
@@ -222,7 +229,7 @@ export default function DesktopSearchPage() {
                       .map((purity) => (
                         <FilterChip
                           key={purity}
-                          label={purity}
+                          label={t.purity[purity]}
                           onRemove={() => toggleFilter('purity', purity)}
                         />
                       ))}
@@ -232,16 +239,13 @@ export default function DesktopSearchPage() {
                 {/* Results Count */}
                 <div className="mb-6">
                   <p className="text-gray-600">
-                    <span className="font-semibold text-gray-900">
-                      {filteredWallpapers.length}
-                    </span>{' '}
-                    wallpaper{filteredWallpapers.length !== 1 ? 's' : ''} found
-                    {query && (
-                      <>
-                        {' '}
-                        for <span className="font-semibold text-gray-900">"{query}"</span>
-                      </>
+                    {tpl(
+                      filteredWallpapers.length === 1
+                        ? t.searchPage.wallpapersFoundOne
+                        : t.searchPage.wallpapersFoundMany,
+                      { count: filteredWallpapers.length },
                     )}
+                    {query ? tpl(t.searchPage.resultsForQuery, { q: query }) : ''}
                   </p>
                 </div>
 
@@ -253,8 +257,8 @@ export default function DesktopSearchPage() {
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                       <SlidersHorizontal size={40} className="text-gray-400" />
                     </div>
-                    <p className="text-xl text-gray-500 mb-2">No wallpapers found</p>
-                    <p className="text-gray-400">Try adjusting your search or filters</p>
+                    <p className="text-xl text-gray-500 mb-2">{t.searchPage.noWallpapersFound}</p>
+                    <p className="text-gray-400">{t.searchPage.tryAdjusting}</p>
                   </div>
                 )}
               </div>

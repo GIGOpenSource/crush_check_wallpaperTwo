@@ -5,16 +5,18 @@ import { WallpaperGrid } from '../components/WallpaperGrid';
 import { mockWallpapers, mockTags } from '../mockData';
 import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type SortOption = 'relevance' | 'date' | 'views' | 'downloads';
 
 export default function TagDetailPage() {
+  const { t } = useLanguage();
   const { tagName } = useParams();
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [showFilters, setShowFilters] = useState(false);
 
-  const tag = mockTags.find((t) => t.name === tagName);
+  const tag = mockTags.find((tg) => tg.name === tagName);
   const tagWallpapers = mockWallpapers.filter((w) => w.tags.includes(tagName || ''));
 
   // Sort wallpapers
@@ -34,16 +36,16 @@ export default function TagDetailPage() {
   if (!tag) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Tag not found</p>
+        <p className="text-gray-500">{t.tags.tagNotFound}</p>
       </div>
     );
   }
 
-  const sortOptions: { value: SortOption; label: string; icon: any }[] = [
-    { value: 'relevance', label: 'Relevance', icon: SlidersHorizontal },
-    { value: 'date', label: 'Latest', icon: Calendar },
-    { value: 'views', label: 'Most Viewed', icon: Eye },
-    { value: 'downloads', label: 'Most Downloaded', icon: Download }
+  const sortOptions: { value: SortOption; label: string; icon: typeof SlidersHorizontal }[] = [
+    { value: 'relevance', label: t.tags.relevance, icon: SlidersHorizontal },
+    { value: 'date', label: t.tags.latest, icon: Calendar },
+    { value: 'views', label: t.tags.mostViewed, icon: Eye },
+    { value: 'downloads', label: t.tags.mostDownloaded, icon: Download },
   ];
 
   return (
@@ -59,7 +61,9 @@ export default function TagDetailPage() {
           </button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-gray-900">#{tag.name}</h1>
-            <p className="text-sm text-gray-500">{formatNumber(tag.wallpaperCount)} wallpapers</p>
+            <p className="text-sm text-gray-500">
+              {formatNumber(tag.wallpaperCount)} {t.tags.wallpapers}
+            </p>
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -88,7 +92,7 @@ export default function TagDetailPage() {
               className="overflow-hidden border-t border-gray-200"
             >
               <div className="px-4 py-3">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Sort by</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">{t.tags.sortBy}</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {sortOptions.map((option) => {
                     const Icon = option.icon;
@@ -126,7 +130,7 @@ export default function TagDetailPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <SlidersHorizontal size={32} className="text-gray-400" />
             </div>
-            <p className="text-gray-500 text-center">No wallpapers found with this tag</p>
+            <p className="text-gray-500 text-center">{t.tags.noWallpapersWithTag}</p>
           </div>
         )}
       </div>

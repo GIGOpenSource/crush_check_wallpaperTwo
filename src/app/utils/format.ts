@@ -1,3 +1,8 @@
+/** 将文案中的 `{{key}}` 替换为变量，用于 i18n */
+export function tpl(str: string, vars: Record<string, string | number>): string {
+  return str.replace(/\{\{(\w+)\}\}/g, (_, key: string) => String(vars[key] ?? ''));
+}
+
 export function formatNumber(num: number, decimals: number = 1): string {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(decimals) + 'M';

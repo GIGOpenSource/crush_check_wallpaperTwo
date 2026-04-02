@@ -62,8 +62,13 @@ export const translations = {
       downloadStarted: '开始下载！',
       shareWallpaper: '分享壁纸',
       copyLink: '复制链接',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: '等级',
       points: '积分',
+      tagsHeading: '标签',
+      commentLikes: '{{n}} 次赞',
     },
     
     // Tags
@@ -79,6 +84,7 @@ export const translations = {
       latest: '最新',
       mostViewed: '最多浏览',
       mostDownloaded: '最多下载',
+      noWallpapersWithTag: '暂无带此标签的壁纸',
     },
     
     // Search
@@ -94,6 +100,9 @@ export const translations = {
       resultsFor: '的结果',
       noWallpapersFound: '未找到壁纸',
       tryAdjusting: '尝试调整搜索或筛选条件',
+      wallpapersFoundOne: '找到 {{count}} 张壁纸',
+      wallpapersFoundMany: '找到 {{count}} 张壁纸',
+      resultsForQuery: '，关键词「{{q}}」',
     },
     
     // Profile
@@ -139,6 +148,7 @@ export const translations = {
       termsConfirm: '我确认拥有此图片的版权或已获得上传许可。我同意服务条款和社区准则。',
       nextAddTags: '下一步：添加标签',
       nextReview: '下一步：审核并上传',
+      uploadYourWallpaper: '上传你的壁纸',
     },
     
     // Purity
@@ -146,6 +156,44 @@ export const translations = {
       SFW: '安全',
       Sketchy: '擦边',
       NSFW: '成人',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: '页面不存在',
+    },
+
+    settings: {
+      accountSettings: '账户设置',
+      profileSettings: '个人资料',
+      profileSettingsDesc: '更新个人资料信息',
+      privacySecurity: '隐私与安全',
+      privacySecurityDesc: '管理隐私选项',
+      appearance: '外观',
+      darkMode: '深色模式',
+      lightMode: '浅色模式',
+      language: '语言',
+      notifications: '通知',
+      notificationLikes: '点赞',
+      notificationComments: '评论',
+      notificationFollows: '新粉丝',
+      notificationUploads: '上传',
+      about: '关于',
+      helpSupport: '帮助与支持',
+      helpSupportDesc: '获取帮助并联系支持',
+      aboutApp: '关于 WallHaven',
+      aboutAppDesc: '了解更多平台信息',
+      dangerZone: '危险操作',
+      privacyPolicy: '隐私政策',
+      logOut: '退出登录',
+      copyright: '© 2026 WallHaven. 保留所有权利。',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: '已开启深色主题',
+      themeLightEnabled: '已开启浅色主题',
+      notificationLikesDesc: '有人点赞你的壁纸时',
+      notificationCommentsDesc: '有人评论你的壁纸时',
+      notificationFollowsDesc: '有人关注你时',
+      notificationUploadsDesc: '与你的上传相关的更新',
     },
   },
   
@@ -208,8 +256,13 @@ export const translations = {
       downloadStarted: 'Download started!',
       shareWallpaper: 'Share Wallpaper',
       copyLink: 'Copy Link',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: 'Level',
       points: 'pts',
+      tagsHeading: 'Tags',
+      commentLikes: '{{n}} likes',
     },
     
     tags: {
@@ -224,6 +277,7 @@ export const translations = {
       latest: 'Latest',
       mostViewed: 'Most Viewed',
       mostDownloaded: 'Most Downloaded',
+      noWallpapersWithTag: 'No wallpapers found with this tag',
     },
     
     searchPage: {
@@ -238,6 +292,9 @@ export const translations = {
       resultsFor: 'results for',
       noWallpapersFound: 'No wallpapers found',
       tryAdjusting: 'Try adjusting your search or filters',
+      wallpapersFoundOne: '{{count}} wallpaper found',
+      wallpapersFoundMany: '{{count}} wallpapers found',
+      resultsForQuery: ' for "{{q}}"',
     },
     
     profile: {
@@ -281,12 +338,51 @@ export const translations = {
       termsConfirm: 'I confirm that I own the rights to this image or have permission to upload it. I agree to the Terms of Service and Community Guidelines.',
       nextAddTags: 'Next: Add Tags',
       nextReview: 'Next: Review & Upload',
+      uploadYourWallpaper: 'Upload Your Wallpaper',
     },
     
     purity: {
       SFW: 'SFW',
       Sketchy: 'Sketchy',
       NSFW: 'NSFW',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: 'Page not found',
+    },
+
+    settings: {
+      accountSettings: 'Account Settings',
+      profileSettings: 'Profile Settings',
+      profileSettingsDesc: 'Update your profile information',
+      privacySecurity: 'Privacy & Security',
+      privacySecurityDesc: 'Manage your privacy settings',
+      appearance: 'Appearance',
+      darkMode: 'Dark Mode',
+      lightMode: 'Light Mode',
+      language: 'Language',
+      notifications: 'Notifications',
+      notificationLikes: 'Likes',
+      notificationComments: 'Comments',
+      notificationFollows: 'New Followers',
+      notificationUploads: 'Uploads',
+      about: 'About',
+      helpSupport: 'Help & Support',
+      helpSupportDesc: 'Get help and contact support',
+      aboutApp: 'About WallHaven',
+      aboutAppDesc: 'Learn more about our platform',
+      dangerZone: 'Danger Zone',
+      privacyPolicy: 'Privacy Policy',
+      logOut: 'Log Out',
+      copyright: '© 2026 WallHaven. All rights reserved.',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: 'Dark theme enabled',
+      themeLightEnabled: 'Light theme enabled',
+      notificationLikesDesc: 'When someone likes your wallpaper',
+      notificationCommentsDesc: 'When someone comments on your wallpaper',
+      notificationFollowsDesc: 'When someone follows you',
+      notificationUploadsDesc: 'Updates about your uploads',
     },
   },
   
@@ -349,8 +445,13 @@ export const translations = {
       downloadStarted: 'ダウンロードを開始しました！',
       shareWallpaper: '壁紙をシェア',
       copyLink: 'リンクをコピー',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: 'レベル',
       points: 'ポイント',
+      tagsHeading: 'タグ',
+      commentLikes: '{{n}} いいね',
     },
     
     tags: {
@@ -365,6 +466,7 @@ export const translations = {
       latest: '最新',
       mostViewed: '最も閲覧',
       mostDownloaded: '最もダウンロード',
+      noWallpapersWithTag: 'このタグの壁紙はまだありません',
     },
     
     searchPage: {
@@ -379,6 +481,9 @@ export const translations = {
       resultsFor: 'の検索結果',
       noWallpapersFound: '壁紙が見つかりません',
       tryAdjusting: '検索またはフィルターを調整してください',
+      wallpapersFoundOne: '{{count}} 件の壁紙が見つかりました',
+      wallpapersFoundMany: '{{count}} 件の壁紙が見つかりました',
+      resultsForQuery: '「{{q}}」の',
     },
     
     profile: {
@@ -422,12 +527,51 @@ export const translations = {
       termsConfirm: 'この画像の権利を所有しているか、アップロードの許可を得ていることを確認します。利用規約とコミュニティガイドラインに同意します。',
       nextAddTags: '次へ：タグを追加',
       nextReview: '次へ：レビューしてアップロード',
+      uploadYourWallpaper: '壁紙をアップロード',
     },
     
     purity: {
       SFW: 'セーフ',
       Sketchy: 'きわどい',
       NSFW: '成人向け',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: 'ページが見つかりません',
+    },
+
+    settings: {
+      accountSettings: 'アカウント設定',
+      profileSettings: 'プロフィール設定',
+      profileSettingsDesc: 'プロフィール情報を更新',
+      privacySecurity: 'プライバシーとセキュリティ',
+      privacySecurityDesc: 'プライバシー設定を管理',
+      appearance: '外観',
+      darkMode: 'ダークモード',
+      lightMode: 'ライトモード',
+      language: '言語',
+      notifications: '通知',
+      notificationLikes: 'いいね',
+      notificationComments: 'コメント',
+      notificationFollows: '新しいフォロワー',
+      notificationUploads: 'アップロード',
+      about: 'について',
+      helpSupport: 'ヘルプとサポート',
+      helpSupportDesc: 'ヘルプを取得しサポートに連絡',
+      aboutApp: 'WallHaven について',
+      aboutAppDesc: 'プラットフォームの詳細',
+      dangerZone: '危険ゾーン',
+      privacyPolicy: 'プライバシーポリシー',
+      logOut: 'ログアウト',
+      copyright: '© 2026 WallHaven. All rights reserved.',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: 'ダークテーマが有効です',
+      themeLightEnabled: 'ライトテーマが有効です',
+      notificationLikesDesc: '壁紙にいいねされたとき',
+      notificationCommentsDesc: '壁紙にコメントがついたとき',
+      notificationFollowsDesc: 'フォローされたとき',
+      notificationUploadsDesc: 'アップロードに関する更新',
     },
   },
   
@@ -490,8 +634,13 @@ export const translations = {
       downloadStarted: '다운로드가 시작되었습니다!',
       shareWallpaper: '배경화면 공유',
       copyLink: '링크 복사',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: '레벨',
       points: '포인트',
+      tagsHeading: '태그',
+      commentLikes: '좋아요 {{n}}개',
     },
     
     tags: {
@@ -506,6 +655,7 @@ export const translations = {
       latest: '최신',
       mostViewed: '최다 조회',
       mostDownloaded: '최다 다운로드',
+      noWallpapersWithTag: '이 태그의 배경화면이 아직 없습니다',
     },
     
     searchPage: {
@@ -520,6 +670,9 @@ export const translations = {
       resultsFor: '에 대한 결과',
       noWallpapersFound: '배경화면을 찾을 수 없습니다',
       tryAdjusting: '검색어나 필터를 조정해보세요',
+      wallpapersFoundOne: '{{count}}개의 배경화면을 찾았습니다',
+      wallpapersFoundMany: '{{count}}개의 배경화면을 찾았습니다',
+      resultsForQuery: ' "{{q}}" 검색',
     },
     
     profile: {
@@ -563,12 +716,51 @@ export const translations = {
       termsConfirm: '이 이미지의 권리를 소유하고 있거나 업로드 권한이 있음을 확인합니다. 서비스 약관 및 커뮤니티 가이드라인에 동의합니다.',
       nextAddTags: '다음: 태그 추가',
       nextReview: '다음: 검토 및 업로드',
+      uploadYourWallpaper: '배경화면 업로드',
     },
     
     purity: {
       SFW: '안전',
       Sketchy: '선정적',
       NSFW: '성인',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: '페이지를 찾을 수 없습니다',
+    },
+
+    settings: {
+      accountSettings: '계정 설정',
+      profileSettings: '프로필 설정',
+      profileSettingsDesc: '프로필 정보 업데이트',
+      privacySecurity: '개인정보 및 보안',
+      privacySecurityDesc: '개인정보 설정 관리',
+      appearance: '모양',
+      darkMode: '다크 모드',
+      lightMode: '라이트 모드',
+      language: '언어',
+      notifications: '알림',
+      notificationLikes: '좋아요',
+      notificationComments: '댓글',
+      notificationFollows: '새 팔로워',
+      notificationUploads: '업로드',
+      about: '정보',
+      helpSupport: '도움말 및 지원',
+      helpSupportDesc: '도움을 받고 지원팀에 문의',
+      aboutApp: 'WallHaven 정보',
+      aboutAppDesc: '플랫폼에 대해 더 알아보기',
+      dangerZone: '위험 구역',
+      privacyPolicy: '개인정보 처리방침',
+      logOut: '로그아웃',
+      copyright: '© 2026 WallHaven. All rights reserved.',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: '다크 테마 사용 중',
+      themeLightEnabled: '라이트 테마 사용 중',
+      notificationLikesDesc: '배경화면에 좋아요를 받을 때',
+      notificationCommentsDesc: '배경화면에 댓글이 달릴 때',
+      notificationFollowsDesc: '새 팔로워가 있을 때',
+      notificationUploadsDesc: '업로드 관련 알림',
     },
   },
   
@@ -631,8 +823,13 @@ export const translations = {
       downloadStarted: '¡Descarga iniciada!',
       shareWallpaper: 'Compartir fondo',
       copyLink: 'Copiar enlace',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: 'Nivel',
       points: 'puntos',
+      tagsHeading: 'Etiquetas',
+      commentLikes: '{{n}} me gusta',
     },
     
     tags: {
@@ -647,6 +844,7 @@ export const translations = {
       latest: 'Más reciente',
       mostViewed: 'Más visto',
       mostDownloaded: 'Más descargado',
+      noWallpapersWithTag: 'Aún no hay fondos con esta etiqueta',
     },
     
     searchPage: {
@@ -661,6 +859,9 @@ export const translations = {
       resultsFor: 'resultados para',
       noWallpapersFound: 'No se encontraron fondos',
       tryAdjusting: 'Intenta ajustar tu búsqueda o filtros',
+      wallpapersFoundOne: '{{count}} fondo encontrado',
+      wallpapersFoundMany: '{{count}} fondos encontrados',
+      resultsForQuery: ' para «{{q}}»',
     },
     
     profile: {
@@ -704,12 +905,51 @@ export const translations = {
       termsConfirm: 'Confirmo que poseo los derechos de esta imagen o tengo permiso para subirla. Acepto los Términos de Servicio y las Directrices de la Comunidad.',
       nextAddTags: 'Siguiente: Agregar etiquetas',
       nextReview: 'Siguiente: Revisar y subir',
+      uploadYourWallpaper: 'Sube tu fondo',
     },
     
     purity: {
       SFW: 'Seguro',
       Sketchy: 'Dudoso',
       NSFW: 'Adulto',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: 'Página no encontrada',
+    },
+
+    settings: {
+      accountSettings: 'Configuración de cuenta',
+      profileSettings: 'Perfil',
+      profileSettingsDesc: 'Actualiza tu información de perfil',
+      privacySecurity: 'Privacidad y seguridad',
+      privacySecurityDesc: 'Administra tu privacidad',
+      appearance: 'Apariencia',
+      darkMode: 'Modo oscuro',
+      lightMode: 'Modo claro',
+      language: 'Idioma',
+      notifications: 'Notificaciones',
+      notificationLikes: 'Me gusta',
+      notificationComments: 'Comentarios',
+      notificationFollows: 'Nuevos seguidores',
+      notificationUploads: 'Subidas',
+      about: 'Acerca de',
+      helpSupport: 'Ayuda y soporte',
+      helpSupportDesc: 'Obtén ayuda y contacta soporte',
+      aboutApp: 'Acerca de WallHaven',
+      aboutAppDesc: 'Más sobre la plataforma',
+      dangerZone: 'Zona de peligro',
+      privacyPolicy: 'Política de privacidad',
+      logOut: 'Cerrar sesión',
+      copyright: '© 2026 WallHaven. All rights reserved.',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: 'Tema oscuro activado',
+      themeLightEnabled: 'Tema claro activado',
+      notificationLikesDesc: 'Cuando alguien da me gusta a tu fondo',
+      notificationCommentsDesc: 'Cuando alguien comenta tu fondo',
+      notificationFollowsDesc: 'Cuando alguien te sigue',
+      notificationUploadsDesc: 'Actualizaciones sobre tus subidas',
     },
   },
   
@@ -772,8 +1012,13 @@ export const translations = {
       downloadStarted: 'Téléchargement commencé !',
       shareWallpaper: 'Partager le fond d\'écran',
       copyLink: 'Copier le lien',
+      shareTwitter: 'Twitter',
+      shareFacebook: 'Facebook',
+      shareWhatsApp: 'WhatsApp',
       level: 'Niveau',
       points: 'points',
+      tagsHeading: 'Tags',
+      commentLikes: '{{n}} j\'aime',
     },
     
     tags: {
@@ -788,6 +1033,7 @@ export const translations = {
       latest: 'Plus récent',
       mostViewed: 'Plus vus',
       mostDownloaded: 'Plus téléchargés',
+      noWallpapersWithTag: 'Aucun fond d\'écran avec ce tag pour le moment',
     },
     
     searchPage: {
@@ -802,6 +1048,9 @@ export const translations = {
       resultsFor: 'résultats pour',
       noWallpapersFound: 'Aucun fond d\'écran trouvé',
       tryAdjusting: 'Essayez d\'ajuster votre recherche ou vos filtres',
+      wallpapersFoundOne: '{{count}} fond d\'écran trouvé',
+      wallpapersFoundMany: '{{count}} fonds d\'écran trouvés',
+      resultsForQuery: ' pour « {{q}} »',
     },
     
     profile: {
@@ -845,12 +1094,51 @@ export const translations = {
       termsConfirm: 'Je confirme que je possède les droits de cette image ou que j\'ai la permission de la téléverser. J\'accepte les Conditions d\'utilisation et les Directives de la communauté.',
       nextAddTags: 'Suivant : Ajouter des tags',
       nextReview: 'Suivant : Réviser et téléverser',
+      uploadYourWallpaper: 'Téléversez votre fond d\'écran',
     },
     
     purity: {
       SFW: 'Sûr',
       Sketchy: 'Douteux',
       NSFW: 'Adulte',
+    },
+
+    errors: {
+      pageNotFoundTitle: '404',
+      pageNotFound: 'Page introuvable',
+    },
+
+    settings: {
+      accountSettings: 'Paramètres du compte',
+      profileSettings: 'Profil',
+      profileSettingsDesc: 'Mettre à jour votre profil',
+      privacySecurity: 'Confidentialité et sécurité',
+      privacySecurityDesc: 'Gérer vos paramètres de confidentialité',
+      appearance: 'Apparence',
+      darkMode: 'Mode sombre',
+      lightMode: 'Mode clair',
+      language: 'Langue',
+      notifications: 'Notifications',
+      notificationLikes: 'J\'aime',
+      notificationComments: 'Commentaires',
+      notificationFollows: 'Nouveaux abonnés',
+      notificationUploads: 'Téléversements',
+      about: 'À propos',
+      helpSupport: 'Aide et support',
+      helpSupportDesc: 'Obtenir de l\'aide et contacter le support',
+      aboutApp: 'À propos de WallHaven',
+      aboutAppDesc: 'En savoir plus sur la plateforme',
+      dangerZone: 'Zone de danger',
+      privacyPolicy: 'Politique de confidentialité',
+      logOut: 'Déconnexion',
+      copyright: '© 2026 WallHaven. Tous droits réservés.',
+      appVersion: 'WallHaven v1.0.0',
+      themeDarkEnabled: 'Thème sombre activé',
+      themeLightEnabled: 'Thème clair activé',
+      notificationLikesDesc: 'Quand quelqu\'aime votre fond d\'écran',
+      notificationCommentsDesc: 'Quand quelqu\'un commente votre fond',
+      notificationFollowsDesc: 'Quand quelqu\'un vous suit',
+      notificationUploadsDesc: 'Mises à jour sur vos téléversements',
     },
   },
 } as const;

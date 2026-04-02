@@ -11,11 +11,13 @@ import {
   Loader
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 type UploadStep = 'select' | 'details' | 'tags' | 'review' | 'uploading' | 'success';
 
 export default function DesktopUploadPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState<UploadStep>('select');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [title, setTitle] = useState('');
@@ -26,11 +28,11 @@ export default function DesktopUploadPage() {
 
   const suggestedTags = ['nature', 'abstract', 'minimal', 'dark', 'colorful', 'space', 'city'];
 
-  const steps: { id: UploadStep; label: string; icon: any }[] = [
-    { id: 'select', label: 'Select Image', icon: ImageIcon },
-    { id: 'details', label: 'Add Details', icon: FileText },
-    { id: 'tags', label: 'Add Tags', icon: Tag },
-    { id: 'review', label: 'Review & Upload', icon: CheckCircle }
+  const steps: { id: UploadStep; label: string; icon: typeof ImageIcon }[] = [
+    { id: 'select', label: t.upload.selectImage, icon: ImageIcon },
+    { id: 'details', label: t.upload.addDetails, icon: FileText },
+    { id: 'tags', label: t.upload.addTags, icon: Tag },
+    { id: 'review', label: t.upload.reviewAndUpload, icon: CheckCircle },
   ];
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
@@ -82,8 +84,8 @@ export default function DesktopUploadPage() {
             >
               <Loader size={80} className="text-blue-600" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Uploading...</h2>
-            <p className="text-gray-600">Please wait while we process your wallpaper</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">{t.upload.uploading}</h2>
+            <p className="text-gray-600">{t.upload.pleaseWait}</p>
           </div>
         </div>
       </div>
@@ -104,8 +106,8 @@ export default function DesktopUploadPage() {
             <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={64} className="text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Upload Successful!</h2>
-            <p className="text-gray-600">Your wallpaper has been uploaded successfully</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">{t.upload.uploadSuccessful}</h2>
+            <p className="text-gray-600">{t.upload.uploadSuccessMessage}</p>
           </motion.div>
         </div>
       </div>
@@ -121,7 +123,7 @@ export default function DesktopUploadPage() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Upload Wallpaper</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.upload.uploadWallpaper}</h1>
 
               {/* Progress Steps */}
               {currentStep !== 'select' && (
@@ -186,10 +188,8 @@ export default function DesktopUploadPage() {
                   <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Upload size={48} className="text-blue-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">Upload Your Wallpaper</h2>
-                  <p className="text-gray-600">
-                    Select a high-quality image to share with the community
-                  </p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">{t.upload.uploadYourWallpaper}</h2>
+                  <p className="text-gray-600">{t.upload.selectHighQuality}</p>
                 </div>
 
                 <label className="block">
@@ -201,8 +201,8 @@ export default function DesktopUploadPage() {
                   />
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
                     <ImageIcon size={64} className="text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg text-gray-600 mb-2">Click to select an image</p>
-                    <p className="text-sm text-gray-400">Supported: JPG, PNG (Max 10MB)</p>
+                    <p className="text-lg text-gray-600 mb-2">{t.upload.clickToSelect}</p>
+                    <p className="text-sm text-gray-400">{t.upload.supportedFormats}</p>
                   </div>
                 </label>
               </motion.div>
@@ -224,25 +224,25 @@ export default function DesktopUploadPage() {
                 <div className="bg-white rounded-2xl p-8 space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Title *
+                      {t.upload.titleRequired}
                     </label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Enter wallpaper title"
+                      placeholder={t.upload.enterTitle}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-600"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Description (Optional)
+                      {t.upload.descriptionOptional}
                     </label>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Describe your wallpaper..."
+                      placeholder={t.upload.describeWallpaper}
                       rows={5}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 resize-none"
                     />
@@ -254,7 +254,7 @@ export default function DesktopUploadPage() {
                   disabled={!title.trim()}
                   className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
                 >
-                  Next: Add Tags
+                  {t.upload.nextAddTags}
                 </button>
               </motion.div>
             )}
@@ -267,7 +267,7 @@ export default function DesktopUploadPage() {
                 className="space-y-6"
               >
                 <div className="bg-white rounded-2xl p-8">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6">Add Tags</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-6">{t.upload.addTags}</h3>
 
                   <div className="flex gap-3 mb-6">
                     <input
@@ -280,14 +280,14 @@ export default function DesktopUploadPage() {
                           handleAddTag(tagInput);
                         }
                       }}
-                      placeholder="Type a tag and press Enter"
+                      placeholder={t.upload.typeTag}
                       className="flex-1 px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-600"
                     />
                     <button
                       onClick={() => handleAddTag(tagInput)}
                       className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
                     >
-                      Add
+                      {t.upload.add}
                     </button>
                   </div>
 
@@ -311,7 +311,7 @@ export default function DesktopUploadPage() {
                   )}
 
                   <div>
-                    <p className="text-sm text-gray-500 mb-3">Suggested tags:</p>
+                    <p className="text-sm text-gray-500 mb-3">{t.upload.suggestedTags}</p>
                     <div className="flex flex-wrap gap-2">
                       {suggestedTags
                         .filter((tag) => !tags.includes(tag))
@@ -333,7 +333,7 @@ export default function DesktopUploadPage() {
                   disabled={tags.length === 0}
                   className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
                 >
-                  Next: Review & Upload
+                  {t.upload.nextReview}
                 </button>
               </motion.div>
             )}
@@ -371,10 +371,7 @@ export default function DesktopUploadPage() {
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
                       className="mt-1 w-5 h-5"
                     />
-                    <span className="text-gray-700">
-                      I confirm that I own the rights to this image or have permission to upload it.
-                      I agree to the Terms of Service and Community Guidelines.
-                    </span>
+                    <span className="text-gray-700">{t.upload.termsConfirm}</span>
                   </label>
                 </div>
 
@@ -384,7 +381,7 @@ export default function DesktopUploadPage() {
                   className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                 >
                   <Upload size={24} />
-                  Upload Wallpaper
+                  {t.upload.uploadWallpaper}
                 </button>
               </motion.div>
             )}

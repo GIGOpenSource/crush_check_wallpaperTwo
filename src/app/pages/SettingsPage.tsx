@@ -37,28 +37,28 @@ export default function SettingsPage() {
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
   ];
 
-  const currentLanguage = languageOptions.find(lang => lang.code === language);
+  const currentLanguage = languageOptions.find((lang) => lang.code === language);
 
   const settingsSections = [
     {
-      title: t.profile.settings,
+      title: t.settings.accountSettings,
       items: [
         {
           icon: User,
-          label: t.profile.settings + ' - ' + t.common.edit,
+          label: t.settings.profileSettings,
           onClick: () => {},
           chevron: true,
         },
         {
           icon: Globe,
-          label: currentLanguage?.flag + ' ' + currentLanguage?.name,
+          label: (currentLanguage?.flag ?? '') + ' ' + (currentLanguage?.name ?? ''),
           onClick: () => {},
           chevron: true,
           isLanguage: true,
         },
         {
           icon: isDarkMode ? Moon : Sun,
-          label: isDarkMode ? 'Dark Mode' : 'Light Mode',
+          label: isDarkMode ? t.settings.darkMode : t.settings.lightMode,
           toggle: true,
           value: isDarkMode,
           onChange: setIsDarkMode,
@@ -66,49 +66,56 @@ export default function SettingsPage() {
       ],
     },
     {
-      title: 'Notifications',
+      title: t.settings.notifications,
       items: [
         {
           icon: Bell,
-          label: 'Likes',
+          label: t.settings.notificationLikes,
           toggle: true,
           value: notifications.likes,
           onChange: (val: boolean) => setNotifications({ ...notifications, likes: val }),
         },
         {
           icon: Bell,
-          label: 'Comments',
+          label: t.settings.notificationComments,
           toggle: true,
           value: notifications.comments,
           onChange: (val: boolean) => setNotifications({ ...notifications, comments: val }),
         },
         {
           icon: Bell,
-          label: 'New Followers',
+          label: t.settings.notificationFollows,
           toggle: true,
           value: notifications.follows,
           onChange: (val: boolean) => setNotifications({ ...notifications, follows: val }),
         },
+        {
+          icon: Bell,
+          label: t.settings.notificationUploads,
+          toggle: true,
+          value: notifications.uploads,
+          onChange: (val: boolean) => setNotifications({ ...notifications, uploads: val }),
+        },
       ],
     },
     {
-      title: 'About',
+      title: t.settings.about,
       items: [
         {
           icon: Shield,
-          label: 'Privacy Policy',
+          label: t.settings.privacyPolicy,
           onClick: () => {},
           chevron: true,
         },
         {
           icon: HelpCircle,
-          label: 'Help & Support',
+          label: t.settings.helpSupport,
           onClick: () => {},
           chevron: true,
         },
         {
           icon: Palette,
-          label: 'About WallHaven',
+          label: t.settings.aboutApp,
           onClick: () => {},
           chevron: true,
         },
@@ -186,7 +193,7 @@ export default function SettingsPage() {
         {/* Language Selector */}
         <div className="bg-white px-4 py-4">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Language
+            {t.settings.language}
           </h2>
           <div className="grid grid-cols-2 gap-2">
             {languageOptions.map((lang) => (
@@ -220,14 +227,14 @@ export default function SettingsPage() {
             className="w-full bg-white border-2 border-red-200 text-red-600 py-4 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-red-50 transition-colors"
           >
             <LogOut size={20} />
-            <span>Log Out</span>
+            <span>{t.settings.logOut}</span>
           </motion.button>
         </div>
 
         {/* Version Info */}
         <div className="px-4 text-center">
-          <p className="text-sm text-gray-400">WallHaven v1.0.0</p>
-          <p className="text-xs text-gray-400 mt-1">© 2026 WallHaven. All rights reserved.</p>
+          <p className="text-sm text-gray-400">{t.settings.appVersion}</p>
+          <p className="text-xs text-gray-400 mt-1">{t.settings.copyright}</p>
         </div>
       </div>
 

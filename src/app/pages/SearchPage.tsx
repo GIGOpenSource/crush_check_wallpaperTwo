@@ -6,6 +6,8 @@ import { WallpaperGrid } from '../components/WallpaperGrid';
 import { mockWallpapers, mockTags } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { tpl } from '../utils/format';
 
 interface Filters {
   resolution: string[];
@@ -14,6 +16,7 @@ interface Filters {
 }
 
 export default function SearchPage() {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const initialQuery = searchParams.get('q') || '';
@@ -96,7 +99,7 @@ export default function SearchPage() {
         {/* Suggested Tags */}
         {query && suggestedTags.length > 0 && (
           <div className="px-4 pb-3">
-            <p className="text-xs text-gray-500 mb-2">Suggested tags:</p>
+            <p className="text-xs text-gray-500 mb-2">{t.upload.suggestedTags}</p>
             <div className="flex flex-wrap gap-2">
               {suggestedTags.map((tag) => (
                 <button
@@ -123,20 +126,20 @@ export default function SearchPage() {
           >
             <div className="px-4 py-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
+                <h3 className="text-sm font-semibold text-gray-900">{t.searchPage.filters}</h3>
                 {activeFilterCount > 0 && (
                   <button
                     onClick={clearFilters}
                     className="text-sm text-blue-600 hover:text-blue-700"
                   >
-                    Clear all
+                    {t.searchPage.clearAll}
                   </button>
                 )}
               </div>
 
               {/* Resolution */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Resolution</h4>
+                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.resolution}</h4>
                 <div className="flex flex-wrap gap-2">
                   {resolutionOptions.map((res) => (
                     <button
@@ -156,7 +159,7 @@ export default function SearchPage() {
 
               {/* Aspect Ratio */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Aspect Ratio</h4>
+                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.aspectRatio}</h4>
                 <div className="flex flex-wrap gap-2">
                   {aspectRatioOptions.map((ratio) => (
                     <button
@@ -176,7 +179,7 @@ export default function SearchPage() {
 
               {/* Purity */}
               <div>
-                <h4 className="text-xs font-medium text-gray-700 mb-2">Content Rating</h4>
+                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.contentRating}</h4>
                 <div className="flex flex-wrap gap-2">
                   {purityOptions.map((purity) => (
                     <button
@@ -188,7 +191,7 @@ export default function SearchPage() {
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
-                      {purity}
+                      {t.purity[purity]}
                     </button>
                   ))}
                 </div>
@@ -219,7 +222,7 @@ export default function SearchPage() {
             {filters.purity.filter(p => p !== 'SFW').map((purity) => (
               <FilterChip
                 key={purity}
-                label={purity}
+                label={t.purity[purity]}
                 onRemove={() => toggleFilter('purity', purity)}
               />
             ))}
@@ -231,8 +234,13 @@ export default function SearchPage() {
       <div className="py-4">
         <div className="px-4 mb-4">
           <p className="text-sm text-gray-600">
-            {filteredWallpapers.length} wallpaper{filteredWallpapers.length !== 1 ? 's' : ''} found
-            {query && ` for "${query}"`}
+            {tpl(
+              filteredWallpapers.length === 1
+                ? t.searchPage.wallpapersFoundOne
+                : t.searchPage.wallpapersFoundMany,
+              { count: filteredWallpapers.length },
+            )}
+            {query ? tpl(t.searchPage.resultsForQuery, { q: query }) : ''}
           </p>
         </div>
         {filteredWallpapers.length > 0 ? (
@@ -242,10 +250,8 @@ export default function SearchPage() {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <SlidersHorizontal size={32} className="text-gray-400" />
             </div>
-            <p className="text-gray-500 text-center mb-2">No wallpapers found</p>
-            <p className="text-sm text-gray-400 text-center">
-              Try adjusting your search or filters
-            </p>
+            <p className="text-gray-500 text-center mb-2">{t.searchPage.noWallpapersFound}</p>
+            <p className="text-sm text-gray-400 text-center">{t.searchPage.tryAdjusting}</p>
           </div>
         )}
       </div>

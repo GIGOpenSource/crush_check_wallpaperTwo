@@ -4,8 +4,10 @@ import { BottomNav } from '../components/BottomNav';
 import { mockTags } from '../mockData';
 import { Search, TrendingUp, Hash } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function TagsPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTags = mockTags.filter((tag) =>
@@ -19,14 +21,14 @@ export default function TagsPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-gray-900 mb-3">Browse Tags</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-3">{t.tags.browseTags}</h1>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tags..."
+              placeholder={t.tags.searchTags}
               className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
@@ -37,7 +39,7 @@ export default function TagsPage() {
       <section className="bg-white py-4 mb-4">
         <div className="px-4 mb-3 flex items-center gap-2">
           <TrendingUp size={20} className="text-blue-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Trending Tags</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t.tags.trendingTags}</h2>
         </div>
         <div className="px-4 space-y-2">
           {popularTags.map((tag, index) => (
@@ -64,7 +66,7 @@ export default function TagsPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-blue-600">{formatNumber(tag.wallpaperCount)}</p>
-                  <p className="text-xs text-gray-500">wallpapers</p>
+                  <p className="text-xs text-gray-500">{t.tags.wallpapers}</p>
                 </div>
               </Link>
             </motion.div>
@@ -75,7 +77,7 @@ export default function TagsPage() {
       {/* All Tags */}
       <section className="py-4">
         <div className="px-4 mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">All Tags</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t.tags.allTags}</h2>
         </div>
         <div className="px-4 flex flex-wrap gap-2">
           {filteredTags.map((tag) => (
