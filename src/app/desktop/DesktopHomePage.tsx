@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
+import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { editorsPicks } from '../mockData';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
@@ -82,9 +83,9 @@ export default function DesktopHomePage() {
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                   {editorsPicks.map((wallpaper) => (
-                    <Link
+                    <EditorsPickWallpaperLink
                       key={wallpaper.id}
-                      to={`/wallpaper/${wallpaper.id}`}
+                      wallpaper={wallpaper}
                       className="flex-shrink-0 w-full snap-center"
                     >
                       <div className="relative aspect-[21/9] overflow-hidden">
@@ -113,7 +114,7 @@ export default function DesktopHomePage() {
                           </div>
                         </div>
                       </div>
-                    </Link>
+                    </EditorsPickWallpaperLink>
                   ))}
                 </div>
 

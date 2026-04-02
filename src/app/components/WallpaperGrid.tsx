@@ -4,15 +4,23 @@ import { Eye, Download, Heart } from 'lucide-react';
 import { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
 import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
+import { useWallpaperListCardTracking } from '../hooks/useWallpaperListCardTracking';
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
   columns?: number;
   /** 从列表进详情时携带，与列表接口筛选一致；卡片会带上当前项序号（第 N 条） */
   listNavBase?: WallpaperListNavBase;
+  /** 列表点击、桌面悬停埋点（不含列表曝光） */
+  trackListEvents?: boolean;
 }
 
-export function WallpaperGrid({ wallpapers, columns = 2, listNavBase }: WallpaperGridProps) {
+export function WallpaperGrid({
+  wallpapers,
+  columns = 2,
+  listNavBase,
+  trackListEvents = true,
+}: WallpaperGridProps) {
   return (
     <div
       className="grid gap-3 px-4"
@@ -26,6 +34,7 @@ export function WallpaperGrid({ wallpapers, columns = 2, listNavBase }: Wallpape
           wallpaper={wallpaper}
           index={index}
           listNavBase={listNavBase}
+          trackListEvents={trackListEvents}
         />
       ))}
     </div>
@@ -36,11 +45,17 @@ function WallpaperCard({
   wallpaper,
   index,
   listNavBase,
+  trackListEvents,
 }: {
   wallpaper: Wallpaper;
   index: number;
   listNavBase?: WallpaperListNavBase;
+  trackListEvents: boolean;
 }) {
+  const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
+    wallpaper.id,
+    trackListEvents,
+  );
   const listState =
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
@@ -48,11 +63,18 @@ function WallpaperCard({
 
   return (
     <motion.div
+      ref={rootRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
+      onMouseEnter={onHoverTrack}
     >
-      <Link to={`/wallpaper/${wallpaper.id}`} state={listState} className="block">
+      <Link
+        to={`/wallpaper/${wallpaper.id}`}
+        state={listState}
+        className="block"
+        onClick={onClickTrack}
+      >
         <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 group">
           <img
             src={wallpaper.imageUrl}

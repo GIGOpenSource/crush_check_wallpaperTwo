@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { Search, TrendingUp, Hash } from 'lucide-react';
 import { motion } from 'motion/react';
+import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigationTags } from '../hooks/useNavigationTags';
 import { getTagDisplayName } from '../utils/tagDisplay';
@@ -93,6 +94,7 @@ export default function TagsPage() {
             >
               <Link
                 to={`/tag/${encodeURIComponent(tag.tag)}`}
+                onClick={() => umengclick('filter_click_tag')}
                 state={{
                   tagMeta: {
                     name: getTagDisplayName(tag) || tag.name,
@@ -144,6 +146,7 @@ export default function TagsPage() {
             <Link
               key={tag.tag}
               to={`/tag/${encodeURIComponent(tag.tag)}`}
+              onClick={() => umengclick('filter_click_tag')}
               state={{
                 tagMeta: {
                   name: getTagDisplayName(tag) || tag.name,

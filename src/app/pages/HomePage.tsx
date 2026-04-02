@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
+import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { BottomNav } from '../components/BottomNav';
 import { editorsPicks } from '../mockData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -73,10 +74,10 @@ export default function HomePage() {
             className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {editorsPicks.map((wallpaper, index) => (
-              <Link
+            {editorsPicks.map((wallpaper) => (
+              <EditorsPickWallpaperLink
                 key={wallpaper.id}
-                to={`/wallpaper/${wallpaper.id}`}
+                wallpaper={wallpaper}
                 className="flex-shrink-0 w-full snap-center"
               >
                 <div className="relative mx-4 aspect-[16/9] rounded-xl overflow-hidden">
@@ -96,7 +97,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </EditorsPickWallpaperLink>
             ))}
           </div>
 

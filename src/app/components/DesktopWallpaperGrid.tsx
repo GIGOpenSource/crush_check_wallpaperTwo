@@ -4,17 +4,21 @@ import { Eye, Download, Heart } from 'lucide-react';
 import { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
 import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
+import { useWallpaperListCardTracking } from '../hooks/useWallpaperListCardTracking';
 
 interface DesktopWallpaperGridProps {
   wallpapers: Wallpaper[];
   columns?: number;
   listNavBase?: WallpaperListNavBase;
+  /** 列表点击、桌面悬停埋点（不含列表曝光） */
+  trackListEvents?: boolean;
 }
 
 export function DesktopWallpaperGrid({
   wallpapers,
   columns = 4,
   listNavBase,
+  trackListEvents = true,
 }: DesktopWallpaperGridProps) {
   return (
     <div
@@ -29,6 +33,7 @@ export function DesktopWallpaperGrid({
           wallpaper={wallpaper}
           index={index}
           listNavBase={listNavBase}
+          trackListEvents={trackListEvents}
         />
       ))}
     </div>
@@ -39,11 +44,17 @@ function DesktopWallpaperCard({
   wallpaper,
   index,
   listNavBase,
+  trackListEvents,
 }: {
   wallpaper: Wallpaper;
   index: number;
   listNavBase?: WallpaperListNavBase;
+  trackListEvents: boolean;
 }) {
+  const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
+    wallpaper.id,
+    trackListEvents,
+  );
   const listState =
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
@@ -51,12 +62,19 @@ function DesktopWallpaperCard({
 
   return (
     <motion.div
+      ref={rootRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
       whileHover={{ y: -4 }}
+      onMouseEnter={onHoverTrack}
     >
-      <Link to={`/wallpaper/${wallpaper.id}`} state={listState} className="block">
+      <Link
+        to={`/wallpaper/${wallpaper.id}`}
+        state={listState}
+        className="block"
+        onClick={onClickTrack}
+      >
         <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
           <img
             src={wallpaper.imageUrl}

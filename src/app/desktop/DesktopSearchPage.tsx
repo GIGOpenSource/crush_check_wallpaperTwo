@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { SearchBar } from '../components/SearchBar';
@@ -6,6 +6,8 @@ import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { mockWallpapers } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { umengclick } from '../analytics/aplusTracking';
+import { useSearchEmptyTrack } from '../hooks/useSearchEmptyTrack';
 import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
 
@@ -57,6 +59,7 @@ export default function DesktopSearchPage() {
   const purityOptions: ('SFW' | 'Sketchy' | 'NSFW')[] = ['SFW', 'Sketchy', 'NSFW'];
 
   const toggleFilter = <K extends keyof Filters>(category: K, value: Filters[K][number]) => {
+    umengclick('filter_click_type');
     setFilters((prev) => {
       const current = prev[category] as any[];
       const updated = current.includes(value)
@@ -67,6 +70,7 @@ export default function DesktopSearchPage() {
   };
 
   const clearFilters = () => {
+    umengclick('filter_click_type');
     setFilters({
       resolution: [],
       aspectRatio: [],
@@ -78,6 +82,16 @@ export default function DesktopSearchPage() {
     filters.resolution.length +
     filters.aspectRatio.length +
     (filters.purity.length > 1 ? filters.purity.length - 1 : 0);
+
+  const emptySignature = useMemo(
+    () => `${query}|${JSON.stringify(filters)}|${filteredWallpapers.length}`,
+    [query, filters, filteredWallpapers.length],
+  );
+  useSearchEmptyTrack(
+    filteredWallpapers.length === 0,
+    query.trim().length > 0 || activeFilterCount > 0,
+    emptySignature,
+  );
 
   return (
     <div className="flex min-h-screen bg-gray-50">

@@ -1,4 +1,4 @@
-export type WallpaperShareChannel = 'copy' | 'twitter' | 'facebook' | 'whatsapp';
+export type WallpaperShareChannel = 'twitter' | 'facebook' | 'whatsapp' | 'pinterest';
 
 export async function copyTextToClipboard(text: string): Promise<boolean> {
   try {
@@ -22,13 +22,17 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   }
 }
 
-export function openWallpaperShareChannel(channel: Exclude<WallpaperShareChannel, 'copy'>, url: string): void {
+/** @returns 是否成功打开新窗口（被拦截则为 false） */
+export function openWallpaperShareChannel(channel: WallpaperShareChannel, url: string): boolean {
   const enc = encodeURIComponent(url);
   const href =
     channel === 'twitter'
       ? `https://twitter.com/intent/tweet?url=${enc}`
       : channel === 'facebook'
         ? `https://www.facebook.com/sharer/sharer.php?u=${enc}`
-        : `https://wa.me/?text=${enc}`;
-  window.open(href, '_blank', 'noopener,noreferrer');
+        : channel === 'pinterest'
+          ? `https://www.pinterest.com/pin/create/button/?url=${enc}`
+          : `https://wa.me/?text=${enc}`;
+  const w = window.open(href, '_blank', 'noopener,noreferrer');
+  return w != null;
 }

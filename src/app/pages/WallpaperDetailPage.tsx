@@ -4,11 +4,12 @@ import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { mockComments, currentUser } from '../mockData';
+import { trackAndRunDetailShare } from '../analytics/detailPageShareTrack';
+import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
-import { copyTextToClipboard, openWallpaperShareChannel } from '../utils/wallpaperShareActions';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage } from '../utils/downloadWallpaperImage';
 import {
@@ -64,20 +65,30 @@ export default function WallpaperDetailPage() {
 
   const handleDownload = async () => {
     if (downloading || !wallpaper.imageUrl) return;
+    umengclick('detail_download_click');
     setDownloading(true);
+    umengclick('download_start');
     try {
       const result = await downloadWallpaperImage(wallpaper.imageUrl, wallpaper.title);
-      if (result === 'opened-tab') {
-        alert(t.wallpaperDetail.downloadOpenInNewTab);
-      } else if (result === 'failed') {
+      if (result === 'failed') {
+        umengclick('download_fail');
         alert(t.wallpaperDetail.downloadFailed);
+      } else {
+        umengclick('download_success');
+        if (result === 'opened-tab') {
+          alert(t.wallpaperDetail.downloadOpenInNewTab);
+        }
       }
+    } catch {
+      umengclick('download_fail');
+      alert(t.wallpaperDetail.downloadFailed);
     } finally {
       setDownloading(false);
     }
   };
 
   const handleShare = () => {
+    umengclick('detail_share_click');
     setShowShareSheet(true);
   };
 
@@ -87,7 +98,11 @@ export default function WallpaperDetailPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
         <div className="flex items-center justify-between p-4">
           <button
-            onClick={() => navigate(-1)}
+            type="button"
+            onClick={() => {
+              umengclick('detail_back');
+              navigate(-1);
+            }}
             className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
           >
             <ChevronLeft size={24} className="text-gray-900" />
@@ -216,6 +231,7 @@ export default function WallpaperDetailPage() {
               <Link
                 key={tag.id}
                 to={`/tag/${encodeURIComponent(tag.id)}`}
+                onClick={() => umengclick('filter_click_tag')}
                 state={{
                   tagMeta: {
                     name: tag.name,
@@ -311,13 +327,14 @@ export default function WallpaperDetailPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 {t.wallpaperDetail.shareWallpaper}
               </h3>
-              <div className="grid grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-5 gap-2 sm:gap-4 mb-4">
                 {(
                   [
                     ['copy', t.wallpaperDetail.copyLink],
-                    ['tw', t.wallpaperDetail.shareTwitter],
+                    ['tw', t.wallpaperDetail.shareX],
                     ['fb', t.wallpaperDetail.shareFacebook],
                     ['wa', t.wallpaperDetail.shareWhatsApp],
+                    ['pin', t.wallpaperDetail.sharePinterest],
                   ] as const
                 ).map(([key, label]) => (
                   <button
@@ -325,17 +342,9 @@ export default function WallpaperDetailPage() {
                     type="button"
                     className="flex flex-col items-center gap-2"
                     onClick={async () => {
-                      if (!shareUrl) return;
-                      if (key === 'copy') {
-                        const ok = await copyTextToClipboard(shareUrl);
-                        if (ok) message.success(t.wallpaperDetail.linkCopied);
-                      } else if (key === 'tw') {
-                        openWallpaperShareChannel('twitter', shareUrl);
-                      } else if (key === 'fb') {
-                        openWallpaperShareChannel('facebook', shareUrl);
-                      } else if (key === 'wa') {
-                        openWallpaperShareChannel('whatsapp', shareUrl);
-                      }
+                      await trackAndRunDetailShare(key, shareUrl, () =>
+                        message.success(t.wallpaperDetail.linkCopied),
+                      );
                       setShowShareSheet(false);
                     }}
                   >

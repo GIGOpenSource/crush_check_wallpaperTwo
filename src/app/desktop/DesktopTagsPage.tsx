@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { Search, TrendingUp, Hash, Grid3x3 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigationTags } from '../hooks/useNavigationTags';
 import { getTagDisplayName } from '../utils/tagDisplay';
@@ -102,6 +103,7 @@ export default function DesktopTagsPage() {
                   >
                     <Link
                       to={`/tag/${encodeURIComponent(tag.tag)}`}
+                      onClick={() => umengclick('filter_click_tag')}
                       state={{
                         tagMeta: {
                           name: getTagDisplayName(tag) || tag.name,
@@ -157,6 +159,7 @@ export default function DesktopTagsPage() {
                     <Link
                       key={tag.tag}
                       to={`/tag/${encodeURIComponent(tag.tag)}`}
+                      onClick={() => umengclick('filter_click_tag')}
                       state={{
                         tagMeta: {
                           name: getTagDisplayName(tag) || tag.name,

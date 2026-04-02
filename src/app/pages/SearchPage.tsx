@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { SearchBar } from '../components/SearchBar';
@@ -6,6 +6,8 @@ import { WallpaperGrid } from '../components/WallpaperGrid';
 import { mockWallpapers, mockTags } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { umengclick } from '../analytics/aplusTracking';
+import { useSearchEmptyTrack } from '../hooks/useSearchEmptyTrack';
 import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
 import { getTagDisplayName } from '../utils/tagDisplay';
@@ -73,6 +75,7 @@ export default function SearchPage() {
     category: K,
     value: Filters[K][number]
   ) => {
+    umengclick('filter_click_type');
     setFilters((prev) => {
       const current = prev[category] as any[];
       const updated = current.includes(value)
@@ -83,6 +86,7 @@ export default function SearchPage() {
   };
 
   const clearFilters = () => {
+    umengclick('filter_click_type');
     setFilters({
       resolution: [],
       aspectRatio: [],
@@ -92,6 +96,16 @@ export default function SearchPage() {
 
   const activeFilterCount =
     filters.resolution.length + filters.aspectRatio.length + (filters.purity.length > 1 ? filters.purity.length - 1 : 0);
+
+  const emptySignature = useMemo(
+    () => `${query}|${JSON.stringify(filters)}|${filteredWallpapers.length}`,
+    [query, filters, filteredWallpapers.length],
+  );
+  useSearchEmptyTrack(
+    filteredWallpapers.length === 0,
+    query.trim().length > 0 || activeFilterCount > 0,
+    emptySignature,
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
@@ -114,7 +128,8 @@ export default function SearchPage() {
               {suggestedTags.map((tag) => (
                 <button
                   key={tag.tag}
-                  onClick={() =>
+                  onClick={() => {
+                    umengclick('filter_click_tag');
                     navigate(`/tag/${encodeURIComponent(tag.tag)}`, {
                       state: {
                         tagMeta: {
@@ -123,8 +138,8 @@ export default function SearchPage() {
                           description: tag.description,
                         },
                       },
-                    })
-                  }
+                    });
+                  }}
                   className="px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full hover:bg-blue-100"
                 >
                   #{getTagDisplayName(tag) || tag.name}
