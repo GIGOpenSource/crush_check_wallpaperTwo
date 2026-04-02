@@ -1,4 +1,10 @@
-const API_BASE_URL = 'https://markwallpapers.com';
+/** 线上资源域名（拼接接口返回的相对图片地址等） */
+export const API_ORIGIN = 'https://markwallpapers.com';
+
+/**
+ * 发起请求时的基址：开发环境为空，走当前页同源 + Vite proxy（避免 CORS）；生产为线上域名。
+ */
+const API_FETCH_BASE = import.meta.env.DEV ? '' : API_ORIGIN;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -26,7 +32,7 @@ export class ApiError extends Error {
 }
 
 function buildUrl(path: string, params?: Record<string, QueryValue>) {
-  const base = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+  const base = path.startsWith('http') ? path : `${API_FETCH_BASE}${path}`;
 
   if (!params) return base;
 
@@ -116,4 +122,5 @@ export const http = {
   ) => request<T>(path, { ...options, method: 'DELETE' }),
 };
 
-export { API_BASE_URL };
+/** @deprecated 请使用 API_ORIGIN；与历史代码兼容 */
+export const API_BASE_URL = API_ORIGIN;

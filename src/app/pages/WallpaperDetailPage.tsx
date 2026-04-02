@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
-import { mockWallpapers, mockComments, currentUser } from '../mockData';
+import { mockComments, currentUser } from '../mockData';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
+import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import {
   Download,
   Heart,
@@ -19,25 +22,37 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function WallpaperDetailPage() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
-  const wallpaper = mockWallpapers.find((w) => w.id === id);
+  const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
+  const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
 
-  if (!wallpaper) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center max-w-md mx-auto">
-        <p className="text-gray-500">Wallpaper not found</p>
+      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">{t.common.loading}</p>
+        </div>
+        <BottomNav />
       </div>
     );
   }
 
-  const relatedWallpapers = mockWallpapers
-    .filter((w) => w.id !== id && w.tags.some((tag) => wallpaper.tags.includes(tag)))
-    .slice(0, 6);
+  if (!wallpaper || error) {
+    return (
+      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">{t.wallpaperDetail.wallpaperNotFound}</p>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   const handleDownload = () => {
     // Simulate download
@@ -234,13 +249,20 @@ export default function WallpaperDetailPage() {
           </AnimatePresence>
         </div>
 
-        {/* Related Wallpapers */}
-        <div className="py-4">
-          <div className="px-4 mb-4">
-            <h3 className="text-sm font-semibold text-gray-900">Related Wallpapers</h3>
+        {(loadingRelated || relatedWallpapers.length > 0) && (
+          <div className="py-4">
+            <div className="px-4 mb-4">
+              <h3 className="text-sm font-semibold text-gray-900">
+                {t.wallpaperDetail.relatedWallpapers}
+              </h3>
+            </div>
+            {loadingRelated ? (
+              <p className="px-4 py-4 text-center text-sm text-gray-500">{t.common.loading}</p>
+            ) : (
+              <WallpaperGrid wallpapers={relatedWallpapers} />
+            )}
           </div>
-          <WallpaperGrid wallpapers={relatedWallpapers} />
-        </div>
+        )}
       </div>
 
       {/* Share Bottom Sheet */}

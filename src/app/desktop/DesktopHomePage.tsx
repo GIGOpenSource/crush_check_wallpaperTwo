@@ -3,14 +3,23 @@ import { Link } from 'react-router';
 import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { DesktopSidebar } from '../components/DesktopSidebar';
-import { mockWallpapers, editorsPicks } from '../mockData';
+import { editorsPicks } from '../mockData';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { formatNumber } from '../utils/format';
+import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
 
 export default function DesktopHomePage() {
   const { t } = useLanguage();
+  const {
+    wallpapers: popularWallpapers,
+    loading: popularLoading,
+    loadingMore: popularLoadingMore,
+    error: popularError,
+    hasMore: popularHasMore,
+    sentinelRef: popularSentinelRef,
+  } = useHomePopularWallpapers();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -155,7 +164,25 @@ export default function DesktopHomePage() {
                   <ChevronRight size={20} />
                 </Link>
               </div>
-              <DesktopWallpaperGrid wallpapers={mockWallpapers} columns={4} />
+              {popularLoading ? (
+                <p className="py-12 text-center text-gray-500">{t.common.loading}</p>
+              ) : popularError || popularWallpapers.length === 0 ? (
+                <p className="py-12 text-center text-gray-500">{t.searchPage.noWallpapersFound}</p>
+              ) : (
+                <>
+                  <DesktopWallpaperGrid
+                    wallpapers={popularWallpapers}
+                    columns={4}
+                    listNavBase={{ platform: 'PC', media_live: false }}
+                  />
+                  {popularHasMore ? (
+                    <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
+                  ) : null}
+                  {popularLoadingMore ? (
+                    <p className="py-6 text-center text-sm text-gray-400">{t.common.loading}</p>
+                  ) : null}
+                </>
+              )}
             </section>
           </div>
         </div>

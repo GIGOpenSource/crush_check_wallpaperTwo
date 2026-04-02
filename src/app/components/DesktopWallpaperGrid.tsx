@@ -2,13 +2,20 @@ import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import { Eye, Download, Heart } from 'lucide-react';
 import { Wallpaper } from '../types';
+import type { WallpaperListNavBase } from '../types/wallpaperListNav';
+import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
 
 interface DesktopWallpaperGridProps {
   wallpapers: Wallpaper[];
   columns?: number;
+  listNavBase?: WallpaperListNavBase;
 }
 
-export function DesktopWallpaperGrid({ wallpapers, columns = 4 }: DesktopWallpaperGridProps) {
+export function DesktopWallpaperGrid({
+  wallpapers,
+  columns = 4,
+  listNavBase,
+}: DesktopWallpaperGridProps) {
   return (
     <div
       className="grid gap-6"
@@ -17,13 +24,31 @@ export function DesktopWallpaperGrid({ wallpapers, columns = 4 }: DesktopWallpap
       }}
     >
       {wallpapers.map((wallpaper, index) => (
-        <DesktopWallpaperCard key={wallpaper.id} wallpaper={wallpaper} index={index} />
+        <DesktopWallpaperCard
+          key={wallpaper.id}
+          wallpaper={wallpaper}
+          index={index}
+          listNavBase={listNavBase}
+        />
       ))}
     </div>
   );
 }
 
-function DesktopWallpaperCard({ wallpaper, index }: { wallpaper: Wallpaper; index: number }) {
+function DesktopWallpaperCard({
+  wallpaper,
+  index,
+  listNavBase,
+}: {
+  wallpaper: Wallpaper;
+  index: number;
+  listNavBase?: WallpaperListNavBase;
+}) {
+  const listState =
+    listNavBase != null
+      ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
+      : undefined;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -31,7 +56,7 @@ function DesktopWallpaperCard({ wallpaper, index }: { wallpaper: Wallpaper; inde
       transition={{ delay: index * 0.03 }}
       whileHover={{ y: -4 }}
     >
-      <Link to={`/wallpaper/${wallpaper.id}`} className="block">
+      <Link to={`/wallpaper/${wallpaper.id}`} state={listState} className="block">
         <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
           <img
             src={wallpaper.imageUrl}

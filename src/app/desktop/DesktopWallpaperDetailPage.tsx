@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { mockWallpapers, mockComments, currentUser } from '../mockData';
+import { mockComments, currentUser } from '../mockData';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
+import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import {
   Download,
   Heart,
@@ -18,27 +21,36 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function DesktopWallpaperDetailPage() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
-  const wallpaper = mockWallpapers.find((w) => w.id === id);
+  const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
+  const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
 
-  if (!wallpaper) {
+  if (loading) {
     return (
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">Wallpaper not found</p>
+          <p className="text-gray-500">{t.common.loading}</p>
         </div>
       </div>
     );
   }
 
-  const relatedWallpapers = mockWallpapers
-    .filter((w) => w.id !== id && w.tags.some((tag) => wallpaper.tags.includes(tag)))
-    .slice(0, 8);
+  if (!wallpaper || error) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
+        <div className="flex-1 ml-64 flex items-center justify-center">
+          <p className="text-gray-500">{t.wallpaperDetail.wallpaperNotFound}</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleDownload = () => {
     alert('Download started!');
@@ -126,11 +138,18 @@ export default function DesktopWallpaperDetailPage() {
                   </div>
                 </div>
 
-                {/* Related Wallpapers */}
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">Related Wallpapers</h3>
-                  <DesktopWallpaperGrid wallpapers={relatedWallpapers} columns={3} />
-                </div>
+                {(loadingRelated || relatedWallpapers.length > 0) && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">
+                      {t.wallpaperDetail.relatedWallpapers}
+                    </h3>
+                    {loadingRelated ? (
+                      <p className="py-8 text-center text-gray-500">{t.common.loading}</p>
+                    ) : (
+                      <DesktopWallpaperGrid wallpapers={relatedWallpapers} columns={3} />
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Sidebar - Right Column */}

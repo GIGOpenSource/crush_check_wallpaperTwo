@@ -2,13 +2,17 @@ import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import { Eye, Download, Heart } from 'lucide-react';
 import { Wallpaper } from '../types';
+import type { WallpaperListNavBase } from '../types/wallpaperListNav';
+import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
   columns?: number;
+  /** 从列表进详情时携带，与列表接口筛选一致；卡片会带上当前项序号（第 N 条） */
+  listNavBase?: WallpaperListNavBase;
 }
 
-export function WallpaperGrid({ wallpapers, columns = 2 }: WallpaperGridProps) {
+export function WallpaperGrid({ wallpapers, columns = 2, listNavBase }: WallpaperGridProps) {
   return (
     <div
       className="grid gap-3 px-4"
@@ -17,20 +21,38 @@ export function WallpaperGrid({ wallpapers, columns = 2 }: WallpaperGridProps) {
       }}
     >
       {wallpapers.map((wallpaper, index) => (
-        <WallpaperCard key={wallpaper.id} wallpaper={wallpaper} index={index} />
+        <WallpaperCard
+          key={wallpaper.id}
+          wallpaper={wallpaper}
+          index={index}
+          listNavBase={listNavBase}
+        />
       ))}
     </div>
   );
 }
 
-function WallpaperCard({ wallpaper, index }: { wallpaper: Wallpaper; index: number }) {
+function WallpaperCard({
+  wallpaper,
+  index,
+  listNavBase,
+}: {
+  wallpaper: Wallpaper;
+  index: number;
+  listNavBase?: WallpaperListNavBase;
+}) {
+  const listState =
+    listNavBase != null
+      ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
+      : undefined;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Link to={`/wallpaper/${wallpaper.id}`} className="block">
+      <Link to={`/wallpaper/${wallpaper.id}`} state={listState} className="block">
         <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 group">
           <img
             src={wallpaper.imageUrl}

@@ -3,13 +3,27 @@ import { Link } from 'react-router';
 import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { BottomNav } from '../components/BottomNav';
-import { mockWallpapers, editorsPicks } from '../mockData';
+import { editorsPicks } from '../mockData';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useView } from '../contexts/ViewContext';
+import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const { viewMode } = useView();
+  const popularListNavBase = {
+    platform: (viewMode === 'mobile' ? 'PHONE' : 'PC') as 'PC' | 'PHONE',
+    media_live: false,
+  };
+  const {
+    wallpapers: popularWallpapers,
+    loading: popularLoading,
+    loadingMore: popularLoadingMore,
+    error: popularError,
+    hasMore: popularHasMore,
+    sentinelRef: popularSentinelRef,
+  } = useHomePopularWallpapers();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +141,21 @@ export default function HomePage() {
             {t.common.viewAll}
           </Link>
         </div>
-        <WallpaperGrid wallpapers={mockWallpapers} />
+        {popularLoading ? (
+          <p className="px-4 py-8 text-center text-sm text-gray-500">{t.common.loading}</p>
+        ) : popularError || popularWallpapers.length === 0 ? (
+          <p className="px-4 py-8 text-center text-sm text-gray-500">{t.searchPage.noWallpapersFound}</p>
+        ) : (
+          <>
+            <WallpaperGrid wallpapers={popularWallpapers} listNavBase={popularListNavBase} />
+            {popularHasMore ? (
+              <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
+            ) : null}
+            {popularLoadingMore ? (
+              <p className="px-4 py-4 text-center text-xs text-gray-400">{t.common.loading}</p>
+            ) : null}
+          </>
+        )}
       </section>
 
       <BottomNav />
