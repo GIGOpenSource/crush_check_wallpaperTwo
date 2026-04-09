@@ -49,6 +49,11 @@ function resolveMediaUrl(url: string): string {
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
+/** 列表/轮播封面：优先缩略图，否则原图 */
+export function wallpaperListCoverUrl(w: Wallpaper): string {
+  return w.thumbUrl || w.imageUrl;
+}
+
 function mapUserFromApi(raw: unknown): User {
   if (!raw || typeof raw !== 'object') return listUploaderPlaceholder;
   const o = raw as Record<string, unknown>;
@@ -89,17 +94,20 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
     pickStr(item, ['id', 'wallpaper_id', 'pk']) || String(pickNum(item, ['id'], 0) || '');
   const title = pickStr(item, ['title', 'name']) || 'Wallpaper';
   let imageUrl = pickStr(item, [
+    'url',
     'imageUrl',
     'image_url',
     'cover',
     'cover_url',
-    'thumbnail',
-    'thumb',
-    'url',
     'img',
     'image',
   ]);
   imageUrl = resolveMediaUrl(imageUrl);
+
+  let thumbUrl = pickStr(item, ['thumb_url', 'thumbnail', 'thumb']);
+  thumbUrl = resolveMediaUrl(thumbUrl);
+  if (!thumbUrl) thumbUrl = imageUrl;
+  if (!imageUrl) imageUrl = thumbUrl;
 
   const tagsRaw = item.tags;
   const tags: WallpaperTag[] = [];
@@ -125,6 +133,7 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
     id,
     title,
     imageUrl,
+    thumbUrl,
     resolution: resolutionFromItem(item),
     fileSize: pickStr(item, ['fileSize', 'file_size', 'size_label']) || '—',
     uploadDate: pickStr(item, ['uploadDate', 'upload_date', 'created_at', 'create_time']) || '',

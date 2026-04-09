@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { guessLike } from '../../api/wallpaper';
 import type { Wallpaper } from '../types';
-import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
+import {
+  extractWallpaperItemsFromResponse,
+  mapRecordToWallpaper,
+  wallpaperListCoverUrl,
+} from '../utils/wallpaperApiMap';
 
 export function useGuessYouLikeRelated(wallpaperId: string | undefined) {
   const [relatedWallpapers, setRelatedWallpapers] = useState<Wallpaper[]>([]);
@@ -20,7 +24,10 @@ export function useGuessYouLikeRelated(wallpaperId: string | undefined) {
         if (cancelled) return;
         const mapped = extractWallpaperItemsFromResponse(raw)
           .map(mapRecordToWallpaper)
-          .filter((w) => w.id && w.imageUrl && String(w.id) !== String(wallpaperId));
+          .filter(
+            (w) =>
+              w.id && wallpaperListCoverUrl(w) && String(w.id) !== String(wallpaperId),
+          );
         setRelatedWallpapers(mapped);
       })
       .catch(() => {

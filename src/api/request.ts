@@ -19,6 +19,43 @@ type RequestOptions = {
   signal?: AbortSignal;
 };
 
+const TOKEN_STORAGE_KEY = 'wallhaven_token';
+let memoryToken = '';
+
+export function getAuthToken(): string {
+  if (memoryToken) return memoryToken;
+  if (typeof window === 'undefined') return '';
+  try {
+    const local = window.localStorage.getItem(TOKEN_STORAGE_KEY) || '';
+    const session = window.sessionStorage.getItem(TOKEN_STORAGE_KEY) || '';
+    const token = (local || session).trim();
+    if (token) {
+      memoryToken = token;
+      return token;
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
+export function setAuthToken(token: string) {
+  const normalized = token.trim();
+  memoryToken = normalized;
+  if (typeof window === 'undefined') return;
+  try {
+    if (normalized) {
+      window.localStorage.setItem(TOKEN_STORAGE_KEY, normalized);
+      window.sessionStorage.setItem(TOKEN_STORAGE_KEY, normalized);
+    } else {
+      window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+      window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
 export class ApiError extends Error {
   status: number;
   data: unknown;
@@ -73,8 +110,11 @@ export async function request<T = unknown>(
     signal,
   };
 
-  if (token) {
-    requestHeaders.Authorization = `Bearer ${token}`;
+  const finalToken = (token || getAuthToken()).trim();
+  if (finalToken) {
+    requestHeaders.token = finalToken;
+    requestHeaders.Token = finalToken;
+    requestHeaders.Authorization = `Bearer ${finalToken}`;
   }
 
   if (data !== undefined && data !== null) {

@@ -224,6 +224,7 @@ export default function SettingsPage() {
         <div className="px-4">
           <motion.button
             whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/login')}
             className="w-full bg-white border-2 border-red-200 text-red-600 py-4 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-red-50 transition-colors"
           >
             <LogOut size={20} />

@@ -1,6 +1,20 @@
-/** 从图片 URL 触发本地下载；跨域无 CORS 时回退为新标签页打开 */
+/** 从图片 URL 触发本地下载；跨域无 CORS 时由上层先弹窗，用户确认后再 {@link openImageUrlInNewTab} */
 
-export type DownloadWallpaperImageResult = 'blob' | 'opened-tab' | 'failed';
+export type DownloadWallpaperImageResult =
+  | { status: 'blob' }
+  | { status: 'open-tab-after-confirm'; url: string }
+  | { status: 'failed' };
+
+/** 在新标签页打开图片地址（供「无法直接保存」时用户点击确认后调用） */
+export function openImageUrlInNewTab(url: string): void {
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 
 function sanitizeFilename(name: string, maxLen = 100): string {
   const s = name
@@ -53,19 +67,10 @@ export async function downloadWallpaperImage(
     } finally {
       URL.revokeObjectURL(objectUrl);
     }
-    return 'blob';
+    return { status: 'blob' };
   } catch {
-    try {
-      const a = document.createElement('a');
-      a.href = imageUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      return 'opened-tab';
-    } catch {
-      return 'failed';
-    }
+    const u = imageUrl?.trim();
+    if (!u) return { status: 'failed' };
+    return { status: 'open-tab-after-confirm', url: u };
   }
 }

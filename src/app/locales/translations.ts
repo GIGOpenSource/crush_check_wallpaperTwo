@@ -15,6 +15,8 @@ export const translations = {
       viewAll: '查看全部',
       noResults: '未找到结果',
       loadFailed: '加载失败，请稍后重试',
+      tip: '提示',
+      gotIt: '知道了',
     },
     
     // Navigation
@@ -62,7 +64,7 @@ export const translations = {
       wallpaperNotFound: '未找到壁纸',
       downloadStarted: '开始下载！',
       downloadOpenInNewTab:
-        '无法在后台直接保存（跨域限制）。已在新标签页打开图片，请右键选择「图片另存为」。',
+        '无法在后台直接保存，点击「知道了」后将打开新标签页显示图片，请右键选择「图片另存为」。',
       downloadFailed: '下载失败，请稍后重试。',
       shareWallpaper: '分享壁纸',
       copyLink: '复制链接',
@@ -219,6 +221,8 @@ export const translations = {
       viewAll: 'View All',
       noResults: 'No results found',
       loadFailed: 'Failed to load. Please try again.',
+      tip: 'Notice',
+      gotIt: 'OK',
     },
     
     nav: {
@@ -263,7 +267,7 @@ export const translations = {
       wallpaperNotFound: 'Wallpaper not found',
       downloadStarted: 'Download started!',
       downloadOpenInNewTab:
-        'Could not save directly due to browser restrictions. The image opened in a new tab — right-click and choose "Save image as…".',
+        'Could not save in the background. Tap OK to open the image in a new tab, then right-click and choose "Save image as…".',
       downloadFailed: 'Download failed. Please try again.',
       shareWallpaper: 'Share Wallpaper',
       copyLink: 'Copy Link',
@@ -415,6 +419,8 @@ export const translations = {
       viewAll: 'すべて表示',
       noResults: '結果が見つかりません',
       loadFailed: '読み込みに失敗しました。しばらくしてからお試しください。',
+      tip: 'お知らせ',
+      gotIt: 'OK',
     },
     
     nav: {
@@ -459,7 +465,7 @@ export const translations = {
       wallpaperNotFound: '壁紙が見つかりません',
       downloadStarted: 'ダウンロードを開始しました！',
       downloadOpenInNewTab:
-        'ブラウザの制限で直接保存できませんでした。新しいタブで画像を開きました。右クリックして「名前を付けて画像を保存」を選んでください。',
+        'バックグラウンドでは直接保存できませんでした。「OK」を押すと新しいタブで画像が開きます。右クリックして「名前を付けて画像を保存」を選んでください。',
       downloadFailed: 'ダウンロードに失敗しました。しばらくしてから再度お試しください。',
       shareWallpaper: '壁紙をシェア',
       copyLink: 'リンクをコピー',
@@ -611,6 +617,8 @@ export const translations = {
       viewAll: '모두 보기',
       noResults: '결과를 찾을 수 없습니다',
       loadFailed: '불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      tip: '알림',
+      gotIt: '확인',
     },
     
     nav: {
@@ -655,7 +663,7 @@ export const translations = {
       wallpaperNotFound: '배경화면을 찾을 수 없습니다',
       downloadStarted: '다운로드가 시작되었습니다!',
       downloadOpenInNewTab:
-        '브라우저 제한으로 직접 저장할 수 없습니다. 새 탭에서 이미지를 열었습니다. 이미지를 길게 눌러 저장하거나 마우스 오른쪽 버튼으로 다른 이름으로 저장하세요.',
+        '백그라운드에서 바로 저장할 수 없습니다. 확인을 누르면 새 탭에서 이미지가 열립니다. 길게 눌러 저장하거나 마우스 오른쪽 버튼으로 저장하세요.',
       downloadFailed: '다운로드에 실패했습니다. 잠시 후 다시 시도해 주세요.',
       shareWallpaper: '배경화면 공유',
       copyLink: '링크 복사',
@@ -807,6 +815,8 @@ export const translations = {
       viewAll: 'Ver todo',
       noResults: 'No se encontraron resultados',
       loadFailed: 'Error al cargar. Inténtalo de nuevo más tarde.',
+      tip: 'Aviso',
+      gotIt: 'Entendido',
     },
     
     nav: {
@@ -851,7 +861,7 @@ export const translations = {
       wallpaperNotFound: 'Fondo no encontrado',
       downloadStarted: '¡Descarga iniciada!',
       downloadOpenInNewTab:
-        'No se pudo guardar directamente por restricciones del navegador. La imagen se abrió en una pestaña nueva: clic derecho y «Guardar imagen como…».',
+        'No se pudo guardar en segundo plano. Pulsa Entendido para abrir la imagen en una pestaña nueva; luego clic derecho y «Guardar imagen como…».',
       downloadFailed: 'Error al descargar. Inténtalo de nuevo más tarde.',
       shareWallpaper: 'Compartir fondo',
       copyLink: 'Copiar enlace',
@@ -1003,6 +1013,8 @@ export const translations = {
       viewAll: 'Voir tout',
       noResults: 'Aucun résultat trouvé',
       loadFailed: 'Échec du chargement. Veuillez réessayer plus tard.',
+      tip: 'Information',
+      gotIt: 'OK',
     },
     
     nav: {
@@ -1047,7 +1059,7 @@ export const translations = {
       wallpaperNotFound: 'Fond d\'écran introuvable',
       downloadStarted: 'Téléchargement commencé !',
       downloadOpenInNewTab:
-        'Impossible d\'enregistrer directement (restriction du navigateur). L\'image s\'est ouverte dans un nouvel onglet : clic droit puis « Enregistrer l\'image sous… ».',
+        'Impossible d\'enregistrer en arrière-plan. Appuyez sur OK pour ouvrir l\'image dans un nouvel onglet, puis clic droit et « Enregistrer l\'image sous… ».',
       downloadFailed: 'Échec du téléchargement. Veuillez réessayer plus tard.',
       shareWallpaper: 'Partager le fond d\'écran',
       copyLink: 'Copier le lien',

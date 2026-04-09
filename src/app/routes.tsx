@@ -9,6 +9,8 @@ import SearchPage from './wrappers/SearchPage';
 import ProfilePage from './wrappers/ProfilePage';
 import UploadPage from './wrappers/UploadPage';
 import SettingsPage from './wrappers/SettingsPage';
+import LoginPage from './wrappers/LoginPage';
+import RegisterPage from './wrappers/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -55,6 +57,14 @@ export const router = createBrowserRouter([
       {
         path: 'trending',
         element: <HomePage />
+      },
+      {
+        path: 'login',
+        element: <LoginPage />
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />
       },
       {
         path: '*',

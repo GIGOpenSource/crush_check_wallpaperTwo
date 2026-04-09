@@ -3,7 +3,11 @@ import { getWallpapersList } from '../../api/wallpaper';
 import { useView } from '../contexts/ViewContext';
 import type { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
-import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
+import {
+  extractWallpaperItemsFromResponse,
+  mapRecordToWallpaper,
+  wallpaperListCoverUrl,
+} from '../utils/wallpaperApiMap';
 
 const PAGE_SIZE = 20;
 
@@ -21,7 +25,7 @@ function mergeDedupe(prev: Wallpaper[], batch: Wallpaper[]): Wallpaper[] {
 
 function mapResponse(raw: unknown): Wallpaper[] {
   const items = extractWallpaperItemsFromResponse(raw);
-  return items.map(mapRecordToWallpaper).filter((w) => w.id && w.imageUrl);
+  return items.map(mapRecordToWallpaper).filter((w) => w.id && wallpaperListCoverUrl(w));
 }
 
 function pickTotal(raw: unknown): number | undefined {

@@ -11,7 +11,9 @@ import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
 import { tpl } from '../utils/format';
-import { downloadWallpaperImage } from '../utils/downloadWallpaperImage';
+import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
+import { recordWallpaperDownload } from '../../api/wallpaper';
+import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import {
   Download,
   Heart,
@@ -38,6 +40,11 @@ export default function DesktopWallpaperDetailPage() {
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadNotice, setDownloadNotice] = useState<{
+    open: boolean;
+    message: string;
+    pendingTabUrl?: string;
+  }>({ open: false, message: '' });
 
   if (loading) {
     return (
@@ -67,19 +74,27 @@ export default function DesktopWallpaperDetailPage() {
     setDownloading(true);
     umengclick('download_start');
     try {
+      try {
+        await recordWallpaperDownload(wallpaper.id);
+      } catch {
+        // 上报失败不影响实际下载流程
+      }
       const result = await downloadWallpaperImage(wallpaper.imageUrl, wallpaper.title);
-      if (result === 'failed') {
+      if (result.status === 'failed') {
         umengclick('download_fail');
-        alert(t.wallpaperDetail.downloadFailed);
-      } else {
+        setDownloadNotice({ open: true, message: t.wallpaperDetail.downloadFailed });
+      } else if (result.status === 'blob') {
         umengclick('download_success');
-        if (result === 'opened-tab') {
-          alert(t.wallpaperDetail.downloadOpenInNewTab);
-        }
+      } else {
+        setDownloadNotice({
+          open: true,
+          message: t.wallpaperDetail.downloadOpenInNewTab,
+          pendingTabUrl: result.url,
+        });
       }
     } catch {
       umengclick('download_fail');
-      alert(t.wallpaperDetail.downloadFailed);
+      setDownloadNotice({ open: true, message: t.wallpaperDetail.downloadFailed });
     } finally {
       setDownloading(false);
     }
@@ -384,6 +399,27 @@ export default function DesktopWallpaperDetailPage() {
           </>
         )}
       </AnimatePresence>
+
+      <DownloadNoticeAlert
+        open={downloadNotice.open}
+        onOpenChange={(open) =>
+          setDownloadNotice((s) => ({
+            ...s,
+            open,
+            ...(open ? {} : { pendingTabUrl: undefined }),
+          }))
+        }
+        title={t.common.tip}
+        description={downloadNotice.message}
+        actionLabel={t.common.gotIt}
+        onConfirm={() => {
+          const url = downloadNotice.pendingTabUrl;
+          if (url) {
+            openImageUrlInNewTab(url);
+            umengclick('download_success');
+          }
+        }}
+      />
     </div>
   );
 }

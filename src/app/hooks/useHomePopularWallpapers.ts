@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getWallpapersList } from '../../api/wallpaper';
 import { useView } from '../contexts/ViewContext';
 import type { Wallpaper } from '../types';
-import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
+import {
+  extractWallpaperItemsFromResponse,
+  mapRecordToWallpaper,
+  wallpaperListCoverUrl,
+} from '../utils/wallpaperApiMap';
 
 const PAGE_SIZE = 20;
 
@@ -32,12 +36,18 @@ function mergeDedupe(prev: Wallpaper[], batch: Wallpaper[]): Wallpaper[] {
 
 function mapResponse(raw: unknown): Wallpaper[] {
   const items = extractWallpaperItemsFromResponse(raw);
-  return items.map(mapRecordToWallpaper).filter((w) => w.id && w.imageUrl);
+  return items.map(mapRecordToWallpaper).filter((w) => w.id && wallpaperListCoverUrl(w));
 }
 
-export function useHomePopularWallpapers() {
+type UseHomePopularOptions = {
+  /** 为 false 时不请求（例：桌面端首页只要 Banner、不要热门接口） */
+  enabled?: boolean;
+};
+
+export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
   const { viewMode } = useView();
   const platform: PlatformKey = viewMode === 'mobile' ? 'PHONE' : 'PC';
+  const enabled = options?.enabled !== false;
 
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>(() => {
     const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
@@ -45,6 +55,7 @@ export function useHomePopularWallpapers() {
   });
   const [loading, setLoading] = useState(() => {
     const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
+    if (options?.enabled === false) return false;
     return !homePopularCache[plat]?.ready;
   });
   const [loadingMore, setLoadingMore] = useState(false);
@@ -62,6 +73,12 @@ export function useHomePopularWallpapers() {
 
   /** 有缓存则恢复；无缓存或切换 platform 时拉第一页 */
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      fetchingRef.current = false;
+      return;
+    }
+
     const cached = homePopularCache[platform];
     if (cached?.ready) {
       pageRef.current = cached.page;
@@ -116,10 +133,10 @@ export function useHomePopularWallpapers() {
     return () => {
       cancelled = true;
     };
-  }, [platform]);
+  }, [platform, enabled]);
 
   const loadNextPage = useCallback(() => {
-    if (!hasMore || loading || loadingMore || error || fetchingRef.current) return;
+    if (!enabled || !hasMore || loading || loadingMore || error || fetchingRef.current) return;
 
     const nextPage = pageRef.current + 1;
     fetchingRef.current = true;
@@ -167,9 +184,10 @@ export function useHomePopularWallpapers() {
         fetchingRef.current = false;
         setLoadingMore(false);
       });
-  }, [hasMore, loading, loadingMore, error, platform]);
+  }, [enabled, hasMore, loading, loadingMore, error, platform]);
 
   useEffect(() => {
+    if (!enabled) return;
     const el = sentinelRef.current;
     if (!el || loading || error || !hasMore || loadingMore) return;
 
@@ -183,7 +201,7 @@ export function useHomePopularWallpapers() {
 
     ob.observe(el);
     return () => ob.disconnect();
-  }, [loading, error, hasMore, loadingMore, loadNextPage, wallpapers.length]);
+  }, [enabled, loading, error, hasMore, loadingMore, loadNextPage, wallpapers.length]);
 
   return {
     wallpapers,

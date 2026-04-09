@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
@@ -86,11 +86,10 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      {/* Upload Button */}
-      <div className="px-4 -mt-6 mb-6">
+      <div className="px-4 mt-4 mb-6">
         <Link
           to="/upload"
-          className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-xl shadow-lg hover:bg-blue-700 transition-colors"
+          className="profile-upload-btn flex items-center justify-center gap-2 w-full bg-white py-3.5 rounded-3xl no-underline text-blue-600 [&_svg]:shrink-0"
         >
           <Upload size={20} />
           <span className="font-semibold">{t.profile.uploadWallpaper}</span>

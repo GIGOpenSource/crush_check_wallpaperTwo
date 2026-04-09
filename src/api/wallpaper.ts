@@ -77,6 +77,11 @@ export function guessLike(wallpaper_id: string | number) {
   });
 }
 
+/** 下载埋点：点击下载时上报 */
+export function recordWallpaperDownload(wallpaper_id: string | number) {
+  return http.post('/api/wallpapers/wallpaper/record-download/', { wallpaper_id });
+}
+
 /** 导航标签列表 */
 export type NavigationTagListParams = {
   currentPage: number;

@@ -26,7 +26,7 @@ export function BottomNav() {
             <Link
               key={item.path}
               to={item.path}
-              className="flex flex-col items-center justify-center flex-1 h-full relative"
+              className="flex flex-col items-center justify-center flex-1 h-full"
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}
@@ -47,13 +47,6 @@ export function BottomNav() {
                   {item.label}
                 </span>
               </motion.div>
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-b-full"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              )}
             </Link>
           );
         })}
