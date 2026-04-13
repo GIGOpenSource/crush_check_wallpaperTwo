@@ -19,7 +19,7 @@ type RequestOptions = {
   signal?: AbortSignal;
 };
 
-const TOKEN_STORAGE_KEY = 'wallhaven_token';
+const TOKEN_STORAGE_KEY = 'token';
 let memoryToken = '';
 
 export function getAuthToken(): string {
@@ -113,13 +113,21 @@ export async function request<T = unknown>(
   const finalToken = (token || getAuthToken()).trim();
   if (finalToken) {
     requestHeaders.token = finalToken;
-    requestHeaders.Token = finalToken;
-    requestHeaders.Authorization = `Bearer ${finalToken}`;
+    // requestHeaders.Token = finalToken;
+    // requestHeaders.Authorization = `Bearer ${finalToken}`;
   }
 
   if (data !== undefined && data !== null) {
-    requestHeaders['Content-Type'] = 'application/json';
-    init.body = JSON.stringify(data);
+    // 特殊处理 FormData：不要设置 Content-Type，让浏览器自动设置 boundary
+    if (data instanceof FormData) {
+      init.body = data;
+      // 删除之前设置的 Content-Type，让浏览器自动处理
+      delete requestHeaders['Content-Type'];
+    } else {
+      // 普通 JSON 数据
+      requestHeaders['Content-Type'] = 'application/json';
+      init.body = JSON.stringify(data);
+    }
   }
 
   const response = await fetch(url, init);

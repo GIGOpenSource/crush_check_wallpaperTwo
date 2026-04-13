@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import {
@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getTagList, uploadWallpaper } from '../../api/wallpaper';
+import type { TagItem } from '../../api/wallpaper';
 
 type UploadStep = 'select' | 'details' | 'tags' | 'review' | 'uploading' | 'success';
 
@@ -20,13 +22,14 @@ export default function DesktopUploadPage() {
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState<UploadStep>('select');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-
-  const suggestedTags = ['nature', 'abstract', 'minimal', 'dark', 'colorful', 'space', 'city'];
+  const [tagList, setTagList] = useState<TagItem[]>([]);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const steps: { id: UploadStep; label: string; icon: typeof ImageIcon }[] = [
     { id: 'select', label: t.upload.selectImage, icon: ImageIcon },
@@ -37,9 +40,27 @@ export default function DesktopUploadPage() {
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
 
+  // 获取标签列表
+  useEffect(() => {
+    getTagList({ pageSize: 50 })
+      .then((res) => {
+        // 热门标签接口返回格式: { code: 200, message: "...", data: [...] }
+        const tagData = res && typeof res === 'object' && 'data' in res 
+          ? (res as any).data 
+          : res;
+        if (Array.isArray(tagData)) {
+          setTagList(tagData as TagItem[]);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load tags:', err);
+      });
+  }, []);
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
@@ -61,14 +82,44 @@ export default function DesktopUploadPage() {
     setTags(tags.filter((t) => t !== tag));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!selectedFile || !title.trim()) {
+      setUploadError('请选择图片并填写标题');
+      return;
+    }
+
     setCurrentStep('uploading');
-    setTimeout(() => {
+    setUploadError(null);
+
+    try {
+      // 匹配已有标签 ID
+      const matchedTagIds = tagList
+        .filter((tag) => tags.includes(tag.name.toLowerCase()))
+        .map((tag) => String(tag.id));
+
+      // 新标签（没有在系统标签列表中的）
+      const newTagNames = tags.filter(
+        (tag) => !tagList.some((t) => t.name.toLowerCase() === tag)
+      );
+
+      await uploadWallpaper({
+        platform: 'PC',
+        file: selectedFile,
+        title: title.trim(),
+        description: description.trim() || undefined,
+        tag_ids: matchedTagIds.length > 0 ? matchedTagIds.join(',') : undefined,
+        tag_names: newTagNames.length > 0 ? newTagNames.join(',') : undefined,
+      });
+
       setCurrentStep('success');
       setTimeout(() => {
         navigate('/profile');
       }, 2000);
-    }, 2000);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setUploadError('上传失败，请重试');
+      setCurrentStep('review');
+    }
   };
 
   if (currentStep === 'uploading') {
@@ -224,7 +275,8 @@ export default function DesktopUploadPage() {
                 <div className="bg-white rounded-2xl p-8 space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      {t.upload.titleRequired}
+                      {t.upload.title}
+                      <span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                       type="text"
@@ -285,7 +337,7 @@ export default function DesktopUploadPage() {
                     />
                     <button
                       onClick={() => handleAddTag(tagInput)}
-                      className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                      className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
                     >
                       {t.upload.add}
                     </button>
@@ -299,11 +351,8 @@ export default function DesktopUploadPage() {
                           className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-xl"
                         >
                           <span className="font-medium">#{tag}</span>
-                          <button
-                            onClick={() => handleRemoveTag(tag)}
-                            className="hover:text-blue-900"
-                          >
-                            <X size={18} />
+                          <button onClick={() => handleRemoveTag(tag)} className="hover:text-blue-900">
+                            <X size={16} />
                           </button>
                         </div>
                       ))}
@@ -312,16 +361,17 @@ export default function DesktopUploadPage() {
 
                   <div>
                     <p className="text-sm text-gray-500 mb-3">{t.upload.suggestedTags}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {suggestedTags
-                        .filter((tag) => !tags.includes(tag))
+                    <div className="flex flex-wrap gap-3">
+                      {tagList
+                        .filter((tag) => !tags.includes(tag.name.toLowerCase()))
+                        .slice(0, 15)
                         .map((tag) => (
                           <button
-                            key={tag}
-                            onClick={() => handleAddTag(tag)}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
+                            key={tag.id}
+                            onClick={() => handleAddTag(tag.name.toLowerCase())}
+                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
                           >
-                            #{tag}
+                            #{tag.name}
                           </button>
                         ))}
                     </div>
@@ -345,6 +395,12 @@ export default function DesktopUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-6"
               >
+                {uploadError && (
+                  <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                    <p className="text-gray-900">{uploadError}</p>
+                  </div>
+                )}
+
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
                   <img src={selectedImage!} alt="Preview" className="w-full h-96 object-cover" />
                   <div className="p-8">

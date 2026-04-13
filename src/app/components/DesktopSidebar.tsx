@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router';
-import { Home, Search, Tag, User, Upload, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Home, Search, Tag, TrendingUp, Upload, User, Settings } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function DesktopSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const navItems = [
@@ -17,6 +19,15 @@ export function DesktopSidebar() {
 
   return (
     <aside className="desktop-sidebar fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 z-40">
+      {/* 设置按钮 - 右上角 */}
+      <button
+        onClick={() => navigate('/settings')}
+        className="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+        aria-label="设置"
+      >
+        <Settings size={20} className="text-gray-600" />
+      </button>
+
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="p-6 border-b border-gray-200">

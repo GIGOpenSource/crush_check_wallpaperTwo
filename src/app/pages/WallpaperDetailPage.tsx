@@ -12,7 +12,7 @@ import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRout
 import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
-import { recordWallpaperDownload } from '../../api/wallpaper';
+import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import {
   Download,
@@ -97,6 +97,20 @@ export default function WallpaperDetailPage() {
     } catch {
       umengclick('download_fail');
       setDownloadNotice({ open: true, message: t.wallpaperDetail.downloadFailed });
+    } finally {
+      setDownloading(false);
+    }
+  };
+   const handleCollect = async () => {
+    try {
+      try {
+        await recordWallpaperCollect(wallpaper.id);
+        setIsLiked((prev) => !prev);
+      } catch {
+      }
+  
+    } catch {
+      
     } finally {
       setDownloading(false);
     }
@@ -195,7 +209,7 @@ export default function WallpaperDetailPage() {
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={handleCollect}
             className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${
               isLiked
                 ? 'bg-red-50 border-red-500 text-red-500'

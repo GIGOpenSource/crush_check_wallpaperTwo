@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { currentUser, mockWallpapers } from '../mockData';
+import { mockWallpapers } from '../mockData';
 import { Settings, Upload, Image as ImageIcon, Heart, Award } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { useMyCollections } from '../hooks/useMyCollections';
 
 type TabType = 'uploaded' | 'favorites';
 
@@ -13,11 +15,73 @@ export default function DesktopProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
+  const { profile, loading: profileLoading, error: profileError } = useUserProfile();
+  const { 
+    wallpapers: favoriteWallpapers, 
+    loading: favoritesLoading, 
+    loadingMore,
+    hasMore, 
+    loadMore,
+    error: favoritesError 
+  } = useMyCollections();
 
+  // Mock data - 上传的壁纸暂时使用 Mock 数据
   const uploadedWallpapers = mockWallpapers.slice(0, 8);
-  const favoriteWallpapers = mockWallpapers.slice(8, 16);
 
+  // 根据活跃标签显示不同的数据
   const displayWallpapers = activeTab === 'uploaded' ? uploadedWallpapers : favoriteWallpapers;
+
+  // 加载中状态
+  if (profileLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
+        <div className="flex-1 ml-64 flex items-center justify-center">
+          <p className="text-gray-500">{t.common.loading}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 错误状态
+  if (profileError) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
+        <div className="flex-1 ml-64 flex items-center justify-center">
+          <div className="text-red-500 text-center">
+            <p>{profileError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              重新加载
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 未登录状态
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
+        <div className="flex-1 ml-64 flex items-center justify-center">
+          <div className="text-gray-500 text-center">
+            <p>请先登录</p>
+            <button
+              onClick={() => navigate('/login')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              去登录
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -28,61 +92,56 @@ export default function DesktopProfilePage() {
         <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
           <div className="px-8 py-12">
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-start justify-between mb-8">
+              {/* 用户信息区 */}
+              <div className="flex items-start mb-8">
                 <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-2xl overflow-hidden border-4 border-white/30 shadow-xl">
+                  <div className="w-20 h-20 bg-white rounded-xl overflow-hidden shadow-lg">
                     <img
-                      src={currentUser.avatar}
-                      alt={currentUser.username}
+                      src={profile.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.username)}
+                      alt={profile.username}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">{currentUser.username}</h1>
-                    <div className="flex items-center gap-4 text-white/90 mb-4">
-                      <span className="text-lg">{t.profile.level} {currentUser.level}</span>
+                    <h1 className="text-3xl font-bold mb-2">{profile.username}</h1>
+                    <div className="flex items-center gap-3 text-white/90 mb-3">
+                      <span>等级 {profile.level || 0}</span>
                       <span>•</span>
-                      <span className="text-lg">{currentUser.points} {t.profile.points}</span>
+                      <span>{profile.points || 0} 积分</span>
                     </div>
                     <button
                       onClick={() => navigate('/upload')}
-                      className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-white/90 transition-colors"
+                      className="bg-white text-blue-600 py-2 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-white/90 transition-colors shadow-lg"
                     >
-                      <Upload size={20} />
-                      {t.profile.uploadWallpaper}
+                      <Upload size={16} />
+                      <span>上传壁纸</span>
                     </button>
                   </div>
                 </div>
-                <button
-                  onClick={() => navigate('/settings')}
-                  className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors"
-                >
-                  <Settings size={24} />
-                </button>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 max-w-3xl">
+              {/* 统计卡片 */}
+              <div className="grid grid-cols-3 gap-6 max-w-2xl">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <ImageIcon size={24} />
-                    <span className="text-3xl font-bold">{currentUser.uploadedCount}</span>
+                    <ImageIcon size={24} className="opacity-80" />
+                    <div className="text-3xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</div>
                   </div>
-                  <p className="text-white/80">{t.profile.uploaded}</p>
+                  <div className="text-white/80 text-sm">已上传</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <Heart size={24} />
-                    <span className="text-3xl font-bold">{currentUser.favoritesCount}</span>
+                    <Heart size={24} className="opacity-80" />
+                    <div className="text-3xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</div>
                   </div>
-                  <p className="text-white/80">{t.profile.favorites}</p>
+                  <div className="text-white/80 text-sm">收藏</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <Award size={24} />
-                    <span className="text-3xl font-bold">{currentUser.badges.length}</span>
+                    <Award size={24} className="opacity-80" />
+                    <div className="text-3xl font-bold">{profile.badges?.length ?? 0}</div>
                   </div>
-                  <p className="text-white/80">{t.profile.badges}</p>
+                  <div className="text-white/80 text-sm">徽章</div>
                 </div>
               </div>
             </div>
@@ -94,18 +153,25 @@ export default function DesktopProfilePage() {
             {/* Badges */}
             <section className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900 mb-6">{t.profile.achievementBadges}</h2>
-              <div className="grid grid-cols-3 gap-4">
-                {currentUser.badges.map((badge) => (
-                  <div
-                    key={badge.id}
-                    className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200"
-                  >
-                    <div className="text-4xl mb-3">{badge.icon}</div>
-                    <h3 className="font-bold text-gray-900 mb-2">{badge.name}</h3>
-                    <p className="text-sm text-gray-600">{badge.description}</p>
-                  </div>
-                ))}
-              </div>
+              {profile.badges && profile.badges.length > 0 ? (
+                <div className="grid grid-cols-3 gap-4">
+                  {profile.badges.map((badge) => (
+                    <div
+                      key={badge.id}
+                      className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200"
+                    >
+                      <div className="text-4xl mb-3">{badge.icon}</div>
+                      <h3 className="font-bold text-gray-900 mb-2">{badge.name}</h3>
+                      <p className="text-sm text-gray-600">{badge.description}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Award size={48} className="mx-auto mb-4 text-gray-300" />
+                  <p>还没有获得徽章</p>
+                </div>
+              )}
             </section>
 
             {/* Tabs and Content */}
@@ -141,26 +207,64 @@ export default function DesktopProfilePage() {
                 </button>
               </div>
 
-              {displayWallpapers.length > 0 ? (
-                <DesktopWallpaperGrid wallpapers={displayWallpapers} />
+              {activeTab === 'favorites' ? (
+                // 收藏列表 - 使用真实数据
+                <>
+                  {favoritesLoading ? (
+                    <div className="py-16 text-center">
+                      <p className="text-gray-500">{t.common.loading}</p>
+                    </div>
+                  ) : favoritesError ? (
+                    <div className="py-16 text-center">
+                      <p className="text-red-500">加载失败，请重试</p>
+                    </div>
+                  ) : favoriteWallpapers.length > 0 ? (
+                    <>
+                      <DesktopWallpaperGrid wallpapers={favoriteWallpapers} />
+                      {/* 加载更多 */}
+                      {hasMore && (
+                        <div className="py-8 text-center">
+                          <button
+                            onClick={loadMore}
+                            disabled={loadingMore}
+                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
+                          >
+                            {loadingMore ? t.common.loading : '加载更多'}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="py-16 text-center">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Heart size={40} className="text-gray-400" />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                        {t.profile.noFavoritesYet}
+                      </h3>
+                      <p className="text-gray-500 mb-8">
+                        {t.profile.startFavoriting}
+                      </p>
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="py-16 text-center">
-                  <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    {activeTab === 'uploaded' ? (
+                // 上传列表 - 暂时使用 Mock 数据
+                displayWallpapers.length > 0 ? (
+                  <DesktopWallpaperGrid wallpapers={displayWallpapers} />
+                ) : (
+                  <div className="py-16 text-center">
+                    <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                       <ImageIcon size={40} className="text-gray-400" />
-                    ) : (
-                      <Heart size={40} className="text-gray-400" />
-                    )}
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      {t.profile.noUploadsYet}
+                    </h3>
+                    <p className="text-gray-500 mb-8">
+                      {t.profile.uploadFirstWallpaper}
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                    {activeTab === 'uploaded' ? t.profile.noUploadsYet : t.profile.noFavoritesYet}
-                  </h3>
-                  <p className="text-gray-500 mb-8">
-                    {activeTab === 'uploaded'
-                      ? t.profile.uploadFirstWallpaper
-                      : t.profile.startFavoriting}
-                  </p>
-                </div>
+                )
               )}
             </section>
           </div>

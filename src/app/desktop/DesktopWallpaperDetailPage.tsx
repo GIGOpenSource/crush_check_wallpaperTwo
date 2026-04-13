@@ -1,5 +1,5 @@
 import { App } from 'antd';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
@@ -12,7 +12,7 @@ import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRout
 import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
-import { recordWallpaperDownload } from '../../api/wallpaper';
+import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import {
   Download,
@@ -45,7 +45,12 @@ export default function DesktopWallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
-
+   useEffect(() => {
+    console.log("wallpaper", wallpaper);
+    if (wallpaper && wallpaper.is_collected !== undefined) {
+      setIsLiked(wallpaper.is_collected);
+    }
+  }, [wallpaper]); 
   if (loading) {
     return (
       <div className="flex min-h-screen bg-gray-50">
@@ -99,6 +104,11 @@ export default function DesktopWallpaperDetailPage() {
       setDownloading(false);
     }
   };
+  const handleCollect = async () => {
+    console.log("开始收藏");
+    const res =   await recordWallpaperCollect(wallpaper.id);
+        setIsLiked(res.data.collected);
+  };
 
   const handleShare = () => {
     umengclick('detail_share_click');
@@ -126,11 +136,10 @@ export default function DesktopWallpaperDetailPage() {
             <h1 className="text-xl font-bold text-gray-900 flex-1">{wallpaper.title}</h1>
             <button
               onClick={() => setIsFavorited(!isFavorited)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                isFavorited
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${isFavorited
                   ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} />
               <span className="font-medium">
@@ -218,12 +227,11 @@ export default function DesktopWallpaperDetailPage() {
                   </motion.button>
                   <motion.button
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setIsLiked(!isLiked)}
-                    className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors ${
-                      isLiked
+                    onClick={handleCollect}
+                    className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors ${isLiked
                         ? 'bg-red-50 text-red-600 hover:bg-red-100'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     <Heart size={20} className={isLiked ? 'fill-red-600' : ''} />
                     {isLiked ? t.wallpaperDetail.liked : t.wallpaperDetail.like}
