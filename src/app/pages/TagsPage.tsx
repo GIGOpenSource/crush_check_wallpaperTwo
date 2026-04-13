@@ -8,10 +8,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigationTags } from '../hooks/useNavigationTags';
 import { getTagDisplayName } from '../utils/tagDisplay';
 
-/** 热门区展示条数 / 接口多取一些备用 */
+/** 热门区展示条数 */
 const TRENDING_DISPLAY = 5;
-const HOT_FETCH_PAGE_SIZE = 24;
-const ALL_TAGS_PAGE_SIZE = 100;
 
 export default function TagsPage() {
   const { t } = useLanguage();
@@ -23,8 +21,6 @@ export default function TagsPage() {
     error: hotError,
   } = useNavigationTags({
     isHot: true,
-    pageSize: HOT_FETCH_PAGE_SIZE,
-    currentPage: 1,
   });
 
   const {
@@ -33,8 +29,6 @@ export default function TagsPage() {
     error: allError,
   } = useNavigationTags({
     isHot: false,
-    pageSize: ALL_TAGS_PAGE_SIZE,
-    currentPage: 1,
   });
 
   const popularTags = useMemo(() => hotTags.slice(0, TRENDING_DISPLAY), [hotTags]);
@@ -93,7 +87,7 @@ export default function TagsPage() {
               transition={{ delay: index * 0.05 }}
             >
               <Link
-                to={`/tag/${encodeURIComponent(tag.tag)}`}
+                to={`/tag/${encodeURIComponent(tag.id || tag.tag)}`}
                 onClick={() => umengclick('filter_click_tag')}
                 state={{
                   tagMeta: {
@@ -145,7 +139,7 @@ export default function TagsPage() {
           {filteredTags.map((tag) => (
             <Link
               key={tag.tag}
-              to={`/tag/${encodeURIComponent(tag.tag)}`}
+              to={`/tag/${encodeURIComponent(tag.id || tag.tag)}`}
               onClick={() => umengclick('filter_click_tag')}
               state={{
                 tagMeta: {

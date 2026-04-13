@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { getTagList, uploadWallpaper } from '../../api/wallpaper';
+import { getHotTags, uploadWallpaper } from '../../api/wallpaper';
 import type { TagItem } from '../../api/wallpaper';
 
 type UploadStep = 'select' | 'details' | 'tags' | 'review' | 'uploading' | 'success';
@@ -42,9 +42,9 @@ export default function UploadPage() {
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
 
-  // 获取标签列表
+  // 获取热门标签列表
   useEffect(() => {
-    getTagList({ pageSize: 50 })
+    getHotTags()
       .then((res) => {
         // 热门标签接口返回格式: { code: 200, message: "...", data: [...] }
         const tagData = res && typeof res === 'object' && 'data' in res 

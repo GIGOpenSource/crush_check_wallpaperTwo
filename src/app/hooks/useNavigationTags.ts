@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getNavigationTags } from '../../api/wallpaper';
+import { useEffect, useState } from 'react';
+import { getHotTags, getAllTags } from '../../api/wallpaper';
 import type { Tag } from '../types';
 import { mapNavigationTagResponseToTags } from '../utils/navigationTagApiMap';
 
 type Options = {
   isHot: boolean;
-  pageSize: number;
-  currentPage?: number;
 };
 
 type NavTagsSnapshot = {
@@ -15,24 +13,15 @@ type NavTagsSnapshot = {
 };
 
 /** 跨路由保留标签列表，避免从标签详情返回时重复请求 */
-const navigationTagsCache = new Map<string, NavTagsSnapshot>();
+const navigationTagsCache = new Map<boolean, NavTagsSnapshot>();
 
-function cacheKey(isHot: boolean, pageSize: number, currentPage: number): string {
-  return `${isHot ? '1' : '0'}:${pageSize}:${currentPage}`;
-}
-
-export function useNavigationTags({ isHot, pageSize, currentPage = 1 }: Options) {
-  const key = useMemo(
-    () => cacheKey(isHot, pageSize, currentPage),
-    [isHot, pageSize, currentPage],
-  );
-
-  const [tags, setTags] = useState<Tag[]>(() => navigationTagsCache.get(key)?.tags ?? []);
-  const [loading, setLoading] = useState(() => !navigationTagsCache.get(key)?.ready);
+export function useNavigationTags({ isHot }: Options) {
+  const [tags, setTags] = useState<Tag[]>(() => navigationTagsCache.get(isHot)?.tags ?? []);
+  const [loading, setLoading] = useState(() => !navigationTagsCache.get(isHot)?.ready);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const cached = navigationTagsCache.get(key);
+    const cached = navigationTagsCache.get(isHot);
     if (cached?.ready) {
       setTags(cached.tags);
       setError(false);
@@ -44,12 +33,15 @@ export function useNavigationTags({ isHot, pageSize, currentPage = 1 }: Options)
     setLoading(true);
     setError(false);
 
-    getNavigationTags({ currentPage, pageSize, isHot })
+    // 根据 isHot 参数选择不同的接口，无需参数
+    const fetchFn = isHot ? getHotTags : getAllTags;
+    
+    fetchFn()
       .then((raw) => {
         if (cancelled) return;
         const mapped = mapNavigationTagResponseToTags(raw);
         setTags(mapped);
-        navigationTagsCache.set(key, { tags: mapped, ready: true });
+        navigationTagsCache.set(isHot, { tags: mapped, ready: true });
       })
       .catch(() => {
         if (!cancelled) {
@@ -64,7 +56,7 @@ export function useNavigationTags({ isHot, pageSize, currentPage = 1 }: Options)
     return () => {
       cancelled = true;
     };
-  }, [key, currentPage, pageSize, isHot]);
+  }, [isHot]);
 
   return { tags, loading, error };
 }

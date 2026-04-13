@@ -3,7 +3,6 @@ import { useSearchParams, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
-import { mockWallpapers, mockTags } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
@@ -11,78 +10,57 @@ import { useSearchEmptyTrack } from '../hooks/useSearchEmptyTrack';
 import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
 import { getTagDisplayName } from '../utils/tagDisplay';
-
-interface Filters {
-  resolution: string[];
-  aspectRatio: string[];
-  purity: ('SFW' | 'Sketchy' | 'NSFW')[];
-}
+import { useSearchWallpapers, SearchFilters } from '../hooks/useSearchWallpapers';
 
 export default function SearchPage() {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const initialQuery = searchParams.get('q') || '';
+  
   const [query, setQuery] = useState(initialQuery);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<Filters>({
+  
+  const [filters, setFilters] = useState<SearchFilters>({
     resolution: [],
     aspectRatio: [],
-    purity: ['SFW']
   });
 
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
 
-  // Filter wallpapers based on search and filters
-  const filteredWallpapers = mockWallpapers.filter((wallpaper) => {
-    const matchesQuery =
-      !query ||
-      wallpaper.title.toLowerCase().includes(query.toLowerCase()) ||
-      wallpaper.tags.some(
-        (tag) =>
-          tag.name.toLowerCase().includes(query.toLowerCase()) ||
-          tag.id.toLowerCase().includes(query.toLowerCase()),
-      );
+  // 使用真实 API 获取壁纸数据
+  const {
+    wallpapers: filteredWallpapers,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+    totalCount,
+    currentPage,
+  } = useSearchWallpapers(query, filters, 1, 20, 'PHONE');
 
-    const matchesResolution =
-      filters.resolution.length === 0 || filters.resolution.includes(wallpaper.resolution);
-
-    const matchesAspectRatio =
-      filters.aspectRatio.length === 0 || filters.aspectRatio.includes(wallpaper.aspectRatio);
-
-    const matchesPurity =
-      filters.purity.length === 0 || filters.purity.includes(wallpaper.purity);
-
-    return matchesQuery && matchesResolution && matchesAspectRatio && matchesPurity;
-  });
-
-  const suggestedTags = mockTags
-    .filter((tag) => {
-      const q = query.toLowerCase();
-      return (
-        getTagDisplayName(tag).toLowerCase().includes(q) || tag.name.toLowerCase().includes(q)
-      );
-    })
-    .slice(0, 5);
+  // 搜索建议标签 - 暂时禁用
+  const suggestedTags: any[] = [];
+  // const { tags: suggestedTags } = useSearchSuggestions(query);
 
   const resolutionOptions = ['3840x2160', '2560x1440', '1920x1080'];
   const aspectRatioOptions = ['16:9', '21:9', '9:16'];
-  const purityOptions: ('SFW' | 'Sketchy' | 'NSFW')[] = ['SFW', 'Sketchy', 'NSFW'];
 
-  const toggleFilter = <K extends keyof Filters>(
+  const toggleFilter = <K extends keyof SearchFilters>(
     category: K,
-    value: Filters[K][number]
+    value: SearchFilters[K][number]
   ) => {
     umengclick('filter_click_type');
     setFilters((prev) => {
-      const current = prev[category] as any[];
+      const current = prev[category] as string[];
       const updated = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
       return { ...prev, [category]: updated };
     });
+    // 重置页码由 Hook 内部管理
   };
 
   const clearFilters = () => {
@@ -90,17 +68,16 @@ export default function SearchPage() {
     setFilters({
       resolution: [],
       aspectRatio: [],
-      purity: ['SFW']
     });
   };
 
-  const activeFilterCount =
-    filters.resolution.length + filters.aspectRatio.length + (filters.purity.length > 1 ? filters.purity.length - 1 : 0);
+  const activeFilterCount = filters.resolution.length + filters.aspectRatio.length;
 
   const emptySignature = useMemo(
     () => `${query}|${JSON.stringify(filters)}|${filteredWallpapers.length}`,
     [query, filters, filteredWallpapers.length],
   );
+  
   useSearchEmptyTrack(
     filteredWallpapers.length === 0,
     query.trim().length > 0 || activeFilterCount > 0,
@@ -120,34 +97,6 @@ export default function SearchPage() {
           />
         </div>
 
-        {/* Suggested Tags */}
-        {query && suggestedTags.length > 0 && (
-          <div className="px-4 pb-3">
-            <p className="text-xs text-gray-500 mb-2">{t.upload.suggestedTags}</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestedTags.map((tag) => (
-                <button
-                  key={tag.tag}
-                  onClick={() => {
-                    umengclick('filter_click_tag');
-                    navigate(`/tag/${encodeURIComponent(tag.tag)}`, {
-                      state: {
-                        tagMeta: {
-                          name: getTagDisplayName(tag) || tag.name,
-                          wallpaperCount: tag.wallpaperCount,
-                          description: tag.description,
-                        },
-                      },
-                    });
-                  }}
-                  className="px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full hover:bg-blue-100"
-                >
-                  #{getTagDisplayName(tag) || tag.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Filters Panel */}
@@ -212,8 +161,8 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Purity */}
-              <div>
+              {/* Purity - 暂时注释掉 */}
+              {/* <div>
                 <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.contentRating}</h4>
                 <div className="flex flex-wrap gap-2">
                   {purityOptions.map((purity) => (
@@ -230,7 +179,7 @@ export default function SearchPage() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </motion.div>
         )}
@@ -254,32 +203,41 @@ export default function SearchPage() {
                 onRemove={() => toggleFilter('aspectRatio', ratio)}
               />
             ))}
-            {filters.purity.filter(p => p !== 'SFW').map((purity) => (
+            {/* {filters.purity.filter(p => p !== 'SFW').map((purity) => (
               <FilterChip
                 key={purity}
                 label={t.purity[purity]}
                 onRemove={() => toggleFilter('purity', purity)}
               />
-            ))}
+            ))} */}
           </div>
         </div>
       )}
 
       {/* Results */}
       <div className="py-4">
-        <div className="px-4 mb-4">
-          <p className="text-sm text-gray-600">
-            {tpl(
-              filteredWallpapers.length === 1
-                ? t.searchPage.wallpapersFoundOne
-                : t.searchPage.wallpapersFoundMany,
-              { count: filteredWallpapers.length },
+        {loading && filteredWallpapers.length === 0 ? (
+           <div className="flex flex-col items-center justify-center py-16 px-4">
+             <p className="text-gray-500">{t.common.loading}</p>
+           </div>
+        ) : error ? (
+           <div className="flex flex-col items-center justify-center py-16 px-4">
+             <p className="text-red-500">{t.common.loadFailed}</p>
+           </div>
+        ) : filteredWallpapers.length > 0 ? (
+          <>
+            <WallpaperGrid wallpapers={filteredWallpapers} />
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button 
+                  onClick={loadMore}
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  加载更多
+                </button>
+              </div>
             )}
-            {query ? tpl(t.searchPage.resultsForQuery, { q: query }) : ''}
-          </p>
-        </div>
-        {filteredWallpapers.length > 0 ? (
-          <WallpaperGrid wallpapers={filteredWallpapers} />
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">

@@ -58,6 +58,10 @@ export type WallpapersListParams = {
   /** Static → false，Live → true */
   media_live?: boolean;
   platform: 'PC' | 'PHONE';
+  /** 分辨率筛选，多个值用逗号分隔，如 "2560x1440,1920x1080" */
+  resolution?: string;
+  /** 宽高比筛选，多个值用逗号分隔，如 "16:9,21:9" */
+  aspect_ratio?: string;
 };
 
 export function getWallpapersList(params: WallpapersListParams) {
@@ -113,6 +117,14 @@ export function guessLike(wallpaper_id: string | number) {
   return http.get<WallpaperListResponse>('/api/wallpapers/wallpaper/guess_you_like/', {
     params: { wallpaper_id },
   });
+}
+
+/**
+ * 获取精选壁纸（轮播图）
+ * GET /api/wallpapers/wallpaper/featured/
+ */
+export function getFeaturedWallpapers() {
+  return http.get<WallpaperListResponse>('/api/wallpapers/wallpaper/featured/');
 }
 
 /** 下载埋点：点击下载时上报 */
@@ -174,31 +186,39 @@ export function getUserProfile() {
 export type TagItem = {
   id: number | string;
   name: string;
+  wallpaper_count?: number;
   [key: string]: unknown;
 };
 
 /** 标签列表响应 */
 export type TagListResponse = {
+  code: number;
+  message: string;
   data: TagItem[];
-  total?: number;
-  [key: string]: unknown;
-};
-
-/**
- * 获取壁纸标签列表
- * GET /api/wallpapers/tags/list/
- */
-export type TagListParams = {
-  currentPage?: number;
-  pageSize?: number;
 };
 
 /**
  * 获取热门标签列表
  * GET /api/wallpapers/tags/hot/
+ * 无需参数
  */
-export function getTagList(params?: TagListParams) {
-  return http.get<TagListResponse>('/api/wallpapers/tags/hot/', { params });
+export function getHotTags() {
+  return http.get<TagListResponse>('/api/wallpapers/tags/hot/');
+}
+
+/**
+ * 获取所有标签列表
+ * GET /api/wallpapers/tags/list/
+ * 无需参数
+ */
+export function getAllTags() {
+  return http.get<TagListResponse>('/api/wallpapers/tags/list/');
+}
+
+// 保留旧接口名称以兼容现有代码
+/** @deprecated 使用 getHotTags 或 getAllTags */
+export function getTagList() {
+  return getHotTags();
 }
 
 /**

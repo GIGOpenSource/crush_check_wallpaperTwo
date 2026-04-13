@@ -22,17 +22,18 @@ function pickNum(obj: Record<string, unknown>, keys: string[], fallback = 0): nu
 }
 
 export function mapRecordToTag(item: Record<string, unknown>): Tag | null {
-  const listTag = pickStr(item, ['tag']).trim();
-  if (!listTag) return null;
+  // 优先使用 name 字段，因为 API 返回的是 name 而不是 tag
+  const nameRaw = pickStr(item, ['name', 'tag_name', 'title', 'label']).trim();
+  const navName = pickStr(item, ['nav_name', 'navName']).trim();
+  const name = nameRaw || navName;
+  
+  // 如果没有 name，返回 null
+  if (!name) return null;
 
   const id = pickStr(item, ['id', 'tag_id', 'pk']).trim();
 
-  const navName = pickStr(item, ['nav_name', 'navName']).trim();
-  const nameRaw = pickStr(item, ['name', 'tag_name', 'title', 'label']).trim();
-  const name = nameRaw || navName;
-
   return {
-    tag: listTag,
+    tag: name,  // 使用 name 作为 tag 标识
     id: id || undefined,
     name: name || navName,
     navName: navName || undefined,

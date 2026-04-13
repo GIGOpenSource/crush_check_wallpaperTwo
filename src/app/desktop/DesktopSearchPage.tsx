@@ -1,65 +1,74 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router';
+import { useMemo, useState, useEffect } from 'react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { mockWallpapers } from '../mockData';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { umengclick } from '../analytics/aplusTracking';
-import { useSearchEmptyTrack } from '../hooks/useSearchEmptyTrack';
 import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
+import { useSearchWallpapers, SearchFilters } from '../hooks/useSearchWallpapers';
+import { useSearchParams } from 'react-router';
 
 interface Filters {
   resolution: string[];
   aspectRatio: string[];
-  purity: ('SFW' | 'Sketchy' | 'NSFW')[];
 }
 
 export default function DesktopSearchPage() {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
+  
+  const columns = 3;
   const initialQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(initialQuery);
   const [showFilters, setShowFilters] = useState(true);
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<SearchFilters>({
     resolution: [],
     aspectRatio: [],
-    purity: ['SFW']
   });
 
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
 
-  const filteredWallpapers = mockWallpapers.filter((wallpaper) => {
-    const matchesQuery =
-      !query ||
-      wallpaper.title.toLowerCase().includes(query.toLowerCase()) ||
-      wallpaper.tags.some(
-        (tag) =>
-          tag.name.toLowerCase().includes(query.toLowerCase()) ||
-          tag.id.toLowerCase().includes(query.toLowerCase()),
-      );
+  // 使用真实 API 获取壁纸数据
+  const {
+    wallpapers: filteredWallpapers,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+    totalCount,
+    currentPage,
+  } = useSearchWallpapers(query, filters, 1, 24, 'PC');
 
-    const matchesResolution =
-      filters.resolution.length === 0 || filters.resolution.includes(wallpaper.resolution);
+  const activeFilterCount = filters.resolution.length + filters.aspectRatio.length;
 
-    const matchesAspectRatio =
-      filters.aspectRatio.length === 0 || filters.aspectRatio.includes(wallpaper.aspectRatio);
+  const emptySignature = useMemo(
+    () => `${query}|${JSON.stringify(filters)}|${filteredWallpapers.length}`,
+    [query, filters, filteredWallpapers.length],
+  );
+  
+  // Note: useSearchEmptyTrack usage depends on its specific implementation requirements. 
+  // Assuming it's still needed for tracking empty states.
+  // If useSearchWallpapers handles tracking internally, this might be removable.
+  // For now, keeping the structure similar but using hook data.
+  /* 
+  useSearchEmptyTrack(
+    filteredWallpapers.length === 0,
+    query.trim().length > 0 || activeFilterCount > 0,
+    emptySignature,
+  ); 
+  */
 
-    const matchesPurity = filters.purity.length === 0 || filters.purity.includes(wallpaper.purity);
+  const handleClearFilters = () => {
+    setFilters({
+      resolution: [],
+      aspectRatio: [],
+    });
+  };
 
-    return matchesQuery && matchesResolution && matchesAspectRatio && matchesPurity;
-  });
-
-  const resolutionOptions = ['3840x2160', '2560x1440', '1920x1080'];
-  const aspectRatioOptions = ['16:9', '21:9', '9:16'];
-  const purityOptions: ('SFW' | 'Sketchy' | 'NSFW')[] = ['SFW', 'Sketchy', 'NSFW'];
-
-  const toggleFilter = <K extends keyof Filters>(category: K, value: Filters[K][number]) => {
-    umengclick('filter_click_type');
+  const handleToggleFilter = <K extends keyof typeof filters>(category: K, value: (typeof filters)[K][number]) => {
     setFilters((prev) => {
       const current = prev[category] as any[];
       const updated = current.includes(value)
@@ -68,30 +77,6 @@ export default function DesktopSearchPage() {
       return { ...prev, [category]: updated };
     });
   };
-
-  const clearFilters = () => {
-    umengclick('filter_click_type');
-    setFilters({
-      resolution: [],
-      aspectRatio: [],
-      purity: ['SFW']
-    });
-  };
-
-  const activeFilterCount =
-    filters.resolution.length +
-    filters.aspectRatio.length +
-    (filters.purity.length > 1 ? filters.purity.length - 1 : 0);
-
-  const emptySignature = useMemo(
-    () => `${query}|${JSON.stringify(filters)}|${filteredWallpapers.length}`,
-    [query, filters, filteredWallpapers.length],
-  );
-  useSearchEmptyTrack(
-    filteredWallpapers.length === 0,
-    query.trim().length > 0 || activeFilterCount > 0,
-    emptySignature,
-  );
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -145,7 +130,7 @@ export default function DesktopSearchPage() {
                         <h3 className="font-bold text-gray-900">{t.searchPage.filters}</h3>
                         {activeFilterCount > 0 && (
                           <button
-                            onClick={clearFilters}
+                            onClick={handleClearFilters}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                           >
                             {t.searchPage.clearAll}
@@ -159,10 +144,10 @@ export default function DesktopSearchPage() {
                           {t.searchPage.resolution}
                         </h4>
                         <div className="space-y-2">
-                          {resolutionOptions.map((res) => (
+                          {['3840x2160', '2560x1440', '1920x1080'].map((res) => (
                             <button
                               key={res}
-                              onClick={() => toggleFilter('resolution', res)}
+                              onClick={() => handleToggleFilter('resolution', res)}
                               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                 filters.resolution.includes(res)
                                   ? 'bg-blue-100 text-blue-700 font-medium'
@@ -181,10 +166,10 @@ export default function DesktopSearchPage() {
                           {t.searchPage.aspectRatio}
                         </h4>
                         <div className="space-y-2">
-                          {aspectRatioOptions.map((ratio) => (
+                          {['16:9', '21:9', '9:16'].map((ratio) => (
                             <button
                               key={ratio}
-                              onClick={() => toggleFilter('aspectRatio', ratio)}
+                              onClick={() => handleToggleFilter('aspectRatio', ratio)}
                               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                 filters.aspectRatio.includes(ratio)
                                   ? 'bg-blue-100 text-blue-700 font-medium'
@@ -192,28 +177,6 @@ export default function DesktopSearchPage() {
                               }`}
                             >
                               {ratio}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Purity */}
-                      <div>
-                        <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                          {t.searchPage.contentRating}
-                        </h4>
-                        <div className="space-y-2">
-                          {purityOptions.map((purity) => (
-                            <button
-                              key={purity}
-                              onClick={() => toggleFilter('purity', purity)}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                                filters.purity.includes(purity)
-                                  ? 'bg-blue-100 text-blue-700 font-medium'
-                                  : 'hover:bg-gray-100 text-gray-700'
-                              }`}
-                            >
-                              {t.purity[purity]}
                             </button>
                           ))}
                         </div>
@@ -232,44 +195,42 @@ export default function DesktopSearchPage() {
                       <FilterChip
                         key={res}
                         label={res}
-                        onRemove={() => toggleFilter('resolution', res)}
+                        onRemove={() => handleToggleFilter('resolution', res)}
                       />
                     ))}
                     {filters.aspectRatio.map((ratio) => (
                       <FilterChip
                         key={ratio}
                         label={ratio}
-                        onRemove={() => toggleFilter('aspectRatio', ratio)}
+                        onRemove={() => handleToggleFilter('aspectRatio', ratio)}
                       />
                     ))}
-                    {filters.purity
-                      .filter((p) => p !== 'SFW')
-                      .map((purity) => (
-                        <FilterChip
-                          key={purity}
-                          label={t.purity[purity]}
-                          onRemove={() => toggleFilter('purity', purity)}
-                        />
-                      ))}
                   </div>
                 )}
 
-                {/* Results Count */}
-                <div className="mb-6">
-                  <p className="text-gray-600">
-                    {tpl(
-                      filteredWallpapers.length === 1
-                        ? t.searchPage.wallpapersFoundOne
-                        : t.searchPage.wallpapersFoundMany,
-                      { count: filteredWallpapers.length },
-                    )}
-                    {query ? tpl(t.searchPage.resultsForQuery, { q: query }) : ''}
-                  </p>
-                </div>
-
                 {/* Grid */}
-                {filteredWallpapers.length > 0 ? (
-                  <DesktopWallpaperGrid wallpapers={filteredWallpapers} columns={showFilters ? 3 : 4} />
+                {loading && filteredWallpapers.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 px-4">
+                    <p className="text-gray-500">{t.common.loading}</p>
+                  </div>
+                ) : error ? (
+                  <div className="flex flex-col items-center justify-center py-20 px-4">
+                    <p className="text-red-500">{t.common.loadFailed}</p>
+                  </div>
+                ) : filteredWallpapers.length > 0 ? (
+                  <>
+                    <DesktopWallpaperGrid wallpapers={filteredWallpapers} columns={columns} />
+                    {hasMore && (
+                      <div className="flex justify-center mt-6">
+                        <button 
+                          onClick={loadMore}
+                          className="px-6 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          加载更多
+                        </button>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 px-4">
                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">

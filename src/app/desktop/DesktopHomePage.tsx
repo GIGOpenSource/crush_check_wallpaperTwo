@@ -4,11 +4,11 @@ import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { DesktopSidebar } from '../components/DesktopSidebar';
-import { editorsPicks } from '../mockData';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { formatNumber } from '../utils/format';
 import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
+import { useHomeFeaturedWallpapers } from '../hooks/useHomeFeaturedWallpapers';
 import { wallpaperListCoverUrl } from '../utils/wallpaperApiMap';
 
 export default function DesktopHomePage() {
@@ -25,31 +25,40 @@ export default function DesktopHomePage() {
     sentinelRef: popularSentinelRef,
   } = useHomePopularWallpapers({ enabled: isTrendingRoute });
 
+  // 使用真实 API 获取精选壁纸
+  const {
+    wallpapers: featuredWallpapers,
+    loading: featuredLoading,
+    error: featuredError,
+  } = useHomeFeaturedWallpapers();
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!showEditorsBanner) return;
+    if (!showEditorsBanner || featuredWallpapers.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % editorsPicks.length);
+      setCurrentSlide((prev) => (prev + 1) % featuredWallpapers.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [showEditorsBanner]);
+  }, [showEditorsBanner, featuredWallpapers.length]);
 
   useEffect(() => {
-    if (!showEditorsBanner || !carouselRef.current) return;
+    if (!showEditorsBanner || !carouselRef.current || featuredWallpapers.length === 0) return;
     carouselRef.current.scrollTo({
       left: currentSlide * carouselRef.current.offsetWidth,
       behavior: 'smooth',
     });
-  }, [currentSlide, showEditorsBanner]);
+  }, [currentSlide, showEditorsBanner, featuredWallpapers.length]);
 
   const handlePrev = () => {
-    setCurrentSlide((prev) => (prev - 1 + editorsPicks.length) % editorsPicks.length);
+    if (featuredWallpapers.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + featuredWallpapers.length) % featuredWallpapers.length);
   };
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % editorsPicks.length);
+    if (featuredWallpapers.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % featuredWallpapers.length);
   };
 
   return (
@@ -86,7 +95,16 @@ export default function DesktopHomePage() {
                     className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide rounded-2xl"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
-                    {editorsPicks.map((wallpaper) => (
+                    {featuredLoading ? (
+                      <div className="w-full h-96 flex items-center justify-center text-gray-500">
+                        {t.common.loading}
+                      </div>
+                    ) : featuredError || featuredWallpapers.length === 0 ? (
+                       <div className="w-full h-96 flex items-center justify-center text-gray-500">
+                         {t.searchPage.noWallpapersFound}
+                       </div>
+                    ) : (
+                      featuredWallpapers.map((wallpaper) => (
                       <EditorsPickWallpaperLink
                         key={wallpaper.id}
                         wallpaper={wallpaper}
@@ -125,7 +143,8 @@ export default function DesktopHomePage() {
                           </div>
                         </div>
                       </EditorsPickWallpaperLink>
-                    ))}
+                    ))
+                    )}
                   </div>
 
                   <button
@@ -143,24 +162,26 @@ export default function DesktopHomePage() {
                     <ChevronRight size={28} className="text-gray-900" />
                   </button>
 
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                    {editorsPicks.map((_, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={() => setCurrentSlide(index)}
-                        className="relative"
-                      >
-                        <div
-                          className={`h-2 rounded-full transition-all ${
-                            index === currentSlide
-                              ? 'bg-white w-8'
-                              : 'bg-white/50 w-2 hover:bg-white/70'
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
+                  {!featuredLoading && !featuredError && featuredWallpapers.length > 0 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                      {featuredWallpapers.map((_, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => setCurrentSlide(index)}
+                          className="relative"
+                        >
+                          <div
+                            className={`h-2 rounded-full transition-all ${
+                              index === currentSlide
+                                ? 'bg-white w-8'
+                                : 'bg-white/50 w-2 hover:bg-white/70'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </section>
             ) : (
