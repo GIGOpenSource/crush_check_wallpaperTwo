@@ -90,23 +90,66 @@ export function extractWallpaperItemsFromResponse(data: unknown): Record<string,
   return [];
 }
 
-export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
-  const id =
-    pickStr(item, ['id', 'wallpaper_id', 'pk']) || String(pickNum(item, ['id'], 0) || '');
+/** 将后端记录映射为前端 Wallpaper */
+export function mapRecordToWallpaper(raw: unknown): Wallpaper {
+  if (!raw || typeof raw !== 'object') {
+    return {
+      id: '0',
+      title: 'Wallpaper',
+      imageUrl: '',
+      thumbUrl: '',
+      resolution: '—',
+      fileSize: '—',
+      uploadDate: '',
+      uploader: listUploaderPlaceholder,
+      tags: [],
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      favorites: 0,
+      aspectRatio: '16:9',
+      colors: [],
+      purity: 'SFW',
+    };
+  }
+  const item = raw as Record<string, unknown>;
+
+  const id = pickStr(item, ['id', 'wallpaper_id', 'pk']);
   const title = pickStr(item, ['title', 'name']) || 'Wallpaper';
-  let imageUrl = pickStr(item, [
-    'url',
-    'imageUrl',
-    'image_url',
-    'cover',
-    'cover_url',
-    'img',
-    'image',
-  ]);
+  
+  // 提取 imageUrl：优先处理可能是对象的字段
+  let imageUrl = '';
+  for (const key of ['url', 'imageUrl', 'image_url', 'cover', 'cover_url', 'img', 'image']) {
+    const value = item[key];
+    if (value != null && value !== '') {
+      // 如果是对象，尝试提取其中的 url 或 src 属性
+      if (typeof value === 'object' && value !== null) {
+        const obj = value as Record<string, unknown>;
+        imageUrl = pickStr(obj, ['url', 'src', 'image', 'link']) || String(value);
+      } else {
+        imageUrl = String(value);
+      }
+      break;
+    }
+  }
   imageUrl = resolveMediaUrl(imageUrl);
 
-  let thumbUrl = pickStr(item, ['thumb_url', 'thumbnail', 'thumb']);
+  // 提取 thumbUrl：同样处理对象类型
+  let thumbUrl = '';
+  for (const key of ['thumb_url', 'thumbnail', 'thumb']) {
+    const value = item[key];
+    if (value != null && value !== '') {
+      if (typeof value === 'object' && value !== null) {
+        const obj = value as Record<string, unknown>;
+        thumbUrl = pickStr(obj, ['url', 'src', 'image', 'link']) || String(value);
+      } else {
+        thumbUrl = String(value);
+      }
+      break;
+    }
+  }
   thumbUrl = resolveMediaUrl(thumbUrl);
+  
   if (!thumbUrl) thumbUrl = imageUrl;
   if (!imageUrl) imageUrl = thumbUrl;
 
