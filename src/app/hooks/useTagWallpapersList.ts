@@ -42,7 +42,7 @@ function pickTotal(raw: unknown): number | undefined {
 }
 
 /** 标签详情：壁纸列表 tag_id 为导航接口返回的 tag 字段（路由 :tagId 同值） */
-export function useTagWallpapersList(tagId: string | undefined) {
+export function useTagWallpapersList(tagId: string | undefined, order?: 'latest' | 'views' | 'downloads') {
   const { viewMode } = useView();
   const platform = viewMode === 'mobile' ? 'PHONE' : 'PC';
 
@@ -58,6 +58,8 @@ export function useTagWallpapersList(tagId: string | undefined) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const tagIdRef = useRef(tagId);
   tagIdRef.current = tagId;
+  const orderRef = useRef(order);
+  orderRef.current = order;
 
   useEffect(() => {
     if (!tagId?.trim()) {
@@ -84,6 +86,7 @@ export function useTagWallpapersList(tagId: string | undefined) {
       platform,
       media_live: false,
       tag_id: tagId,
+      order,
     })
       .then((raw) => {
         if (cancelled) return;
@@ -109,10 +112,11 @@ export function useTagWallpapersList(tagId: string | undefined) {
     return () => {
       cancelled = true;
     };
-  }, [tagId, platform]);
+  }, [tagId, platform, order]);
 
   const loadNextPage = useCallback(() => {
     const id = tagIdRef.current?.trim();
+    const currentOrder = orderRef.current;
     if (!id || !hasMore || loading || loadingMore || error || fetchingRef.current) return;
 
     const nextPage = pageRef.current + 1;
@@ -125,6 +129,7 @@ export function useTagWallpapersList(tagId: string | undefined) {
       platform,
       media_live: false,
       tag_id: id,
+      order: currentOrder,
     })
       .then((raw) => {
         const mapped = mapResponse(raw);

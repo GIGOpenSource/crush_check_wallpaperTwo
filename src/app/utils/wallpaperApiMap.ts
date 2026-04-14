@@ -54,12 +54,13 @@ export function wallpaperListCoverUrl(w: Wallpaper): string {
   return w.thumbUrl || w.imageUrl;
 }
 
-function mapUserFromApi(raw: unknown): User {
-  if (!raw || typeof raw !== 'object') return listUploaderPlaceholder;
+/** 将后端用户对象映射为 User 类型 */
+function mapUserFromApi(raw: unknown): User | null {
+  if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;
   return {
     id: String(o.id ?? '0'),
-    username: String(o.username ?? o.name ?? '—'),
+    username: String(o.username ?? o.name ?? o.nickname ?? '—'),
     avatar: String(o.avatar ?? o.avatar_url ?? ''),
     level: typeof o.level === 'number' ? o.level : 0,
     points: typeof o.points === 'number' ? o.points : 0,
@@ -147,5 +148,6 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
     aspectRatio: pickStr(item, ['aspectRatio', 'aspect_ratio']) || '16:9',
     colors: Array.isArray(item.colors) ? (item.colors as unknown[]).map(String) : [],
     purity: 'SFW',
+    is_collected: typeof item.is_collected === 'boolean' ? item.is_collected : undefined,
   };
 }

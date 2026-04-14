@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
@@ -24,8 +24,11 @@ export default function TagDetailPage() {
 
   const decodedId = tagIdParam ? decodeURIComponent(tagIdParam).trim() : '';
 
+  // 将sortBy转换为API order参数
+  const apiOrder = sortBy === 'relevance' ? undefined : sortBy as 'latest' | 'views' | 'downloads';
+
   const { wallpapers, total, loading, loadingMore, error, sentinelRef, listNavBase } =
-    useTagWallpapersList(decodedId || undefined);
+    useTagWallpapersList(decodedId || undefined, apiOrder);
 
   const displayTag: Tag | null = decodedId
     ? {
@@ -35,22 +38,6 @@ export default function TagDetailPage() {
         wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
       }
     : null;
-
-  const sortedWallpapers = useMemo(() => {
-    const list = [...wallpapers];
-    switch (sortBy) {
-      case 'date':
-        return list.sort(
-          (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
-        );
-      case 'views':
-        return list.sort((a, b) => b.views - a.views);
-      case 'downloads':
-        return list.sort((a, b) => b.downloads - a.downloads);
-      default:
-        return list;
-    }
-  }, [wallpapers, sortBy]);
 
   if (!displayTag) {
     return (
@@ -147,7 +134,7 @@ export default function TagDetailPage() {
         {error && wallpapers.length === 0 && !loading && (
           <p className="text-center text-red-500 py-12 px-4">{t.common.loadFailed}</p>
         )}
-        {!loading && !error && sortedWallpapers.length === 0 && (
+        {!loading && !error && wallpapers.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <SlidersHorizontal size={32} className="text-gray-400" />
@@ -155,9 +142,9 @@ export default function TagDetailPage() {
             <p className="text-gray-500 text-center">{t.tags.noWallpapersWithTag}</p>
           </div>
         )}
-        {sortedWallpapers.length > 0 && (
+        {wallpapers.length > 0 && (
           <>
-            <WallpaperGrid wallpapers={sortedWallpapers} listNavBase={listNavBase} />
+            <WallpaperGrid wallpapers={wallpapers} listNavBase={listNavBase} />
             {loadingMore && (
               <p className="text-center text-sm text-gray-500 py-4">{t.common.loading}</p>
             )}

@@ -104,8 +104,8 @@ export default function DesktopWallpaperDetailPage() {
   };
   const handleCollect = async () => {
     console.log("开始收藏");
-    const res =   await recordWallpaperCollect(wallpaper.id);
-        setIsLiked(res.data.collected);
+    const res = await recordWallpaperCollect(wallpaper.id) as { data: { collected: boolean } };
+    setIsLiked(res.data.collected);
   };
 
   const handleShare = () => {
@@ -304,24 +304,48 @@ export default function DesktopWallpaperDetailPage() {
                   </div>
                 </div>
 
-                {/* Uploader */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h4 className="font-semibold text-gray-900 mb-4">{t.wallpaperDetail.uploader}</h4>
-                  <Link
-                    to={`/profile/${wallpaper.uploader.id}`}
-                    className="flex items-center gap-3 hover:bg-gray-50 p-3 rounded-lg transition-colors"
-                  >
-                    <div className="w-12 h-12 bg-gray-200 rounded-full" />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{wallpaper.uploader.username}</p>
-                      <p className="text-sm text-gray-500">
-                        {t.wallpaperDetail.level} {wallpaper.uploader.level} •{' '}
-                        {wallpaper.uploader.points} {t.wallpaperDetail.points}
-                      </p>
+                {/* Uploader - 只在有uploader时显示 */}
+                {wallpaper.uploader ? (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-4">{t.wallpaperDetail.uploader}</h4>
+                    <Link
+                      to={`/profile/${wallpaper.uploader.id}`}
+                      className="flex items-center gap-3 hover:bg-gray-50 p-3 rounded-lg transition-colors"
+                    >
+                      {wallpaper.uploader.avatar ? (
+                        <img
+                          src={wallpaper.uploader.avatar}
+                          alt={wallpaper.uploader.username}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                          <User size={20} className="text-gray-500" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{wallpaper.uploader.username}</p>
+                        <p className="text-sm text-gray-500">
+                          {t.wallpaperDetail.level} {wallpaper.uploader.level} •{' '}
+                          {wallpaper.uploader.points} {t.wallpaperDetail.points}
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-4">{t.wallpaperDetail.uploader}</h4>
+                    <div className="flex items-center gap-3 p-3">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                        <User size={20} className="text-gray-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-500">系统上传</p>
+                        <p className="text-sm text-gray-400">此壁纸由系统自动上传</p>
+                      </div>
                     </div>
-                    <ExternalLink size={18} className="text-gray-400" />
-                  </Link>
-                </div>
+                  </div>
+                )}
 
                 {/* Tags */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">

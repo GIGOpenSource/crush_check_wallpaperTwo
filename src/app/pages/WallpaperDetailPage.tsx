@@ -156,13 +156,16 @@ export default function WallpaperDetailPage() {
           {wallpaper.description && (
             <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
           )}
-          <Link
-            to={`/profile/${wallpaper.uploader.id}`}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <User size={16} />
-            <span className="text-sm">{wallpaper.uploader.username}</span>
-          </Link>
+          {/* 上传者信息 - 只在有uploader时显示 */}
+          {wallpaper.uploader && (
+            <Link
+              to={`/profile/${wallpaper.uploader.id}`}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            >
+              <User size={16} />
+              <span className="text-sm">{wallpaper.uploader.username}</span>
+            </Link>
+          )}
         </div>
 
         {/* Stats */}
@@ -239,6 +242,22 @@ export default function WallpaperDetailPage() {
                 {new Date(wallpaper.uploadDate).toLocaleDateString()}
               </span>
             </div>
+            {/* 上传者信息 - 只在有uploader时显示 */}
+            {wallpaper.uploader && (
+              <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+                <span className="text-gray-500">{t.wallpaperDetail.uploader || '上传者'}</span>
+                <div className="flex items-center gap-2">
+                  {wallpaper.uploader.avatar && (
+                    <img
+                      src={wallpaper.uploader.avatar}
+                      alt={wallpaper.uploader.username}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  )}
+                  <span className="text-gray-900 font-medium">{wallpaper.uploader.username}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

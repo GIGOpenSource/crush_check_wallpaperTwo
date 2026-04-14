@@ -7,6 +7,7 @@ import TagsPage from './wrappers/TagsPage';
 import TagDetailPage from './wrappers/TagDetailPage';
 import SearchPage from './wrappers/SearchPage';
 import ProfilePage from './wrappers/ProfilePage';
+import EditProfilePage from './wrappers/EditProfilePage';
 import UploadPage from './wrappers/UploadPage';
 import SettingsPage from './wrappers/SettingsPage';
 import LoginPage from './wrappers/LoginPage';
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: 'profile/:userId',
         element: <ProfilePage />
+      },
+      {
+        path: 'profile/edit',
+        element: <EditProfilePage />
       },
       {
         path: 'upload',

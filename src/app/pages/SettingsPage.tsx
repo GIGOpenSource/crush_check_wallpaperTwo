@@ -46,7 +46,7 @@ export default function SettingsPage() {
         {
           icon: User,
           label: t.settings.profileSettings,
-          onClick: () => {},
+          onClick: () => navigate('/profile/edit'),
           chevron: true,
         },
         {

@@ -22,8 +22,11 @@ export default function DesktopTagDetailPage() {
 
   const decodedId = tagIdParam ? decodeURIComponent(tagIdParam).trim() : '';
 
+  // 将sortBy转换为API order参数
+  const apiOrder = sortBy === 'relevance' ? undefined : sortBy as 'latest' | 'views' | 'downloads';
+
   const { wallpapers, total, loading, loadingMore, error, sentinelRef, listNavBase } =
-    useTagWallpapersList(decodedId || undefined);
+    useTagWallpapersList(decodedId || undefined, apiOrder);
 
   const displayTag: Tag | null = decodedId
     ? {
@@ -33,22 +36,6 @@ export default function DesktopTagDetailPage() {
         wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
       }
     : null;
-
-  const sortedWallpapers = useMemo(() => {
-    const list = [...wallpapers];
-    switch (sortBy) {
-      case 'date':
-        return list.sort(
-          (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime(),
-        );
-      case 'views':
-        return list.sort((a, b) => b.views - a.views);
-      case 'downloads':
-        return list.sort((a, b) => b.downloads - a.downloads);
-      default:
-        return list;
-    }
-  }, [wallpapers, sortBy]);
 
   if (!displayTag) {
     return (
@@ -129,7 +116,7 @@ export default function DesktopTagDetailPage() {
             {error && wallpapers.length === 0 && !loading && (
               <p className="text-center text-red-500 py-20">{t.common.loadFailed}</p>
             )}
-            {!loading && !error && sortedWallpapers.length === 0 && (
+            {!loading && !error && wallpapers.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <SlidersHorizontal size={40} className="text-gray-400" />
@@ -138,10 +125,10 @@ export default function DesktopTagDetailPage() {
                 <p className="text-gray-400">{t.tags.noWallpapersWithTag}</p>
               </div>
             )}
-            {sortedWallpapers.length > 0 && (
+            {wallpapers.length > 0 && (
               <>
                 <DesktopWallpaperGrid
-                  wallpapers={sortedWallpapers}
+                  wallpapers={wallpapers}
                   columns={4}
                   listNavBase={listNavBase}
                 />

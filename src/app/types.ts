@@ -18,7 +18,8 @@ export interface Wallpaper {
   resolution: string;
   fileSize: string;
   uploadDate: string;
-  uploader: User;
+  /** 上传者信息，如果为null则表示系统上传 */
+  uploader?: User | null;
   tags: WallpaperTag[];
   views: number;
   downloads: number;
@@ -27,6 +28,8 @@ export interface Wallpaper {
   aspectRatio: string;
   colors: string[];
   purity: 'SFW' | 'Sketchy' | 'NSFW';
+  /** 是否已收藏 */
+  is_collected?: boolean;
 }
 
 export interface User {

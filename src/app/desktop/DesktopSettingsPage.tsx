@@ -65,7 +65,12 @@ export default function DesktopSettingsPage() {
                 <h2 className="text-xl font-bold text-gray-900">{t.settings.accountSettings}</h2>
               </div>
               <div className="divide-y divide-gray-100">
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => navigate('/profile/edit')}
+                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-100 rounded-xl">
                       <User size={24} className="text-blue-600" />
@@ -76,7 +81,7 @@ export default function DesktopSettingsPage() {
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-gray-400" />
-                </div>
+                </motion.div>
                 
                 <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
                   <div className="flex items-center gap-4">
@@ -189,19 +194,19 @@ export default function DesktopSettingsPage() {
                       </div>
                     </div>
                     <button
-                      onClick={() => setNotifications({ 
-                        ...notifications, 
-                        [item.key]: !notifications[item.key as keyof typeof notifications] 
-                      })}
+                      onClick={() => setNotifications(prev => ({ 
+                        ...prev, 
+                        [item.key]: !prev[item.key] 
+                      }))}
                       className={`relative w-14 h-7 rounded-full transition-colors ${
-                        notifications[item.key as keyof typeof notifications] ? 'bg-blue-600' : 'bg-gray-300'
+                        notifications[item.key] ? 'bg-blue-600' : 'bg-gray-300'
                       }`}
                     >
                       <motion.div
                         layout
                         className="absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md"
                         animate={{ 
-                          left: notifications[item.key as keyof typeof notifications] ? '30px' : '2px' 
+                          left: notifications[item.key] ? '30px' : '2px' 
                         }}
                         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                       />

@@ -62,6 +62,8 @@ export type WallpapersListParams = {
   resolution?: string;
   /** 宽高比筛选，多个值用逗号分隔，如 "16:9,21:9" */
   aspect_ratio?: string;
+  /** 排序方式：latest=最新, views=最多浏览, downloads=最多下载 */
+  order?: 'latest' | 'views' | 'downloads';
 };
 
 export function getWallpapersList(params: WallpapersListParams) {
@@ -176,6 +178,12 @@ export type UserProfile = {
   id: string | number;
   username: string;
   avatar?: string;
+  /** 头像URL（用于编辑） */
+  avatar_url?: string;
+  /** 昵称 */
+  nickname?: string;
+  /** 性别: 0-未知, 1-男, 2-女 */
+  gender?: 0 | 1 | 2;
   level?: number;
   points?: number;
   badges?: Array<{
@@ -280,4 +288,25 @@ export function uploadWallpaper(data: UploadWallpaperParams) {
   
   // 注意：不要手动设置 Content-Type，让浏览器自动设置包含 boundary 的值
   return http.post('/api/wallpapers/wallpaper/upload-person/', formData);
+}
+
+/**
+ * 更新用户个人信息参数
+ * POST /api/client/users/update-profile/
+ */
+export type UpdateUserProfileParams = {
+  /** 昵称 */
+  nickname?: string;
+  /** 性别: 0-未知, 1-男, 2-女 */
+  gender?: 0 | 1 | 2;
+  /** 头像URL */
+  avatar_url?: string;
+};
+
+/**
+ * 更新用户个人信息
+ * POST /api/client/users/update-profile/
+ */
+export function updateUserProfile(data: UpdateUserProfileParams) {
+  return http.post('/api/client/users/update-profile/', data);
 }
