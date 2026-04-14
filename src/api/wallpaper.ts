@@ -83,6 +83,20 @@ export function getMyCollections(params: MyCollectionsParams) {
 }
 
 /**
+ * 获取用户上传列表
+ * GET /api/wallpapers/wallpaper/my-uploads/
+ */
+export type MyUploadsParams = {
+  currentPage: number;
+  pageSize: number;
+  platform: 'PC' | 'PHONE';
+};
+
+export function getMyUploads(params: MyUploadsParams) {
+  return http.get<WallpaperListResponse>('/api/wallpapers/wallpaper/my-uploads/', { params });
+}
+
+/**
  * 详情：与列表同一套筛选条件，固定 pageSize=1，currentPage = 列表中的序号（第 3 条传 3）。
  */
 export function getWallpaperByListPosition(

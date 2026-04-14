@@ -23,7 +23,6 @@ import {
   User,
   ChevronLeft,
   MessageCircle,
-  Flag,
   Bookmark
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -99,18 +98,12 @@ export default function WallpaperDetailPage() {
       setDownloading(false);
     }
   };
-   const handleCollect = async () => {
+  const handleCollect = async () => {
     try {
-      try {
-        await recordWallpaperCollect(wallpaper.id);
-        setIsLiked((prev) => !prev);
-      } catch {
-      }
-  
+      await recordWallpaperCollect(wallpaper.id);
+      setIsLiked((prev) => !prev);
     } catch {
-      
-    } finally {
-      setDownloading(false);
+      // 收藏失败处理
     }
   };
 
@@ -235,10 +228,6 @@ export default function WallpaperDetailPage() {
             <div className="flex items-center justify-between">
               <span className="text-gray-500">{t.wallpaperDetail.resolution}</span>
               <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">{t.wallpaperDetail.fileSize}</span>
-              <span className="text-gray-900 font-medium">{wallpaper.fileSize}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-500">{t.wallpaperDetail.aspectRatio}</span>

@@ -9,7 +9,6 @@ import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
-import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
@@ -34,7 +33,6 @@ export default function DesktopWallpaperDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
-  const shareUrl = useWallpaperDetailShareUrl();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -292,10 +290,6 @@ export default function DesktopWallpaperDetailPage() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">{t.wallpaperDetail.resolution}</span>
                       <span className="font-medium text-gray-900">{wallpaper.resolution}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t.wallpaperDetail.fileSize}</span>
-                      <span className="font-medium text-gray-900">{wallpaper.fileSize}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">{t.wallpaperDetail.aspectRatio}</span>

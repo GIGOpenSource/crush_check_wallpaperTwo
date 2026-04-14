@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { mockWallpapers } from '../mockData';
 import { Settings, Upload, Image as ImageIcon, Heart, Award } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useMyCollections } from '../hooks/useMyCollections';
+import { useMyUploads } from '../hooks/useMyUploads';
 
 type TabType = 'uploaded' | 'favorites';
 
@@ -19,17 +19,20 @@ export default function DesktopProfilePage() {
   const { 
     wallpapers: favoriteWallpapers, 
     loading: favoritesLoading, 
-    loadingMore,
-    hasMore, 
-    loadMore,
+    loadingMore: favoritesLoadingMore,
+    hasMore: favoritesHasMore, 
+    loadMore: favoritesLoadMore,
     error: favoritesError 
   } = useMyCollections();
 
-  // Mock data - 上传的壁纸暂时使用 Mock 数据
-  const uploadedWallpapers = mockWallpapers.slice(0, 8);
-
-  // 根据活跃标签显示不同的数据
-  const displayWallpapers = activeTab === 'uploaded' ? uploadedWallpapers : favoriteWallpapers;
+  const { 
+    wallpapers: uploadedWallpapers, 
+    loading: uploadsLoading, 
+    loadingMore: uploadsLoadingMore,
+    hasMore: uploadsHasMore, 
+    loadMore: uploadsLoadMore,
+    error: uploadsError 
+  } = useMyUploads();
 
   // 加载中状态
   if (profileLoading) {
@@ -222,14 +225,14 @@ export default function DesktopProfilePage() {
                     <>
                       <DesktopWallpaperGrid wallpapers={favoriteWallpapers} />
                       {/* 加载更多 */}
-                      {hasMore && (
+                      {favoritesHasMore && (
                         <div className="py-8 text-center">
                           <button
-                            onClick={loadMore}
-                            disabled={loadingMore}
+                            onClick={favoritesLoadMore}
+                            disabled={favoritesLoadingMore}
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                           >
-                            {loadingMore ? t.common.loading : '加载更多'}
+                            {favoritesLoadingMore ? t.common.loading : '加载更多'}
                           </button>
                         </div>
                       )}
@@ -249,22 +252,46 @@ export default function DesktopProfilePage() {
                   )}
                 </>
               ) : (
-                // 上传列表 - 暂时使用 Mock 数据
-                displayWallpapers.length > 0 ? (
-                  <DesktopWallpaperGrid wallpapers={displayWallpapers} />
-                ) : (
-                  <div className="py-16 text-center">
-                    <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                      <ImageIcon size={40} className="text-gray-400" />
+                // 上传列表 - 使用真实数据
+                <>
+                  {uploadsLoading ? (
+                    <div className="py-16 text-center">
+                      <p className="text-gray-500">{t.common.loading}</p>
                     </div>
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                      {t.profile.noUploadsYet}
-                    </h3>
-                    <p className="text-gray-500 mb-8">
-                      {t.profile.uploadFirstWallpaper}
-                    </p>
-                  </div>
-                )
+                  ) : uploadsError ? (
+                    <div className="py-16 text-center">
+                      <p className="text-red-500">加载失败，请重试</p>
+                    </div>
+                  ) : uploadedWallpapers.length > 0 ? (
+                    <>
+                      <DesktopWallpaperGrid wallpapers={uploadedWallpapers} />
+                      {/* 加载更多 */}
+                      {uploadsHasMore && (
+                        <div className="py-8 text-center">
+                          <button
+                            onClick={uploadsLoadMore}
+                            disabled={uploadsLoadingMore}
+                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
+                          >
+                            {uploadsLoadingMore ? t.common.loading : '加载更多'}
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="py-16 text-center">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                        <ImageIcon size={40} className="text-gray-400" />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                        {t.profile.noUploadsYet}
+                      </h3>
+                      <p className="text-gray-500 mb-8">
+                        {t.profile.uploadFirstWallpaper}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </section>
           </div>

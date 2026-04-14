@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
-import { currentUser, mockWallpapers } from '../mockData';
+import { mockWallpapers } from '../mockData';
+import { useMyUploads } from '../hooks/useMyUploads';
+import { useMyCollections } from '../hooks/useMyCollections';
+import { useUserProfile } from '../hooks/useUserProfile';
 import {
   Settings,
   Upload,
@@ -22,11 +25,52 @@ export default function ProfilePage() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
 
-  // Mock data - in real app, these would be filtered by user
-  const uploadedWallpapers = mockWallpapers.slice(0, 6);
-  const favoriteWallpapers = mockWallpapers.slice(6, 12);
+  // 获取用户信息
+  const { profile } = useUserProfile();
+  
+  // 获取上传列表
+  const { 
+    wallpapers: uploadedWallpapers, 
+    loading: uploadsLoading, 
+    loadingMore: uploadsLoadingMore,
+    error: uploadsError,
+    hasMore: uploadsHasMore,
+    loadMore: uploadsLoadMore 
+  } = useMyUploads();
 
-  const displayWallpapers = activeTab === 'uploaded' ? uploadedWallpapers : favoriteWallpapers;
+  // 获取收藏列表
+  const { 
+    wallpapers: favoriteWallpapers, 
+    loading: favoritesLoading, 
+    loadingMore: favoritesLoadingMore,
+    error: favoritesError,
+    hasMore: favoritesHasMore,
+    loadMore: favoritesLoadMore 
+  } = useMyCollections();
+
+  // 根据当前Tab显示对应的数据
+  const displayLoading = activeTab === 'uploaded' ? uploadsLoading : favoritesLoading;
+  const displayLoadingMore = activeTab === 'uploaded' ? uploadsLoadingMore : favoritesLoadingMore;
+  const displayError = activeTab === 'uploaded' ? uploadsError : favoritesError;
+  const displayHasMore = activeTab === 'uploaded' ? uploadsHasMore : favoritesHasMore;
+  const displayLoadMore = activeTab === 'uploaded' ? uploadsLoadMore : favoritesLoadMore;
+
+  // 未登录状态
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500 text-center">
+          <p>请先登录</p>
+          <button
+            onClick={() => navigate('/login')}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+          >
+            去登录
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
@@ -37,17 +81,17 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
                 <img
-                  src={currentUser.avatar}
-                  alt={currentUser.username}
+                  src={profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.username)}`}
+                  alt={profile.username}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold mb-1">{currentUser.username}</h1>
+                <h1 className="text-2xl font-bold mb-1">{profile.username}</h1>
                 <div className="flex items-center gap-3 text-sm text-white/90">
-                  <span>{t.profile.level} {currentUser.level}</span>
+                  <span>{t.profile.level} {profile.level || 0}</span>
                   <span>•</span>
-                  <span>{currentUser.points} {t.profile.points}</span>
+                  <span>{profile.points || 0} {t.profile.points}</span>
                 </div>
               </div>
             </div>
@@ -64,21 +108,21 @@ export default function ProfilePage() {
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <ImageIcon size={18} />
-                <span className="text-2xl font-bold">{currentUser.uploadedCount}</span>
+                <span className="text-2xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</span>
               </div>
               <p className="text-xs text-white/80">{t.profile.uploaded}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Heart size={18} />
-                <span className="text-2xl font-bold">{currentUser.favoritesCount}</span>
+                <span className="text-2xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</span>
               </div>
               <p className="text-xs text-white/80">{t.profile.favorites}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Award size={18} />
-                <span className="text-2xl font-bold">{currentUser.badges.length}</span>
+                <span className="text-2xl font-bold">{profile.badges?.length ?? 0}</span>
               </div>
               <p className="text-xs text-white/80">{t.profile.badges}</p>
             </div>
@@ -132,26 +176,88 @@ export default function ProfilePage() {
 
       {/* Content */}
       <div className="py-4">
-        {displayWallpapers.length > 0 ? (
-          <WallpaperGrid wallpapers={displayWallpapers} />
+        {activeTab === 'uploaded' ? (
+          // 上传列表
+          <>
+            {uploadsLoading ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-gray-500">{t.common.loading}</div>
+              </div>
+            ) : uploadsError ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-red-500">加载失败，请重试</div>
+              </div>
+            ) : uploadedWallpapers.length > 0 ? (
+              <>
+                <WallpaperGrid wallpapers={uploadedWallpapers} />
+                {/* 加载更多 */}
+                {uploadsHasMore && (
+                  <div className="px-4 py-6 text-center">
+                    <button
+                      onClick={uploadsLoadMore}
+                      disabled={uploadsLoadingMore}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {uploadsLoadingMore ? t.common.loading : '加载更多'}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="px-4 py-16 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <ImageIcon size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t.profile.noUploadsYet}
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  {t.profile.uploadFirstWallpaper}
+                </p>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="px-4 py-16 text-center">
-            <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              {activeTab === 'uploaded' ? (
-                <ImageIcon size={32} className="text-gray-400" />
-              ) : (
-                <Heart size={32} className="text-gray-400" />
-              )}
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {activeTab === 'uploaded' ? t.profile.noUploadsYet : t.profile.noFavoritesYet}
-            </h3>
-            <p className="text-gray-500 mb-6">
-              {activeTab === 'uploaded'
-                ? t.profile.uploadFirstWallpaper
-                : t.profile.startFavoriting}
-            </p>
-          </div>
+          // 收藏列表
+          <>
+            {favoritesLoading ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-gray-500">{t.common.loading}</div>
+              </div>
+            ) : favoritesError ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-red-500">加载失败，请重试</div>
+              </div>
+            ) : favoriteWallpapers.length > 0 ? (
+              <>
+                <WallpaperGrid wallpapers={favoriteWallpapers} />
+                {/* 加载更多 */}
+                {favoritesHasMore && (
+                  <div className="px-4 py-6 text-center">
+                    <button
+                      onClick={favoritesLoadMore}
+                      disabled={favoritesLoadingMore}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {favoritesLoadingMore ? t.common.loading : '加载更多'}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="px-4 py-16 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Heart size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t.profile.noFavoritesYet}
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  {t.profile.startFavoriting}
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
 
