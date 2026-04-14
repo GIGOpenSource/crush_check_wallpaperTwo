@@ -25,25 +25,48 @@ export default function DesktopRegisterPage() {
     }
     setSubmitting(true);
     try {
-      await registerUser({
+      const response = await registerUser({
         email: email.trim(),
         password,
         confirm_password: confirmPassword,
       });
+      
+      // 检查响应中的code字段（业务状态码）
+      const responseData = response as any;
+      if (responseData && responseData.code !== undefined && responseData.code !== 200) {
+        // 业务失败：提取错误信息
+        const errorMessage = responseData.message || '注册失败';
+        message.error(errorMessage);
+        return;
+      }
+      
+      // 注册成功
       message.success('注册成功，请登录');
       navigate('/login');
     } catch (error) {
+      // 处理HTTP错误（非2xx状态码）
       if (error instanceof ApiError) {
-        const data = error.data as Record<string, unknown> | string | null;
-        if (typeof data === 'string' && data.trim()) {
-          message.error(data);
-        } else if (data && typeof data === 'object') {
-          const first = Object.values(data)[0];
-          if (typeof first === 'string') message.error(first);
-          else if (Array.isArray(first) && typeof first[0] === 'string') message.error(first[0]);
-          else message.error(error.message || '注册失败，请稍后重试');
+        const responseData = error.data as any;
+        
+        // 优先从响应的data中提取详细错误信息
+        if (responseData && responseData.data && typeof responseData.data === 'object') {
+          // 尝试从data对象中提取第一个错误信息
+          const errorDetails = responseData.data;
+          const firstKey = Object.keys(errorDetails)[0];
+          if (firstKey && Array.isArray(errorDetails[firstKey]) && errorDetails[firstKey].length > 0) {
+            message.error(errorDetails[firstKey][0]);
+            return;
+          } else if (firstKey && typeof errorDetails[firstKey] === 'string') {
+            message.error(errorDetails[firstKey]);
+            return;
+          }
+        }
+        
+        // 使用message字段
+        if (error.message && error.message !== 'Request failed') {
+          message.error(error.message);
         } else {
-          message.error(error.message || '注册失败，请稍后重试');
+          message.error('注册失败，请稍后重试');
         }
       } else {
         message.error('注册失败，请稍后重试');
