@@ -1,32 +1,56 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { 
-  User, 
-  Bell, 
-  Shield, 
-  Globe, 
+import { App, Modal } from 'antd';
+import {
+  User,
+  Shield,
   Palette,
+  Bell,
+  Info,
   HelpCircle,
   LogOut,
   ChevronRight,
-  Moon,
+  Smartphone,
+  Monitor,
+  ArrowLeft,
+  Globe,
   Sun,
-  ArrowLeft
+  Moon,
 } from 'lucide-react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { setAuthToken } from '../../api/request';
 import { motion } from 'motion/react';
 
 export default function DesktopSettingsPage() {
+  const { modal } = App.useApp();
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
+  const { profile } = useUserProfile();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notifications, setNotifications] = useState({
     likes: true,
     comments: true,
     follows: true,
-    uploads: false,
+    uploads: true,
   });
+
+  const handleLogout = () => {
+    modal.confirm({
+      title: t.settings.logOut,
+      content: '确定要退出登录吗？',
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => {
+        // 清除 token
+        setAuthToken('');
+        // 跳转到登录页（保持当前视图模式）
+        navigate('/login', { replace: true });
+      },
+    });
+  };
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
@@ -258,7 +282,7 @@ export default function DesktopSettingsPage() {
               <div className="px-6 py-4">
                 <motion.button
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate('/login')}
+                  onClick={handleLogout}
                   className="flex items-center gap-3 px-6 py-3 bg-red-50 border-2 border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors"
                 >
                   <LogOut size={20} />

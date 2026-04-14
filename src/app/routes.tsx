@@ -13,67 +13,106 @@ import SettingsPage from './wrappers/SettingsPage';
 import LoginPage from './wrappers/LoginPage';
 import RegisterPage from './wrappers/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { Outlet } from 'react-router';
+import { LanguageToggle } from './components/LanguageToggle';
+import { ViewModeToggle } from './components/ViewModeToggle';
+import { useLocation } from 'react-router';
+
+// 不需要显示视图切换按钮的路由
+const HIDDEN_TOGGLE_ROUTES = ['/login', '/register'];
+
+function ToggleButtons() {
+  const location = useLocation();
+  const shouldHide = HIDDEN_TOGGLE_ROUTES.some(route => 
+    location.pathname === route || location.pathname.startsWith(route + '/')
+  );
+
+  if (shouldHide) {
+    return null;
+  }
+
+  return (
+    <>
+      <LanguageToggle />
+      <ViewModeToggle />
+    </>
+  );
+}
+
+function RootLayout() {
+  return (
+    <>
+      <Outlet />
+      <ToggleButtons />
+    </>
+  );
+}
 
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: <AplusPageShell />,
+    element: <RootLayout />,
     children: [
       {
-        index: true,
-        element: <HomePage />
-      },
-      {
-        path: 'wallpaper/:id',
-        element: <WallpaperDetailPage />
-      },
-      {
-        path: 'tags',
-        element: <TagsPage />
-      },
-      {
-        path: 'tag/:tagId',
-        element: <TagDetailPage />
-      },
-      {
-        path: 'search',
-        element: <SearchPage />
-      },
-      {
-        path: 'profile',
-        element: <ProfilePage />
-      },
-      {
-        path: 'profile/:userId',
-        element: <ProfilePage />
-      },
-      {
-        path: 'profile/edit',
-        element: <EditProfilePage />
-      },
-      {
-        path: 'upload',
-        element: <UploadPage />
-      },
-      {
-        path: 'settings',
-        element: <SettingsPage />
-      },
-      {
-        path: 'trending',
-        element: <HomePage />
-      },
-      {
-        path: 'login',
-        element: <LoginPage />
-      },
-      {
-        path: 'register',
-        element: <RegisterPage />
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />
+        path: '/',
+        element: <AplusPageShell />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />
+          },
+          {
+            path: 'wallpaper/:id',
+            element: <WallpaperDetailPage />
+          },
+          {
+            path: 'tags',
+            element: <TagsPage />
+          },
+          {
+            path: 'tag/:tagId',
+            element: <TagDetailPage />
+          },
+          {
+            path: 'search',
+            element: <SearchPage />
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />
+          },
+          {
+            path: 'profile/:userId',
+            element: <ProfilePage />
+          },
+          {
+            path: 'profile/edit',
+            element: <EditProfilePage />
+          },
+          {
+            path: 'upload',
+            element: <UploadPage />
+          },
+          {
+            path: 'settings',
+            element: <SettingsPage />
+          },
+          {
+            path: 'trending',
+            element: <HomePage />
+          },
+          {
+            path: 'login',
+            element: <LoginPage />
+          },
+          {
+            path: 'register',
+            element: <RegisterPage />
+          },
+          {
+            path: '*',
+            element: <NotFoundPage />
+          }
+        ]
       }
     ]
   }
