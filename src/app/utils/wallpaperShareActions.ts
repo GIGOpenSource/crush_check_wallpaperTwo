@@ -23,8 +23,12 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
 }
 
 /** @returns 是否成功打开新窗口（被拦截则为 false） */
-export function openWallpaperShareChannel(channel: WallpaperShareChannel, url: string): boolean {
-  const enc = encodeURIComponent(url);
+export function openWallpaperShareChannel(channel: WallpaperShareChannel, wallpaperId: string): boolean {
+  // 构建壁纸详情页的完整URL
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const wallpaperUrl = `${origin}/wallpaper/${encodeURIComponent(wallpaperId)}`;
+  const enc = encodeURIComponent(wallpaperUrl);
+  
   const href =
     channel === 'twitter'
       ? `https://twitter.com/intent/tweet?url=${enc}`

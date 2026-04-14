@@ -132,6 +132,7 @@ export function mapRecordToWallpaper(item: Record<string, unknown>): Wallpaper {
   return {
     id,
     title,
+    description: pickStr(item, ['description', 'desc']) || undefined,
     imageUrl,
     thumbUrl,
     resolution: resolutionFromItem(item),

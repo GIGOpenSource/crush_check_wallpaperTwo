@@ -9,6 +9,8 @@ export interface WallpaperTag {
 export interface Wallpaper {
   id: string;
   title: string;
+  /** 壁纸描述 */
+  description?: string;
   /** 原图（接口 `url`），用于详情大图与下载 */
   imageUrl: string;
   /** 列表缩略图（接口 `thumb_url`）；无则列表回退 `imageUrl` */

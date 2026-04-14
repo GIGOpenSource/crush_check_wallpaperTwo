@@ -122,30 +122,35 @@ export default function DesktopWallpaperDetailPage() {
       <main className="flex-1 ml-64">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-          <div className="px-8 py-4 flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => {
-                umengclick('detail_back');
-                navigate(-1);
-              }}
-              className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <ChevronLeft size={24} className="text-gray-900" />
-            </button>
-            <h1 className="text-xl font-bold text-gray-900 flex-1">{wallpaper.title}</h1>
-            <button
-              onClick={() => setIsFavorited(!isFavorited)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${isFavorited
-                  ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-            >
-              <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} />
-              <span className="font-medium">
-                {isFavorited ? t.wallpaperDetail.saved : t.wallpaperDetail.save}
-              </span>
-            </button>
+          <div className="px-8 py-4">
+            <div className="flex items-center gap-4 mb-2">
+              <button
+                type="button"
+                onClick={() => {
+                  umengclick('detail_back');
+                  navigate(-1);
+                }}
+                className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <ChevronLeft size={24} className="text-gray-900" />
+              </button>
+              <h1 className="text-xl font-bold text-gray-900 flex-1">{wallpaper.title}</h1>
+              <button
+                onClick={() => setIsFavorited(!isFavorited)}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${isFavorited
+                    ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+              >
+                <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} />
+                <span className="font-medium">
+                  {isFavorited ? t.wallpaperDetail.saved : t.wallpaperDetail.save}
+                </span>
+              </button>
+            </div>
+            {wallpaper.description && (
+              <p className="text-sm text-gray-600 ml-14">{wallpaper.description}</p>
+            )}
           </div>
         </header>
 
@@ -384,7 +389,7 @@ export default function DesktopWallpaperDetailPage() {
                     type="button"
                     className="flex flex-col items-center gap-2"
                     onClick={async () => {
-                      await trackAndRunDetailShare(key, shareUrl, () =>
+                      await trackAndRunDetailShare(key, wallpaper.id, () =>
                         message.success(t.wallpaperDetail.linkCopied),
                       );
                       setShowShareSheet(false);

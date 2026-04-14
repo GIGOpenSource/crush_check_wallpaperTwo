@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import type { Wallpaper } from '../types';
 import { getFeaturedWallpapers } from '../../api/wallpaper';
 import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
+import { useView } from '../contexts/ViewContext';
 
 /**
  * 首页精选轮播 Hook
  * 获取编辑精选壁纸用于轮播展示
  */
 export function useHomeFeaturedWallpapers() {
+  const { viewMode } = useView();
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -17,7 +19,10 @@ export function useHomeFeaturedWallpapers() {
     setLoading(true);
     setError(false);
 
-    getFeaturedWallpapers()
+    // 根据 viewMode 转换 platform 参数
+    const platform = viewMode === 'mobile' ? 'PHONE' : 'PC';
+
+    getFeaturedWallpapers(platform)
       .then((raw) => {
         if (cancelled) return;
 
@@ -39,7 +44,7 @@ export function useHomeFeaturedWallpapers() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [viewMode]);
 
   return {
     wallpapers,

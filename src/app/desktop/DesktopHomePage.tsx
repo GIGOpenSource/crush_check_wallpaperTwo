@@ -23,7 +23,7 @@ export default function DesktopHomePage() {
     error: popularError,
     hasMore: popularHasMore,
     sentinelRef: popularSentinelRef,
-  } = useHomePopularWallpapers({ enabled: isTrendingRoute });
+  } = useHomePopularWallpapers({ enabled: !isTrendingRoute });
 
   // 使用真实 API 获取精选壁纸
   const {
@@ -122,9 +122,11 @@ export default function DesktopHomePage() {
                                 <h3 className="text-white text-3xl font-bold mb-3">
                                   {wallpaper.title}
                                 </h3>
-                                <p className="text-white/90 text-lg mb-4">
-                                  {t.home.by} {wallpaper.uploader.username}
-                                </p>
+                                {wallpaper.description && (
+                                  <p className="text-white/90 text-lg mb-4 line-clamp-2">
+                                    {wallpaper.description}
+                                  </p>
+                                )}
                                 <div className="flex items-center gap-4 text-white/80">
                                   <span>{wallpaper.resolution}</span>
                                   <span>•</span>
@@ -184,39 +186,40 @@ export default function DesktopHomePage() {
                   )}
                 </div>
               </section>
-            ) : (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">{t.home.popularWallpapers}</h2>
-                  <Link
-                    to="/search"
-                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                  >
-                    {t.common.viewAll}
-                    <ChevronRight size={20} />
-                  </Link>
-                </div>
-                {popularLoading ? (
-                  <p className="py-12 text-center text-gray-500">{t.common.loading}</p>
-                ) : popularError || popularWallpapers.length === 0 ? (
-                  <p className="py-12 text-center text-gray-500">{t.searchPage.noWallpapersFound}</p>
-                ) : (
-                  <>
-                    <DesktopWallpaperGrid
-                      wallpapers={popularWallpapers}
-                      columns={4}
-                      listNavBase={{ platform: 'PC', media_live: false }}
-                    />
-                    {popularHasMore ? (
-                      <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
-                    ) : null}
-                    {popularLoadingMore ? (
-                      <p className="py-6 text-center text-sm text-gray-400">{t.common.loading}</p>
-                    ) : null}
-                  </>
-                )}
-              </section>
-            )}
+            ) : null}
+
+            {/* Popular Wallpapers */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">{t.home.popularWallpapers}</h2>
+                <Link
+                  to="/search"
+                  className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                >
+                  {t.common.viewAll}
+                  <ChevronRight size={20} />
+                </Link>
+              </div>
+              {popularLoading ? (
+                <p className="py-12 text-center text-gray-500">{t.common.loading}</p>
+              ) : popularError || popularWallpapers.length === 0 ? (
+                <p className="py-12 text-center text-gray-500">{t.searchPage.noWallpapersFound}</p>
+              ) : (
+                <>
+                  <DesktopWallpaperGrid
+                    wallpapers={popularWallpapers}
+                    columns={4}
+                    listNavBase={{ platform: 'PC', media_live: false }}
+                  />
+                  {popularHasMore ? (
+                    <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
+                  ) : null}
+                  {popularLoadingMore ? (
+                    <p className="py-6 text-center text-sm text-gray-400">{t.common.loading}</p>
+                  ) : null}
+                </>
+              )}
+            </section>
           </div>
         </div>
       </main>

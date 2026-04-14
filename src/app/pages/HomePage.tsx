@@ -110,9 +110,18 @@ export default function HomePage() {
                           <h3 className="text-white text-lg font-semibold mb-1">
                             {wallpaper.title}
                           </h3>
-                          <p className="text-white/80 text-sm">
-                            {t.home.by} {wallpaper.uploader.username}
-                          </p>
+                          {wallpaper.description && (
+                            <p className="text-white/80 text-sm mb-2 line-clamp-2">
+                              {wallpaper.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 text-white/80 text-sm">
+                            <span>{wallpaper.resolution}</span>
+                            <span>•</span>
+                            <span>{formatNumber(wallpaper.views)} {t.wallpaperDetail.views.toLowerCase()}</span>
+                            <span>•</span>
+                            <span>{formatNumber(wallpaper.downloads)} {t.wallpaperDetail.downloads.toLowerCase()}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -184,4 +193,11 @@ export default function HomePage() {
       <BottomNav />
     </div>
   );
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
+  return num.toString();
 }

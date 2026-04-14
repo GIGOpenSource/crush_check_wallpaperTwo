@@ -120,11 +120,13 @@ export function guessLike(wallpaper_id: string | number) {
 }
 
 /**
- * 获取精选壁纸（轮播图）
+ * 获取精选壁纸(轮播图)
  * GET /api/wallpapers/wallpaper/featured/
  */
-export function getFeaturedWallpapers() {
-  return http.get<WallpaperListResponse>('/api/wallpapers/wallpaper/featured/');
+export function getFeaturedWallpapers(platform: 'PC' | 'PHONE') {
+  return http.get<WallpaperListResponse>('/api/wallpapers/wallpaper/featured/', {
+    params: { platform },
+  });
 }
 
 /** 下载埋点：点击下载时上报 */

@@ -9,7 +9,6 @@ import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
-import { useWallpaperDetailShareUrl } from '../hooks/useWallpaperDetailShareUrl';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
@@ -35,7 +34,6 @@ export default function WallpaperDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
-  const shareUrl = useWallpaperDetailShareUrl();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -162,6 +160,9 @@ export default function WallpaperDetailPage() {
         {/* Title and Uploader */}
         <div className="px-4 py-4 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
+          {wallpaper.description && (
+            <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
+          )}
           <Link
             to={`/profile/${wallpaper.uploader.id}`}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
@@ -371,7 +372,7 @@ export default function WallpaperDetailPage() {
                     type="button"
                     className="flex flex-col items-center gap-2"
                     onClick={async () => {
-                      await trackAndRunDetailShare(key, shareUrl, () =>
+                      await trackAndRunDetailShare(key, wallpaper.id, () =>
                         message.success(t.wallpaperDetail.linkCopied),
                       );
                       setShowShareSheet(false);
