@@ -1,3 +1,10 @@
+// 存储 navigate 函数的引用，用于在 request.ts 中跳转
+let navigateFunction: ((path: string, options?: any) => void) | null = null;
+
+export function setNavigateFunction(navigate: (path: string, options?: any) => void) {
+  navigateFunction = navigate;
+}
+
 /** 线上资源域名（拼接接口返回的相对图片地址等） */
 export const API_ORIGIN = 'http://192.168.77.46:8002';
 
@@ -134,6 +141,20 @@ export async function request<T = unknown>(
   const payload = await parseResponse(response);
 
   if (!response.ok) {
+    // 处理401未授权错误，跳转到登录页
+    if (response.status === 401) {
+      // 清除token
+      setAuthToken('');
+      
+      // 跳转到登录页（保持当前视图模式）
+      if (navigateFunction && typeof window !== 'undefined') {
+        // 避免重复跳转
+        if (!window.location.pathname.includes('/login')) {
+          navigateFunction('/login', { replace: true });
+        }
+      }
+    }
+    
     const message =
       typeof payload === 'object' && payload && 'message' in payload
         ? String((payload as { message?: unknown }).message || 'Request failed')

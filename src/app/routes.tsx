@@ -1,5 +1,5 @@
-import React from 'react';
-import { createBrowserRouter } from 'react-router';
+import React, { useEffect } from 'react';
+import { createBrowserRouter, useNavigate } from 'react-router';
 import { AplusPageShell } from './analytics/AplusPageShell';
 import HomePage from './wrappers/HomePage';
 import WallpaperDetailPage from './wrappers/WallpaperDetailPage';
@@ -17,6 +17,19 @@ import { Outlet } from 'react-router';
 import { LanguageToggle } from './components/LanguageToggle';
 import { ViewModeToggle } from './components/ViewModeToggle';
 import { useLocation } from 'react-router';
+import { setNavigateFunction } from '../api/request';
+
+// 用于设置navigate函数的组件
+function NavigateInitializer() {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // 将navigate函数传递给request模块
+    setNavigateFunction(navigate);
+  }, [navigate]);
+  
+  return null;
+}
 
 // 不需要显示视图切换按钮的路由
 const HIDDEN_TOGGLE_ROUTES = ['/login', '/register'];
@@ -42,6 +55,7 @@ function ToggleButtons() {
 function RootLayout() {
   return (
     <>
+      <NavigateInitializer />
       <Outlet />
       <ToggleButtons />
     </>
