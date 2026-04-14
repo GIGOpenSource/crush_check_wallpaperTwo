@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { App } from 'antd';
 import { ArrowLeft, Camera, User, Save } from 'lucide-react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
-import { updateUserProfile } from '../../api/wallpaper';
+import { updateUserProfile, uploadAvatar } from '../../api/wallpaper';
 import { motion } from 'motion/react';
 
 export default function DesktopEditProfilePage() {
@@ -13,11 +13,13 @@ export default function DesktopEditProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { profile, refresh } = useUserProfile();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState<0 | 1 | 2>(0);
   const [avatarUrl, setAvatarUrl] = useState('');
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   // 初始化表单数据
   useEffect(() => {
@@ -27,6 +29,55 @@ export default function DesktopEditProfilePage() {
       setAvatarUrl(profile.avatar_url || profile.avatar || '');
     }
   }, [profile]);
+
+  // 处理头像上传
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 验证文件类型
+    if (!file.type.startsWith('image/')) {
+      message.error('请选择图片文件');
+      return;
+    }
+
+    // 验证文件大小（限制5MB）
+    if (file.size > 5 * 1024 * 1024) {
+      message.error('图片大小不能超过5MB');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const response: any = await uploadAvatar({
+        file_name: file.name,
+        type: 'img',
+        file,
+      });
+
+      // 假设返回数据包含图片URL
+      const imageUrl = response.data?.url || response.data?.file_url || response.url;
+      if (imageUrl) {
+        setAvatarUrl(imageUrl);
+        message.success('头像上传成功');
+      } else {
+        message.error('头像上传失败，未返回图片URL');
+      }
+    } catch (error) {
+      console.error('上传头像失败:', error);
+      message.error('头像上传失败，请重试');
+    } finally {
+      setUploadingAvatar(false);
+      // 清空file input，允许重复选择同一文件
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleSave = async () => {
     if (!nickname.trim()) {
@@ -107,23 +158,30 @@ export default function DesktopEditProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <button className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors">
-                    <Camera size={20} className="text-white" />
+                  <button
+                    type="button"
+                    onClick={handleAvatarClick}
+                    disabled={uploadingAvatar}
+                    className="absolute bottom-2 right-2 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  >
+                    {uploadingAvatar ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Camera size={20} className="text-white" />
+                    )}
                   </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    头像URL
-                  </label>
-                  <input
-                    type="text"
-                    value={avatarUrl}
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                    placeholder="输入头像图片的URL地址"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <p className="text-sm text-gray-500 mt-2">
-                    💡 支持输入有效的图片URL地址，例如：https://example.com/avatar.jpg
+                  <p className="text-lg font-medium text-gray-900 mb-2">点击相机图标上传头像</p>
+                  <p className="text-sm text-gray-500">
+                    💡 支持 JPG、PNG 格式，图片大小不超过 5MB
                   </p>
                 </div>
               </div>
@@ -159,7 +217,7 @@ export default function DesktopEditProfilePage() {
                   <motion.button
                     key={option.value}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setGender(option.value)}
+                    onClick={() => setGender(option.value as 0 | 1 | 2)}
                     className={`py-4 px-6 rounded-xl border-2 font-medium transition-all ${
                       gender === option.value
                         ? 'border-blue-600 bg-blue-50 text-blue-600'

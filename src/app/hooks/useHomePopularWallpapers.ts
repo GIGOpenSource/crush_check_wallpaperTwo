@@ -42,12 +42,15 @@ function mapResponse(raw: unknown): Wallpaper[] {
 type UseHomePopularOptions = {
   /** 为 false 时不请求（例：桌面端首页只要 Banner、不要热门接口） */
   enabled?: boolean;
+  /** 是否为热门路由，为 true 时添加 order='hot' 参数 */
+  isHotRoute?: boolean;
 };
 
 export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
   const { viewMode } = useView();
   const platform: PlatformKey = viewMode === 'mobile' ? 'PHONE' : 'PC';
   const enabled = options?.enabled !== false;
+  const isHotRoute = options?.isHotRoute === true;
 
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>(() => {
     const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
@@ -103,6 +106,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
+      order: isHotRoute ? 'hot' : undefined,
     })
       .then((raw) => {
         if (cancelled) return;
@@ -133,7 +137,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
     return () => {
       cancelled = true;
     };
-  }, [platform, enabled]);
+  }, [platform, enabled, isHotRoute]);
 
   const loadNextPage = useCallback(() => {
     if (!enabled || !hasMore || loading || loadingMore || error || fetchingRef.current) return;
@@ -147,6 +151,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
+      order: isHotRoute ? 'hot' : undefined,
     })
       .then((raw) => {
         const mapped = mapResponse(raw);
@@ -184,7 +189,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
         fetchingRef.current = false;
         setLoadingMore(false);
       });
-  }, [enabled, hasMore, loading, loadingMore, error, platform]);
+  }, [enabled, hasMore, loading, loadingMore, error, platform, isHotRoute]);
 
   useEffect(() => {
     if (!enabled) return;

@@ -23,7 +23,7 @@ export default function DesktopHomePage() {
     error: popularError,
     hasMore: popularHasMore,
     sentinelRef: popularSentinelRef,
-  } = useHomePopularWallpapers({ enabled: !isTrendingRoute });
+  } = useHomePopularWallpapers({ enabled: !isTrendingRoute, isHotRoute: isTrendingRoute });
 
   // 使用真实 API 获取精选壁纸
   const {

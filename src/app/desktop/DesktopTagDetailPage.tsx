@@ -8,7 +8,7 @@ import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTagWallpapersList } from '../hooks/useTagWallpapersList';
 
-type SortOption = 'relevance' | 'date' | 'views' | 'downloads';
+type SortOption = 'relevance' | 'latest' | 'views' | 'downloads';
 
 export default function DesktopTagDetailPage() {
   const { t } = useLanguage();
@@ -23,7 +23,7 @@ export default function DesktopTagDetailPage() {
   const decodedId = tagIdParam ? decodeURIComponent(tagIdParam).trim() : '';
 
   // 将sortBy转换为API order参数
-  const apiOrder = sortBy === 'relevance' ? undefined : sortBy as 'latest' | 'views' | 'downloads';
+  const apiOrder = sortBy === 'relevance' ? undefined : sortBy;
 
   const { wallpapers, total, loading, loadingMore, error, sentinelRef, listNavBase } =
     useTagWallpapersList(decodedId || undefined, apiOrder);
@@ -50,7 +50,7 @@ export default function DesktopTagDetailPage() {
 
   const sortOptions: { value: SortOption; label: string; icon: typeof SlidersHorizontal }[] = [
     { value: 'relevance', label: t.tags.relevance, icon: SlidersHorizontal },
-    { value: 'date', label: t.tags.latest, icon: Calendar },
+    { value: 'latest', label: t.tags.latest, icon: Calendar },
     { value: 'views', label: t.tags.mostViewed, icon: Eye },
     { value: 'downloads', label: t.tags.mostDownloaded, icon: Download },
   ];

@@ -21,6 +21,7 @@ export default function HomePage() {
     platform: (viewMode === 'mobile' ? 'PHONE' : 'PC') as 'PC' | 'PHONE',
     media_live: false,
   };
+  const isTrendingRoute = location.pathname === '/trending';
   const {
     wallpapers: popularWallpapers,
     loading: popularLoading,
@@ -28,7 +29,7 @@ export default function HomePage() {
     error: popularError,
     hasMore: popularHasMore,
     sentinelRef: popularSentinelRef,
-  } = useHomePopularWallpapers();
+  } = useHomePopularWallpapers({ isHotRoute: isTrendingRoute });
 
   // 使用真实 API 获取精选壁纸
   const {

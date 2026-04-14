@@ -310,3 +310,30 @@ export type UpdateUserProfileParams = {
 export function updateUserProfile(data: UpdateUserProfileParams) {
   return http.post('/api/client/users/update-profile/', data);
 }
+
+/**
+ * 上传头像参数
+ * POST /api/client/upload-image/
+ */
+export type UploadAvatarParams = {
+  /** 文件名 */
+  file_name: string;
+  /** 类型：固定为 'img' */
+  type: 'img';
+  /** 文件对象 */
+  file: File;
+};
+
+/**
+ * 上传头像
+ * POST /api/client/upload-image/
+ */
+export function uploadAvatar(data: UploadAvatarParams) {
+  const formData = new FormData();
+  formData.append('file_name', data.file_name);
+  formData.append('type', data.type);
+  formData.append('file', data.file);
+  
+  // 注意：不要手动设置 Content-Type，让浏览器自动设置包含 boundary 的值
+  return http.post('/api/client/upload-image/', formData);
+}
