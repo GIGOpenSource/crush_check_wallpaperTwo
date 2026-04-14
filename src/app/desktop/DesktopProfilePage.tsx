@@ -100,13 +100,13 @@ export default function DesktopProfilePage() {
                 <div className="flex items-center gap-6">
                   <div className="w-20 h-20 bg-white rounded-xl overflow-hidden shadow-lg">
                     <img
-                      src={profile.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.username)}
-                      alt={profile.username}
+                      src={profile.avatar_url || profile.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.nickname || profile.username)}
+                      alt={profile.nickname || profile.username}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">{profile.username}</h1>
+                    <h1 className="text-3xl font-bold mb-2">{profile.nickname || profile.username}</h1>
                     <div className="flex items-center gap-3 text-white/90 mb-3">
                       <span>等级 {profile.level || 0}</span>
                       <span>•</span>

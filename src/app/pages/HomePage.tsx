@@ -169,7 +169,9 @@ export default function HomePage() {
       {/* Popular Wallpapers */}
       <section className="py-4">
         <div className="px-4 mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{t.home.popularWallpapers}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            {isTrendingRoute ? t.home.hotWallpapers : t.home.popularWallpapers}
+          </h2>
           <Link to="/search" className="text-sm text-blue-600 hover:text-blue-700">
             {t.common.viewAll}
           </Link>

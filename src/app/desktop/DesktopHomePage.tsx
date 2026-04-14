@@ -23,7 +23,7 @@ export default function DesktopHomePage() {
     error: popularError,
     hasMore: popularHasMore,
     sentinelRef: popularSentinelRef,
-  } = useHomePopularWallpapers({ enabled: !isTrendingRoute, isHotRoute: isTrendingRoute });
+  } = useHomePopularWallpapers({ enabled: true, isHotRoute: isTrendingRoute });
 
   // 使用真实 API 获取精选壁纸
   const {
@@ -191,7 +191,9 @@ export default function DesktopHomePage() {
             {/* Popular Wallpapers */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{t.home.popularWallpapers}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {isTrendingRoute ? t.home.hotWallpapers : t.home.popularWallpapers}
+                </h2>
                 <Link
                   to="/search"
                   className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"

@@ -81,13 +81,13 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
                 <img
-                  src={profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.username)}`}
-                  alt={profile.username}
+                  src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username)}`}
+                  alt={profile.nickname || profile.username}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h1 className="text-2xl font-bold mb-1">{profile.username}</h1>
+                <h1 className="text-2xl font-bold mb-1">{profile.nickname || profile.username}</h1>
                 <div className="flex items-center gap-3 text-sm text-white/90">
                   <span>{t.profile.level} {profile.level || 0}</span>
                   <span>•</span>

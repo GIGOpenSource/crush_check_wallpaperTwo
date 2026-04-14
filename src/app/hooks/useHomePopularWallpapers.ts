@@ -12,6 +12,8 @@ const PAGE_SIZE = 20;
 
 type PlatformKey = 'PC' | 'PHONE';
 
+type CacheKey = `${PlatformKey}_${'home' | 'hot'}`;
+
 type HomePopularSnapshot = {
   wallpapers: Wallpaper[];
   page: number;
@@ -19,8 +21,8 @@ type HomePopularSnapshot = {
   ready: boolean;
 };
 
-/** 跨路由保留首页热门列表，避免从详情返回时重复请求首屏 */
-const homePopularCache: Partial<Record<PlatformKey, HomePopularSnapshot>> = {};
+/** 跨路由保留列表数据，避免从详情返回时重复请求首屏 */
+const homePopularCache: Partial<Record<CacheKey, HomePopularSnapshot>> = {};
 
 function mergeDedupe(prev: Wallpaper[], batch: Wallpaper[]): Wallpaper[] {
   const ids = new Set(prev.map((w) => w.id));
@@ -52,29 +54,27 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
   const enabled = options?.enabled !== false;
   const isHotRoute = options?.isHotRoute === true;
 
+  // 生成缓存键：区分首页和热门路由
+  const cacheKey: CacheKey = `${platform}_${isHotRoute ? 'hot' : 'home'}`;
+
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>(() => {
-    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
-    return homePopularCache[plat]?.wallpapers ?? [];
+    return homePopularCache[cacheKey]?.wallpapers ?? [];
   });
   const [loading, setLoading] = useState(() => {
-    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
     if (options?.enabled === false) return false;
-    return !homePopularCache[plat]?.ready;
+    return !homePopularCache[cacheKey]?.ready;
   });
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(() => {
-    const plat = viewMode === 'mobile' ? 'PHONE' : 'PC';
-    return homePopularCache[plat]?.hasMore ?? true;
+    return homePopularCache[cacheKey]?.hasMore ?? true;
   });
   const [error, setError] = useState(false);
 
-  const pageRef = useRef(
-    homePopularCache[viewMode === 'mobile' ? 'PHONE' : 'PC']?.page ?? 1,
-  );
+  const pageRef = useRef(homePopularCache[cacheKey]?.page ?? 1);
   const fetchingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  /** 有缓存则恢复；无缓存或切换 platform 时拉第一页 */
+  /** 有缓存则恢复；无缓存或切换 platform/route 时拉第一页 */
   useEffect(() => {
     if (!enabled) {
       setLoading(false);
@@ -82,7 +82,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
       return;
     }
 
-    const cached = homePopularCache[platform];
+    const cached = homePopularCache[cacheKey];
     if (cached?.ready) {
       pageRef.current = cached.page;
       setWallpapers(cached.wallpapers);
@@ -114,7 +114,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
         const nextHasMore = mapped.length >= PAGE_SIZE;
         setWallpapers(mapped);
         setHasMore(nextHasMore);
-        homePopularCache[platform] = {
+        homePopularCache[cacheKey] = {
           wallpapers: mapped,
           page: 1,
           hasMore: nextHasMore,
@@ -158,7 +158,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
         if (mapped.length === 0) {
           setHasMore(false);
           setWallpapers((prev) => {
-            homePopularCache[platform] = {
+            homePopularCache[cacheKey] = {
               ready: true,
               wallpapers: prev,
               page: pageRef.current,
@@ -172,7 +172,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
         pageRef.current = nextPage;
         setWallpapers((prev) => {
           const merged = mergeDedupe(prev, mapped);
-          homePopularCache[platform] = {
+          homePopularCache[cacheKey] = {
             ready: true,
             wallpapers: merged,
             page: nextPage,
