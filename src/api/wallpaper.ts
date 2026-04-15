@@ -100,6 +100,15 @@ export function getMyUploads(params: MyUploadsParams) {
 }
 
 /**
+ * 删除壁纸
+ * DELETE /api/wallpapers/wallpaper/{id}/
+ * @param wallpaperId - 壁纸ID
+ */
+export function deleteWallpaper(wallpaperId: number | string) {
+  return http.delete<void>(`/api/wallpapers/wallpaper/${wallpaperId}/`);
+}
+
+/**
  * 详情：与列表同一套筛选条件，固定 pageSize=1，currentPage = 列表中的序号（第 3 条传 3）。
  */
 export function getWallpaperByListPosition(

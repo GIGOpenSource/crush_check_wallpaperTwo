@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
+import { UploadWallpaperGrid } from '../components/UploadWallpaperGrid';
 import { mockWallpapers } from '../mockData';
 import { useMyUploads } from '../hooks/useMyUploads';
 import { useMyCollections } from '../hooks/useMyCollections';
@@ -13,30 +14,37 @@ import {
   Heart,
   Award,
   TrendingUp,
-  Share2
+  Share2,
+  Trash2,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { App, Modal } from 'antd';
+import { deleteWallpaper } from '../../api/wallpaper';
 
 type TabType = 'uploaded' | 'favorites';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { message } = App.useApp();
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
+  const [deletingId, setDeletingId] = useState<number | string | null>(null);
 
   // 获取用户信息
   const { profile } = useUserProfile();
   
   // 获取上传列表
+  const myUploads = useMyUploads();
   const { 
     wallpapers: uploadedWallpapers, 
     loading: uploadsLoading, 
     loadingMore: uploadsLoadingMore,
     error: uploadsError,
     hasMore: uploadsHasMore,
-    loadMore: uploadsLoadMore 
-  } = useMyUploads();
+    loadMore: uploadsLoadMore,
+    refresh: refreshUploads
+  } = myUploads;
 
   // 获取收藏列表
   const { 
@@ -54,6 +62,31 @@ export default function ProfilePage() {
   const displayError = activeTab === 'uploaded' ? uploadsError : favoritesError;
   const displayHasMore = activeTab === 'uploaded' ? uploadsHasMore : favoritesHasMore;
   const displayLoadMore = activeTab === 'uploaded' ? uploadsLoadMore : favoritesLoadMore;
+
+  // 删除壁纸
+  const handleDeleteWallpaper = async (id: number | string) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这个壁纸吗？此操作不可恢复。',
+      okText: '确认删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        setDeletingId(id);
+        try {
+          await deleteWallpaper(id);
+          message.success('删除成功');
+          // 刷新列表
+          refreshUploads();
+        } catch (err) {
+          console.error('删除失败:', err);
+          message.error('删除失败，请重试');
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
+  };
 
   // 未登录状态
   if (!profile) {
@@ -189,7 +222,11 @@ export default function ProfilePage() {
               </div>
             ) : uploadedWallpapers.length > 0 ? (
               <>
-                <WallpaperGrid wallpapers={uploadedWallpapers} />
+                <UploadWallpaperGrid 
+                  wallpapers={uploadedWallpapers} 
+                  onDelete={(id) => handleDeleteWallpaper(id)}
+                  deletingId={deletingId}
+                />
                 {/* 加载更多 */}
                 {uploadsHasMore && (
                   <div className="px-4 py-6 text-center">
