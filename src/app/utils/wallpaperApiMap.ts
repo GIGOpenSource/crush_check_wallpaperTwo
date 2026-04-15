@@ -93,24 +93,7 @@ export function extractWallpaperItemsFromResponse(data: unknown): Record<string,
 /** 将后端记录映射为前端 Wallpaper */
 export function mapRecordToWallpaper(raw: unknown): Wallpaper {
   if (!raw || typeof raw !== 'object') {
-    return {
-      id: '0',
-      title: 'Wallpaper',
-      imageUrl: '',
-      thumbUrl: '',
-      resolution: '—',
-      fileSize: '—',
-      uploadDate: '',
-      uploader: listUploaderPlaceholder,
-      tags: [],
-      views: 0,
-      downloads: 0,
-      likes: 0,
-      favorites: 0,
-      aspectRatio: '16:9',
-      colors: [],
-      purity: 'SFW',
-    };
+    return createEmptyWallpaper();
   }
   const item = raw as Record<string, unknown>;
 
