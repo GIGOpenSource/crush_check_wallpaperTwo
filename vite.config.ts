@@ -6,6 +6,7 @@ import react from '@vitejs/plugin-react'
 const MARK_WALLPAPERS_ORIGIN = 'https://markwallpapers.com'
 
 export default defineConfig({
+    base: '/markwallpapers/',
   server: {
     port: 5174,
     strictPort: true,

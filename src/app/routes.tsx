@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createBrowserRouter, useNavigate } from 'react-router';
+import { createHashRouter, useNavigate, useLocation, Outlet } from 'react-router';
 import { AplusPageShell } from './analytics/AplusPageShell';
 import HomePage from './wrappers/HomePage';
 import WallpaperDetailPage from './wrappers/WallpaperDetailPage';
@@ -13,10 +13,8 @@ import SettingsPage from './wrappers/SettingsPage';
 import LoginPage from './wrappers/LoginPage';
 import RegisterPage from './wrappers/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { Outlet } from 'react-router';
 import { LanguageToggle } from './components/LanguageToggle';
 import { ViewModeToggle } from './components/ViewModeToggle';
-import { useLocation } from 'react-router';
 import { setNavigateFunction } from '../api/request';
 
 // 用于设置navigate函数的组件
@@ -62,7 +60,7 @@ function RootLayout() {
   );
 }
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     element: <RootLayout />,
     children: [
