@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWallpaperComments } from '../hooks/useWallpaperComments';
-import { createComment, toggleCommentLike } from '../../api/wallpaper';
+import { createComment, toggleCommentLike, deleteComment, getUserProfile } from '../../api/wallpaper';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import { Send, Heart } from 'lucide-react';
-import { App } from 'antd';
+import { Send, Heart, Trash2 } from 'lucide-react';
+import { App, Modal } from 'antd';
 
 interface CommentSectionProps {
   wallpaperId: string | number;
@@ -17,6 +17,36 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
   const [commentContent, setCommentContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [likingCommentId, setLikingCommentId] = useState<number | string | null>(null);
+  const [deletingCommentId, setDeletingCommentId] = useState<number | string | null>(null);
+  const [currentCustomerId, setCurrentCustomerId] = useState<number | null>(null);
+
+  // 获取当前登录用户的 customer_id
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await getUserProfile();
+        // 兼容不同的返回格式：response.data 或 response 本身
+        const profile = (response?.data || response) as Record<string, unknown>;
+        
+        if (!profile || typeof profile !== 'object') return;
+        
+        // 优先使用 customer_id，其次使用 id
+        const rawId = profile.customer_id || profile.id;
+        if (!rawId) return;
+        
+        // 转换为数字类型
+        const customerId = typeof rawId === 'string' ? parseInt(rawId, 10) : Number(rawId);
+        
+        if (!isNaN(customerId) && customerId > 0) {
+          setCurrentCustomerId(customerId);
+        }
+      } catch (err) {
+        console.error('获取用户信息失败:', err);
+      }
+    };
+    
+    fetchUserProfile();
+  }, []);
 
   // 格式化时间
   const formatTime = (dateString?: string) => {
@@ -57,6 +87,33 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
       e.preventDefault();
       handleSubmitComment();
     }
+  };
+
+  // 删除评论
+  const handleDeleteComment = (commentId: number | string) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '删除后将无法恢复，确定要删除这条评论吗？',
+      okText: '确定删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        if (deletingCommentId === commentId) return;
+
+        setDeletingCommentId(commentId);
+        try {
+          await deleteComment(commentId);
+          // 删除成功后刷新评论列表
+          refresh();
+          message.success('删除成功');
+        } catch (err) {
+          console.error('删除评论失败:', err);
+          message.error('删除失败，请重试');
+        } finally {
+          setDeletingCommentId(null);
+        }
+      },
+    });
   };
 
   // 点赞/取消点赞评论
@@ -165,6 +222,9 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
                 formatTime={formatTime}
                 onToggleLike={handleToggleLike}
                 isLiking={likingCommentId === comment.id}
+                onDelete={handleDeleteComment}
+                isDeleting={deletingCommentId === comment.id}
+                isOwner={currentCustomerId === comment.customer_info?.id}
               />
             ))}
           </div>
@@ -196,26 +256,32 @@ interface CommentItemProps {
       avatar_url: string;
     };
     like_count?: number;
-    is_hidden?: boolean;
+    is_liked?: boolean;
     created_at?: string;
     parent_id?: number | null;
   };
   formatTime: (dateString?: string) => string;
   onToggleLike: (commentId: number) => void;
   isLiking: boolean;
+  onDelete?: (commentId: number) => void;
+  isDeleting: boolean;
+  isOwner: boolean;
 }
 
 const CommentItem = React.memo(function CommentItem({ 
   comment, 
   formatTime, 
   onToggleLike,
-  isLiking 
+  isLiking,
+  onDelete,
+  isDeleting,
+  isOwner
 }: CommentItemProps) {
   const isReply = comment.parent_id != null;
   const username = comment.customer_info?.nickname || '匿名用户';
   const avatarUrl = comment.customer_info?.avatar_url;
   const likes = comment.like_count || 0;
-  const isLiked = comment.is_hidden || false;
+  const isLiked = comment.is_liked || false;
 
   return (
     <div
@@ -272,6 +338,20 @@ const CommentItem = React.memo(function CommentItem({
             />
             <span>{likes}</span>
           </button>
+          {isOwner && onDelete && (
+            <button
+              onClick={() => onDelete(comment.id)}
+              disabled={isDeleting}
+              className={`flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                isDeleting 
+                  ? 'text-red-500' 
+                  : 'hover:text-red-500'
+              }`}
+              title="删除评论"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
         </div>
       </div>
     </div>

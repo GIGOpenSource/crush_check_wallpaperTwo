@@ -186,7 +186,7 @@ export function mapRecordToWallpaper(raw: unknown): Wallpaper {
     tags,
     views: pickNum(item, ['views', 'view_count', 'view']),
     downloads: pickNum(item, ['downloads', 'download_count']),
-    likes: pickNum(item, ['likes', 'like_count']),
+    likes: pickNum(item, ['collect_count','likes', 'like_count']),
     favorites: pickNum(item, ['favorites', 'favorite_count']),
     aspectRatio: pickStr(item, ['aspectRatio', 'aspect_ratio']) || '16:9',
     colors: Array.isArray(item.colors) ? (item.colors as unknown[]).map(String) : [],

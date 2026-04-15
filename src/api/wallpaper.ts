@@ -14,6 +14,7 @@ export type WallpaperItem = {
   views?: number;
   likes?: number;
   like_count?: number;
+  collect_count?: number;
   is_liked?: boolean;
   is_collected?: boolean;
   has_watermark?: boolean;
@@ -368,8 +369,8 @@ export type CommentItem = {
   customer_info?: CommentCustomerInfo;
   /** 点赞数 */
   like_count?: number;
-  /** 是否已点赞（暂时使用 is_hidden） */
-  is_hidden?: boolean;
+  /** 是否已点赞 */
+  is_liked?: boolean;
   /** 创建时间 */
   created_at?: string;
   /** 更新时间 */
@@ -440,4 +441,13 @@ export function createComment(data: CreateCommentParams) {
  */
 export function toggleCommentLike(commentId: number | string) {
   return http.post<CommentItem>(`/api/wallpapers/comments/${commentId}/toggle-like/`);
+}
+
+/**
+ * 删除评论
+ * DELETE /api/wallpapers/comments/{id}/
+ * @param commentId - 评论ID
+ */
+export function deleteComment(commentId: number | string) {
+  return http.delete<void>(`/api/wallpapers/comments/${commentId}/`);
 }
