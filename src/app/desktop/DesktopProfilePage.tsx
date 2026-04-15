@@ -8,13 +8,17 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useMyCollections } from '../hooks/useMyCollections';
 import { useMyUploads } from '../hooks/useMyUploads';
+import { App, Modal } from 'antd';
+import { deleteWallpaper } from '../../api/wallpaper';
 
 type TabType = 'uploaded' | 'favorites';
 
 export default function DesktopProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { message } = App.useApp();
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
+  const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const { profile, loading: profileLoading, error: profileError } = useUserProfile();
   const { 
     wallpapers: favoriteWallpapers, 
@@ -31,8 +35,34 @@ export default function DesktopProfilePage() {
     loadingMore: uploadsLoadingMore,
     hasMore: uploadsHasMore, 
     loadMore: uploadsLoadMore,
-    error: uploadsError 
+    error: uploadsError,
+    refresh: refreshUploads
   } = useMyUploads();
+
+  // 删除壁纸
+  const handleDeleteWallpaper = async (id: number | string) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这个壁纸吗？此操作不可恢复。',
+      okText: '确认删除',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        setDeletingId(id);
+        try {
+          await deleteWallpaper(id);
+          message.success('删除成功');
+          // 刷新列表
+          refreshUploads();
+        } catch (err) {
+          console.error('删除失败:', err);
+          message.error('删除失败，请重试');
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
+  };
 
   // 加载中状态
   if (profileLoading) {
@@ -264,7 +294,11 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : uploadedWallpapers.length > 0 ? (
                     <>
-                      <DesktopWallpaperGrid wallpapers={uploadedWallpapers} />
+                      <DesktopWallpaperGrid 
+                        wallpapers={uploadedWallpapers} 
+                        onDelete={(id) => handleDeleteWallpaper(id)}
+                        deletingId={deletingId}
+                      />
                       {/* 加载更多 */}
                       {uploadsHasMore && (
                         <div className="py-8 text-center">

@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
-import { Eye, Download, Heart } from 'lucide-react';
+import { Eye, Download, Heart, Trash2 } from 'lucide-react';
 import { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
 import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
@@ -13,6 +13,10 @@ interface DesktopWallpaperGridProps {
   listNavBase?: WallpaperListNavBase;
   /** 列表点击、桌面悬停埋点（不含列表曝光） */
   trackListEvents?: boolean;
+  /** 删除壁纸回调（可选，仅在需要删除功能时传入） */
+  onDelete?: (id: number | string) => void;
+  /** 正在删除的壁纸ID */
+  deletingId?: number | string | null;
 }
 
 export function DesktopWallpaperGrid({
@@ -20,6 +24,8 @@ export function DesktopWallpaperGrid({
   columns = 4,
   listNavBase,
   trackListEvents = true,
+  onDelete,
+  deletingId,
 }: DesktopWallpaperGridProps) {
   return (
     <div
@@ -35,6 +41,8 @@ export function DesktopWallpaperGrid({
           index={index}
           listNavBase={listNavBase}
           trackListEvents={trackListEvents}
+          onDelete={onDelete}
+          isDeleting={deletingId === wallpaper.id}
         />
       ))}
     </div>
@@ -46,11 +54,15 @@ function DesktopWallpaperCard({
   index,
   listNavBase,
   trackListEvents,
+  onDelete,
+  isDeleting,
 }: {
   wallpaper: Wallpaper;
   index: number;
   listNavBase?: WallpaperListNavBase;
   trackListEvents: boolean;
+  onDelete?: (id: number | string) => void;
+  isDeleting: boolean;
 }) {
   const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
     wallpaper.id,
@@ -69,7 +81,27 @@ function DesktopWallpaperCard({
       transition={{ delay: index * 0.03 }}
       whileHover={{ y: -4 }}
       onMouseEnter={onHoverTrack}
+      className="relative"
     >
+      {/* 删除按钮 - 仅当传入 onDelete 时显示 */}
+      {onDelete && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onDelete(wallpaper.id);
+          }}
+          disabled={isDeleting}
+          className="absolute top-3 right-3 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isDeleting ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Trash2 size={16} />
+          )}
+        </button>
+      )}
+
       <Link
         to={`/wallpaper/${wallpaper.id}`}
         state={listState}
@@ -107,8 +139,8 @@ function DesktopWallpaperCard({
             </div>
           </div>
 
-          {/* Resolution badge */}
-          <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-lg font-medium">
+          {/* Resolution badge - 当有删除按钮时移到左边 */}
+          <div className={`absolute top-3 ${onDelete ? 'left-3' : 'right-3'} bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-lg font-medium`}>
             {wallpaper.resolution}
           </div>
         </div>
