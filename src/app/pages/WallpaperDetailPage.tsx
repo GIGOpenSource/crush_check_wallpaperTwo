@@ -3,16 +3,18 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
-import { mockComments, currentUser } from '../mockData';
+import { currentUser } from '../mockData';
 import { trackAndRunDetailShare } from '../analytics/detailPageShareTrack';
 import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
+import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
+import CommentSection from '../components/CommentSection';
 import {
   Download,
   Heart,
@@ -34,9 +36,9 @@ export default function WallpaperDetailPage() {
   const navigate = useNavigate();
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
+  const { comments, total: commentTotal } = useWallpaperComments(id || '');
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [showComments, setShowComments] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState<{
@@ -283,48 +285,9 @@ export default function WallpaperDetailPage() {
           </div>
         </div>
 
-        {/* Comments */}
+        {/* Comments Section */}
         <div className="px-4 py-4 border-b border-gray-200">
-          <button
-            onClick={() => setShowComments(!showComments)}
-            className="flex items-center justify-between w-full mb-3"
-          >
-            <h3 className="text-sm font-semibold text-gray-900">
-              {t.wallpaperDetail.comments} ({mockComments.length})
-            </h3>
-            <MessageCircle size={20} className="text-gray-500" />
-          </button>
-          
-          <AnimatePresence>
-            {showComments && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="space-y-4 overflow-hidden"
-              >
-                {mockComments.map((comment) => (
-                  <div key={comment.id} className="flex gap-3">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium text-gray-900">
-                          {comment.user.username}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(comment.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 mb-1">{comment.content}</p>
-                      <button className="text-xs text-gray-500 hover:text-gray-700">
-                        {tpl(t.wallpaperDetail.commentLikes, { n: comment.likes })}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <CommentSection wallpaperId={id || ''} />
         </div>
 
         {(loadingRelated || relatedWallpapers.length > 0) && (

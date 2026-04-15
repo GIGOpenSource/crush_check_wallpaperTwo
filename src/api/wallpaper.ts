@@ -337,3 +337,107 @@ export function uploadAvatar(data: UploadAvatarParams) {
   // 注意：不要手动设置 Content-Type，让浏览器自动设置包含 boundary 的值
   return http.post('/api/client/upload-image/', formData);
 }
+
+/**
+ * 评论用户信息
+ */
+export type CommentCustomerInfo = {
+  /** 用户ID */
+  id: number;
+  /** 用户邮箱 */
+  email: string;
+  /** 用户昵称 */
+  nickname: string;
+  /** 用户头像URL */
+  avatar_url: string;
+};
+
+/**
+ * 评论项
+ */
+export type CommentItem = {
+  /** 评论ID */
+  id: number;
+  /** 评论内容 */
+  content: string;
+  /** 壁纸ID */
+  wallpaper_id: number | string;
+  /** 用户ID */
+  user_id: number;
+  /** 发布人信息 */
+  customer_info?: CommentCustomerInfo;
+  /** 点赞数 */
+  like_count?: number;
+  /** 是否已点赞（暂时使用 is_hidden） */
+  is_hidden?: boolean;
+  /** 创建时间 */
+  created_at?: string;
+  /** 更新时间 */
+  updated_at?: string;
+  /** 回复的评论ID（如果是回复） */
+  parent_id?: number | null;
+  /** 父评论 */
+  parent_comment?: CommentItem | null;
+  /** 回复数量 */
+  replies_count?: number;
+};
+
+/**
+ * 评论列表响应
+ */
+export type CommentListResponse = {
+  list: CommentItem[];
+  total?: number;
+  [key: string]: unknown;
+};
+
+/**
+ * 获取评论列表参数
+ * GET /api/wallpapers/comments/
+ */
+export type GetCommentsParams = {
+  /** 当前页码 */
+  currentPage: number;
+  /** 每页数量 */
+  pageSize: number;
+  /** 壁纸ID */
+  wallpaper_id: number | string;
+};
+
+/**
+ * 获取评论列表
+ * GET /api/wallpapers/comments/list/
+ */
+export function getComments(params: GetCommentsParams) {
+  return http.get<CommentListResponse>('/api/wallpapers/comments/list/', { params });
+}
+
+/**
+ * 发表评论请求参数
+ * POST /api/wallpapers/comments/
+ */
+export type CreateCommentParams = {
+  /** 壁纸ID */
+  wallpaper_id: number | string;
+  /** 评论内容 */
+  content: string;
+  /** 回复的评论ID（可选，如果是回复评论） */
+  parent_id?: number;
+};
+
+/**
+ * 发表评论
+ * POST /api/wallpapers/comments/
+ */
+export function createComment(data: CreateCommentParams) {
+  return http.post<CommentItem>('/api/wallpapers/comments/', data);
+}
+
+/**
+ * 评论点赞/取消点赞
+ * POST /api/wallpapers/comments/{id}/toggle-like/
+ * @param commentId - 评论ID
+ */
+export function toggleCommentLike(commentId: number | string) {
+  return http.post<CommentItem>(`/api/wallpapers/comments/${commentId}/toggle-like/`);
+}

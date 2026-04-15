@@ -3,16 +3,18 @@ import { useState,useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
-import { mockComments, currentUser } from '../mockData';
+import { currentUser } from '../mockData';
 import { trackAndRunDetailShare } from '../analytics/detailPageShareTrack';
 import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
+import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
+import CommentSection from '../components/CommentSection';
 import {
   Download,
   Heart,
@@ -34,6 +36,7 @@ export default function DesktopWallpaperDetailPage() {
   const navigate = useNavigate();
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
+  const { comments, total: commentTotal } = useWallpaperComments(id || '');
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -170,35 +173,7 @@ export default function DesktopWallpaperDetailPage() {
 
                 {/* Comments Section */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center gap-2 mb-6">
-                    <MessageCircle size={24} className="text-gray-700" />
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {t.wallpaperDetail.comments} ({mockComments.length})
-                    </h3>
-                  </div>
-
-                  <div className="space-y-6">
-                    {mockComments.map((comment) => (
-                      <div key={comment.id} className="flex gap-4">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0" />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="font-semibold text-gray-900">
-                              {comment.user.username}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {new Date(comment.timestamp).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <p className="text-gray-700 mb-2">{comment.content}</p>
-                          <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                            <Heart size={14} />
-                            <span>{tpl(t.wallpaperDetail.commentLikes, { n: comment.likes })}</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <CommentSection wallpaperId={id || ''} />
                 </div>
 
                 {(loadingRelated || relatedWallpapers.length > 0) && (
