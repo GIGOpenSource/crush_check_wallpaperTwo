@@ -451,3 +451,121 @@ export function toggleCommentLike(commentId: number | string) {
 export function deleteComment(commentId: number | string) {
   return http.delete<void>(`/api/wallpapers/comments/${commentId}/`);
 }
+
+/**
+ * 消息通知类型
+ */
+export type NotificationItem = {
+  /** 消息ID */
+  id: number;
+  /** 消息类型 */
+  type?: string;
+  /** 通知类型 (like, reply, comment, system等) */
+  notification_type?: string;
+  /** 消息标题 */
+  title?: string;
+  /** 消息内容 */
+  content?: string;
+  /** 消息显示内容（系统通知专用） */
+  content_display?: string;
+  /** 是否已读 */
+  is_read?: boolean;
+  /** 关联的壁纸ID */
+  wallpaper_id?: number | string;
+  /** 关联的评论ID */
+  comment_id?: number | string;
+  /** 发送者信息 */
+  sender?: {
+    id: number;
+    username: string;
+    nickname: string;
+    avatar_url?: string;
+  };
+  /** 额外数据 */
+  extra_data?: {
+    /** 回复内容 */
+    reply_content?: string;
+    /** 通用内容 */
+    content?: string;
+    /** 其他字段 */
+    [key: string]: unknown;
+  };
+  /** 创建时间 */
+  created_at?: string;
+};
+
+/**
+ * 消息列表响应
+ */
+export type NotificationListResponse = {
+  list?: NotificationItem[];
+  results?: NotificationItem[];
+  total?: number;
+  pagination?: {
+    page: number;
+    page_size: number;
+    total: number;
+    total_pages: number;
+  };
+  [key: string]: unknown;
+};
+
+/**
+ * 获取消息列表参数
+ */
+export type NotificationsListParams = {
+  currentPage: number;
+  pageSize: number;
+};
+
+/**
+ * 获取消息列表
+ * GET /api/notifications/
+ * @param params - 分页参数
+ */
+export function getNotificationsList(params: NotificationsListParams) {
+  return http.get<NotificationListResponse>('/api/notifications/', { 
+    params: {
+      currentPage: params.currentPage,
+      pageSize: params.pageSize,
+    }
+  });
+}
+
+/**
+ * 获取未读消息数量
+ * GET /api/notifications/unread-count/
+ */
+export function getUnreadNotificationCount() {
+  return http.get<{ data: { count: number } }>('/api/notifications/unread-count/');
+}
+
+/**
+ * 标记消息为已读
+ * POST /api/notifications/mark-read/
+ * @param notificationId - 消息ID
+ */
+export function markNotificationAsRead(notificationId: number | string) {
+  return http.post<void>('/api/notifications/mark-read/', {
+    id: notificationId,
+  });
+}
+
+/**
+ * 标记所有消息为已读
+ * POST /api/notifications/mark-read/
+ */
+export function markAllNotificationsAsRead() {
+  return http.post<void>('/api/notifications/mark-read/', {
+    id: 'all',
+  });
+}
+
+/**
+ * 删除消息
+ * DELETE /api/notifications/{id}/
+ * @param notificationId - 消息ID
+ */
+export function deleteNotification(notificationId: number | string) {
+  return http.delete<void>(`/api/notifications/${notificationId}/`);
+}

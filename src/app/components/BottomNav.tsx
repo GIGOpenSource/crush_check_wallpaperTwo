@@ -1,16 +1,18 @@
 import { Link, useLocation } from 'react-router';
-import { Home, Search, Tag, User, Upload } from 'lucide-react';
+import { Home, Search, Tag, User, Upload, Bell } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useUnreadCount } from '../hooks/useUnreadCount';
 
 export function BottomNav() {
   const location = useLocation();
   const { t } = useLanguage();
+  const { unreadCount } = useUnreadCount();
 
   const navItems = [
     { icon: Home, label: t.nav.home, path: '/' },
     { icon: Search, label: t.nav.search, path: '/search' },
-    { icon: Tag, label: t.nav.tags, path: '/tags' },
+    { icon: Bell, label: t.nav.notifications, path: '/notifications', showBadge: true },
     { icon: Upload, label: t.nav.upload, path: '/upload' },
     { icon: User, label: t.nav.profile, path: '/profile' }
   ];
@@ -26,11 +28,11 @@ export function BottomNav() {
             <Link
               key={item.path}
               to={item.path}
-              className="flex flex-col items-center justify-center flex-1 h-full"
+              className="flex flex-col items-center justify-center flex-1 h-full relative"
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}
-                className="flex flex-col items-center"
+                className="flex flex-col items-center relative"
               >
                 <Icon
                   size={24}
@@ -39,6 +41,12 @@ export function BottomNav() {
                   }`}
                   strokeWidth={isActive ? 2.5 : 2}
                 />
+                {/* 未读消息角标 */}
+                {item.showBadge && unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
                 <span
                   className={`text-xs mt-1 transition-colors ${
                     isActive ? 'text-blue-600 font-medium' : 'text-gray-500'

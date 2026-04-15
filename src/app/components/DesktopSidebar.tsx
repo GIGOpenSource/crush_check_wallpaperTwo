@@ -1,16 +1,19 @@
 import { Link, useLocation } from 'react-router';
 import { useNavigate } from 'react-router';
-import { Home, Search, Tag, TrendingUp, Upload, User, Settings } from 'lucide-react';
+import { Home, Search, Tag, TrendingUp, Upload, User, Settings, Bell } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useUnreadCount } from '../hooks/useUnreadCount';
 
 export function DesktopSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { unreadCount } = useUnreadCount();
 
   const navItems = [
     { icon: Home, label: t.nav.home, path: '/' },
     { icon: Search, label: t.nav.search, path: '/search' },
+    { icon: Bell, label: t.nav.notifications, path: '/notifications', showBadge: true },
     { icon: Tag, label: t.nav.tags, path: '/tags' },
     { icon: TrendingUp, label: t.nav.trending, path: '/trending' },
     { icon: Upload, label: t.nav.upload, path: '/upload' },
@@ -53,6 +56,12 @@ export function DesktopSidebar() {
                   >
                     <Icon size={20} strokeWidth={isActive ? 2.25 : 2} />
                     <span className="font-medium">{item.label}</span>
+                    {/* 未读消息角标 */}
+                    {item.showBadge && unreadCount > 0 && (
+                      <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );
