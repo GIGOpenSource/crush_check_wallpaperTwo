@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, UserPlus, Info } from 'lucide-react';
 import { ApiError } from '../../api/request';
 import { registerUser } from '../../api/auth';
+import { BottomNav } from '../components/BottomNav';
 
 export default function RegisterPage() {
   const { message } = App.useApp();
@@ -86,15 +87,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50">
+    <div className="min-h-dvh bg-gray-50 pb-20 max-w-md mx-auto">
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-        <div className="max-w-md mx-auto px-4 pt-6 pb-8">
+        <div className="px-4 pt-6 pb-8">
           <h1 className="text-xl font-bold">创建账号</h1>
           <p className="mt-1 text-white/85 text-xs">注册后即可上传壁纸并收藏你喜欢的内容</p>
         </div>
       </header>
 
-      <main className="max-w-md mx-auto px-4 -mt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <main className="px-4 -mt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="rounded-xl bg-white p-4 shadow-sm border border-gray-100">
           <form className="space-y-3" onSubmit={handleSubmit} noValidate>
             <label className="block">
@@ -161,6 +162,8 @@ export default function RegisterPage() {
           </p>
         </div>
       </main>
+
+      <BottomNav />
     </div>
   );
 }

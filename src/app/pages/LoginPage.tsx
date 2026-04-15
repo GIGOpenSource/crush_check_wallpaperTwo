@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import { ApiError, setAuthToken } from '../../api/request';
 import { extractApiErrorMessage, extractApiToken, isApiSuccess, loginUser } from '../../api/auth';
+import { BottomNav } from '../components/BottomNav';
 
 export default function LoginPage() {
   const { message } = App.useApp();
@@ -52,7 +53,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gray-50">
+    <div className="min-h-dvh bg-gray-50 pb-20 max-w-md mx-auto">
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <div className="max-w-md mx-auto px-4 pt-6 pb-8">
           <h1 className="text-xl font-bold">欢迎回来</h1>
@@ -60,7 +61,7 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <main className="max-w-md mx-auto px-4 -mt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <main className="px-4 -mt-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="rounded-xl bg-white p-4 shadow-sm border border-gray-100">
           <form className="space-y-3" onSubmit={handleSubmit} noValidate>
             <label className="block">
@@ -109,6 +110,8 @@ export default function LoginPage() {
           </p>
         </div>
       </main>
+
+      <BottomNav />
     </div>
   );
 }

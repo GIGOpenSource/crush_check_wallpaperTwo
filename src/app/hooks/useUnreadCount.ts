@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getUnreadNotificationCount } from '../../api/wallpaper';
+import { getAuthToken } from '../../api/request';
 
 /**
  * 获取未读消息数量
@@ -10,6 +11,13 @@ export function useUnreadCount() {
 
   // 获取未读数量
   const fetchUnreadCount = useCallback(async () => {
+    // 如果未登录，不调用接口
+    const token = getAuthToken();
+    if (!token) {
+      setUnreadCount(0);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await getUnreadNotificationCount();

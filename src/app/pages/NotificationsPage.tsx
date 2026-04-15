@@ -1,15 +1,60 @@
-import { Bell, Trash2, Check, CheckCheck } from 'lucide-react';
+import { Bell, Lock, Trash2, Check, CheckCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useNotifications } from '../hooks/useNotifications';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api/wallpaper';
 import { App, Modal } from 'antd';
+import { getAuthToken } from '../../api/request';
+import { BottomNav } from '../components/BottomNav';
 
 /**
  * 消息列表页面 - 移动端
  */
 export default function MobileNotificationsPage() {
+  const navigate = useNavigate();
+  const token = getAuthToken();
+  
+  // 如果未登录，显示需要登录的提示
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 max-w-md mx-auto">
+        {/* 顶部导航 */}
+        <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-4 py-4 flex items-center gap-2">
+            <Bell className="w-5 h-5 text-blue-500" />
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+              消息通知
+            </h1>
+          </div>
+        </div>
+
+        {/* 未登录提示 */}
+        <div className="flex flex-col items-center justify-center py-20 px-6">
+          <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+            <Lock className="w-10 h-10 text-gray-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            请先登录
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-center mb-8">
+            登录后查看您的消息通知
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+          >
+            去登录
+          </button>
+        </div>
+
+        <BottomNav />
+      </div>
+    );
+  }
+
+  // 已登录，正常显示消息列表
   const { notifications, loading, loadingMore, hasMore, loadMore, refresh, total, error } = useNotifications();
   const { refresh: refreshUnreadCount, unreadCount } = useUnreadCount();
   const { message } = App.useApp();
@@ -289,6 +334,8 @@ export default function MobileNotificationsPage() {
           </div>
         )}
       </div>
+
+      <BottomNav />
     </div>
   );
 }

@@ -1,16 +1,51 @@
-import { Bell, Trash2, Check, CheckCheck } from 'lucide-react';
+import { Bell, Lock, Trash2, Check, CheckCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useNotifications } from '../hooks/useNotifications';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api/wallpaper';
 import { App, Modal } from 'antd';
 import { DesktopSidebar } from '../components/DesktopSidebar';
+import { getAuthToken } from '../../api/request';
 
 /**
  * 消息列表页面 - 桌面版
  */
 export default function DesktopNotificationsPage() {
+  const navigate = useNavigate();
+  const token = getAuthToken();
+  
+  // 如果未登录，显示需要登录的提示
+  if (!token) {
+    return (
+      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+        <DesktopSidebar />
+        
+        <div className="flex-1 ml-64 flex items-center justify-center">
+          <div className="text-center max-w-md">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-12 h-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              请先登录
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8">
+              登录后查看您的消息通知
+            </p>
+            <button
+              onClick={() => navigate('/login')}
+              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+            >
+              去登录
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 已登录，正常显示消息列表
   const { notifications, loading, loadingMore, hasMore, loadMore, refresh, total, error } = useNotifications();
   const { refresh: refreshUnreadCount, unreadCount } = useUnreadCount();
   const { message } = App.useApp();
