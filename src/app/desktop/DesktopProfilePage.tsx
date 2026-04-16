@@ -211,6 +211,18 @@ export default function DesktopProfilePage() {
         <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
           <div className="px-8 py-12">
             <div className="max-w-7xl mx-auto">
+              {/* 返回按钮 - 查看他人主页时显示 */}
+              {isOtherUser && (
+                <button
+                  onClick={() => navigate(-1)}
+                  className="mb-6 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+              
               {/* 用户信息区 */}
               <div className="flex items-start mb-8">
                 <div className="flex items-center gap-6 flex-1">

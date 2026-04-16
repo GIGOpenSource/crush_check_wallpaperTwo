@@ -210,6 +210,18 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white relative">
+        {/* 返回按钮 - 查看他人主页时显示 */}
+        {isOtherUser && (
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-6 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        
         {/* 设置按钮 - 右上角 */}
         {!isOtherUser && (
           <button
