@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
+import { Modal } from 'antd';
 import {
   ChevronLeft,
   Upload,
@@ -104,11 +105,25 @@ export default function UploadPage() {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 检查文件大小（10MB = 10 * 1024 * 1024 bytes）
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        Modal.error({
+          title: '图片过大',
+          content: '图片大小不能超过10MB，请选择更小的图片或压缩后再上传。',
+          okText: '知道了',
+          centered: true,
+        });
+        // 清空文件选择
+        e.target.value = '';
+        return;
+      }
+
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
-        setCurrentStep('details');
+        // 移除自动跳转，让用户手动点击下一步
       };
       reader.readAsDataURL(file);
     }
@@ -227,24 +242,32 @@ export default function UploadPage() {
                 const Icon = step.icon;
                 const isActive = index <= currentStepIndex;
                 const isCurrent = step.id === currentStep;
+                const canClick = index < currentStepIndex; // 只有已完成的步骤可以点击
 
                 return (
                   <div key={step.id} className="flex items-center flex-1">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    <button
+                      onClick={() => canClick && setCurrentStep(step.id)}
+                      disabled={!canClick}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                        canClick
+                          ? 'cursor-pointer hover:scale-110 active:scale-95'
+                          : 'cursor-default'
+                      } ${
                         isActive
                           ? isCurrent
                             ? 'bg-blue-600 text-white'
                             : 'bg-green-500 text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
+                      title={canClick ? `返回到${step.label}` : ''}
                     >
                       {isActive && !isCurrent ? (
                         <CheckCircle size={18} />
                       ) : (
                         <Icon size={18} />
                       )}
-                    </div>
+                    </button>
                     {index < steps.length - 1 && (
                       <div
                         className={`flex-1 h-1 mx-2 ${
@@ -280,19 +303,55 @@ export default function UploadPage() {
               <p className="text-sm text-gray-600">{t.upload.selectHighQuality}</p>
             </div>
 
-            <label className="block">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageSelect}
-                className="hidden"
-              />
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
-                <ImageIcon size={48} className="text-gray-400 mx-auto mb-3" />
-                <p className="text-sm text-gray-600 mb-1">{t.upload.clickToSelect}</p>
-                <p className="text-xs text-gray-400">{t.upload.supportedFormats}</p>
+            {/* 如果已有图片，显示预览 */}
+            {selectedImage ? (
+              <div className="space-y-4">
+                <div className="relative rounded-xl overflow-hidden">
+                  <img src={selectedImage} alt="Selected" className="w-full h-64 object-cover" />
+                  <button
+                    onClick={() => {
+                      setSelectedImage(null);
+                      setSelectedFile(null);
+                    }}
+                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+                <label className="block">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
+                    <Upload size={32} className="text-blue-600 mx-auto mb-2" />
+                    <p className="text-sm text-blue-600 font-medium">点击更换图片</p>
+                  </div>
+                </label>
+                <button
+                  onClick={() => setCurrentStep('details')}
+                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  {t.common.next}
+                </button>
               </div>
-            </label>
+            ) : (
+              <label className="block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
+                  <ImageIcon size={48} className="text-gray-400 mx-auto mb-3" />
+                  <p className="text-sm text-gray-600 mb-1">{t.upload.clickToSelect}</p>
+                  <p className="text-xs text-gray-400">{t.upload.supportedFormats}</p>
+                </div>
+              </label>
+            )}
           </motion.div>
         )}
 

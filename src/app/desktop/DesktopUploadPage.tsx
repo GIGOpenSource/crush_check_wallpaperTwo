@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
+import { Modal } from 'antd';
 import {
   Upload,
   Image as ImageIcon,
@@ -106,11 +107,25 @@ export default function DesktopUploadPage() {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 检查文件大小（10MB = 10 * 1024 * 1024 bytes）
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        Modal.error({
+          title: '图片过大',
+          content: '图片大小不能超过10MB，请选择更小的图片或压缩后再上传。',
+          okText: '知道了',
+          centered: true,
+        });
+        // 清空文件选择
+        e.target.value = '';
+        return;
+      }
+
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
-        setCurrentStep('details');
+        // 移除自动跳转，让用户手动点击下一步
       };
       reader.readAsDataURL(file);
     }
@@ -229,25 +244,33 @@ export default function DesktopUploadPage() {
                     const Icon = step.icon;
                     const isActive = index <= currentStepIndex;
                     const isCurrent = step.id === currentStep;
+                    const canClick = index < currentStepIndex; // 只有已完成的步骤可以点击
 
                     return (
                       <div key={step.id} className="flex items-center flex-1">
                         <div className="flex flex-col items-center flex-1">
-                          <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
+                          <button
+                            onClick={() => canClick && setCurrentStep(step.id)}
+                            disabled={!canClick}
+                            className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${
+                              canClick
+                                ? 'cursor-pointer hover:scale-110 active:scale-95'
+                                : 'cursor-default'
+                            } ${
                               isActive
                                 ? isCurrent
                                   ? 'bg-blue-600 text-white'
                                   : 'bg-green-500 text-white'
                                 : 'bg-gray-200 text-gray-400'
                             }`}
+                            title={canClick ? `返回到${step.label}` : ''}
                           >
                             {isActive && !isCurrent ? (
                               <CheckCircle size={24} />
                             ) : (
                               <Icon size={24} />
                             )}
-                          </div>
+                          </button>
                           <span
                             className={`text-sm font-medium ${
                               isActive ? 'text-gray-900' : 'text-gray-400'
@@ -289,19 +312,55 @@ export default function DesktopUploadPage() {
                   <p className="text-gray-600">{t.upload.selectHighQuality}</p>
                 </div>
 
-                <label className="block">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageSelect}
-                    className="hidden"
-                  />
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
-                    <ImageIcon size={64} className="text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg text-gray-600 mb-2">{t.upload.clickToSelect}</p>
-                    <p className="text-sm text-gray-400">{t.upload.supportedFormats}</p>
+                {/* 如果已有图片，显示预览 */}
+                {selectedImage ? (
+                  <div className="space-y-6">
+                    <div className="relative rounded-2xl overflow-hidden">
+                      <img src={selectedImage} alt="Selected" className="w-full h-96 object-cover" />
+                      <button
+                        onClick={() => {
+                          setSelectedImage(null);
+                          setSelectedFile(null);
+                        }}
+                        className="absolute top-4 right-4 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                      >
+                        <X size={24} />
+                      </button>
+                    </div>
+                    <label className="block">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+                      <div className="border-2 border-dashed border-blue-300 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
+                        <Upload size={40} className="text-blue-600 mx-auto mb-3" />
+                        <p className="text-lg text-blue-600 font-medium">点击更换图片</p>
+                      </div>
+                    </label>
+                    <button
+                      onClick={() => setCurrentStep('details')}
+                      className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      {t.common.next}
+                    </button>
                   </div>
-                </label>
+                ) : (
+                  <label className="block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
+                      <ImageIcon size={64} className="text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg text-gray-600 mb-2">{t.upload.clickToSelect}</p>
+                      <p className="text-sm text-gray-400">{t.upload.supportedFormats}</p>
+                    </div>
+                  </label>
+                )}
               </motion.div>
             )}
 
