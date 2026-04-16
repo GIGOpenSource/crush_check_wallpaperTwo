@@ -1,9 +1,32 @@
 // 存储 navigate 函数的引用，用于在 request.ts 中跳转
 let navigateFunction: ((path: string, options?: any) => void) | null = null;
 
+// 存储当前语言的引用，用于在请求头中添加 Accept-Language
+let currentLanguage: string = 'zh-CN';
+
 export function setNavigateFunction(navigate: (path: string, options?: any) => void) {
   navigateFunction = navigate;
 }
+
+// 设置当前语言
+export function setCurrentLanguage(lang: string) {
+  currentLanguage = lang;
+}
+
+// 获取当前语言
+export function getCurrentLanguage(): string {
+  return currentLanguage;
+}
+
+// 语言代码映射（前端语言代码 -> HTTP Accept-Language 标准代码）
+const languageCodeMap: Record<string, string> = {
+  'zh-CN': 'zh-CN',
+  'en': 'en',
+  'ja': 'ja',
+  'ko': 'ko',
+  'es': 'es',
+  'fr': 'fr',
+};
 
 /** 线上资源域名（拼接接口返回的相对图片地址等） */
 export const API_ORIGIN = 'https://markwallpapers.com';
@@ -106,8 +129,13 @@ export async function request<T = unknown>(
   const { method = 'GET', params, data, headers, token, signal } = options;
   const url = buildUrl(path, params);
 
+  // 获取当前语言并映射为标准语言代码
+  const lang = getCurrentLanguage();
+  const acceptLanguage = languageCodeMap[lang] || lang;
+
   const requestHeaders: Record<string, string> = {
     Accept: 'application/json',
+    'Accept-Language': acceptLanguage,
     ...headers,
   };
 

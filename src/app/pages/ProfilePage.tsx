@@ -209,71 +209,72 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+      <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white relative">
+        {/* 设置按钮 - 右上角 */}
+        {!isOtherUser && (
+          <button
+            onClick={() => navigate('/settings')}
+            className="absolute top-6 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"
+          >
+            <Settings size={20} />
+          </button>
+        )}
+        
         <div className="px-4 pt-6 pb-8">
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
-                <img
-                  src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username)}`}
-                  alt={profile.nickname || profile.username}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold mb-1">{profile.nickname || profile.username}</h1>
-                <div className="flex items-center gap-3 text-sm text-white/90">
-                  <span>{t.profile.level} {profile.level || 0}</span>
-                  <span>•</span>
-                  <span>{profile.points || 0} {t.profile.points}</span>
-                </div>
-              </div>
-              {/* 根据是否是其他用户显示不同按钮 */}
-              {isOtherUser ? (
-                <button
-                  onClick={async () => {
-                    console.log(' [ProfilePage] 点击关注/取消关注按钮');
-                    console.log('👤 profile.id:', profile.id, '类型:', typeof profile.id);
-                    console.log('👤 profile:', profile);
-                    
-                    if (followingActionId) return;
-                    setFollowingActionId(profile.id);
-                    try {
-                      console.log('📡 准备调用 toggleFollowUser，参数:', profile.id);
-                      await toggleFollowUser(profile.id);
-                      // 乐观更新
-                      message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
-                      // 刷新用户信息
-                      refreshProfile();
-                    } catch (err) {
-                      console.error('关注操作失败:', err);
-                      message.error(t.profile.followFailed);
-                    } finally {
-                      setFollowingActionId(null);
-                    }
-                  }}
-                  disabled={followingActionId === profile.id}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
-                    (profile as any).is_following
-                      ? 'bg-white/20 text-white hover:bg-white/30'
-                      : 'bg-white text-blue-600 hover:bg-white/90'
-                  }`}
-                >
-                  {followingActionId === profile.id 
-                    ? t.common.loading 
-                    : (profile as any).is_following 
-                    ? t.profile.unfollow 
-                    : t.profile.follow}
-                </button>
-              ) : (
-                <button
-                  onClick={() => navigate('/settings')}
-                  className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                >
-                  <Settings size={20} />
-                </button>
-              )}
+          <div className="flex items-start gap-4 mb-6">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
+              <img
+                src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username)}`}
+                alt={profile.nickname || profile.username}
+                className="w-full h-full object-cover"
+              />
             </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold mb-1">{profile.nickname || profile.username}</h1>
+              <div className="flex items-center gap-3 text-sm text-white/90">
+                <span>{t.profile.level} {profile.level || 0}</span>
+                <span>•</span>
+                <span>{profile.points || 0} {t.profile.points}</span>
+              </div>
+            </div>
+            {/* 根据是否是其他用户显示关注/取消关注按钮 */}
+            {isOtherUser && (
+              <button
+                onClick={async () => {
+                  console.log(' [ProfilePage] 点击关注/取消关注按钮');
+                  console.log('👤 profile.id:', profile.id, '类型:', typeof profile.id);
+                  console.log('👤 profile:', profile);
+                  
+                  if (followingActionId) return;
+                  setFollowingActionId(profile.id);
+                  try {
+                    console.log('📡 准备调用 toggleFollowUser，参数:', profile.id);
+                    await toggleFollowUser(profile.id);
+                    // 乐观更新
+                    message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
+                    // 刷新用户信息
+                    refreshProfile();
+                  } catch (err) {
+                    console.error('关注操作失败:', err);
+                    message.error(t.profile.followFailed);
+                  } finally {
+                    setFollowingActionId(null);
+                  }
+                }}
+                disabled={followingActionId === profile.id}
+                className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
+                  (profile as any).is_following
+                    ? 'bg-white/20 text-white hover:bg-white/30'
+                    : 'bg-white text-blue-600 hover:bg-white/90'
+                }`}
+              >
+                {followingActionId === profile.id 
+                  ? t.common.loading 
+                  : (profile as any).is_following 
+                  ? t.profile.unfollow 
+                  : t.profile.follow}
+              </button>
+            )}
           </div>
 
           {/* 统计卡片 - 查看其他用户时显示所有4个 */}

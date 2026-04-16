@@ -9,18 +9,60 @@ import {
   Tag,
   FileText,
   CheckCircle,
-  Loader
+  Loader,
+  Lock
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getHotTags, uploadWallpaper } from '../../api/wallpaper';
 import type { TagItem } from '../../api/wallpaper';
+import { getAuthToken } from '../../api/request';
 
 type UploadStep = 'select' | 'details' | 'tags' | 'review' | 'uploading' | 'success';
 
 export default function UploadPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const token = getAuthToken();
+
+  // 如果未登录，显示需要登录的提示
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+        {/* 顶部导航 */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className="px-4 py-4 flex items-center gap-2">
+            <Upload className="w-5 h-5 text-blue-500" />
+            <h1 className="text-lg font-semibold text-gray-900">
+              上传壁纸
+            </h1>
+          </div>
+        </div>
+
+        {/* 未登录提示 */}
+        <div className="flex flex-col items-center justify-center py-20 px-6">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+            <Lock className="w-10 h-10 text-gray-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            请先登录
+          </h2>
+          <p className="text-gray-500 text-center mb-8">
+            登录后上传您的壁纸作品
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+          >
+            去登录
+          </button>
+        </div>
+
+        <BottomNav />
+      </div>
+    );
+  }
+
   const [currentStep, setCurrentStep] = useState<UploadStep>('select');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
