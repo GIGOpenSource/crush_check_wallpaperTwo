@@ -24,7 +24,7 @@ import {
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { App, Modal } from 'antd';
-import { deleteWallpaper, toggleFollowUser } from '../../api/wallpaper';
+import { deleteWallpaper, toggleFollowUser, getUserProfile } from '../../api/wallpaper';
 
 // 用户数据类型
 interface FollowUser {
@@ -51,11 +51,37 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | string | null>(null);
+
+  // 获取当前登录用户的ID
+  useEffect(() => {
+    const fetchCurrentUserId = async () => {
+      try {
+        const response = await getUserProfile();
+        const profile = (response?.data || response) as Record<string, unknown>;
+        if (profile && typeof profile === 'object') {
+          const id = profile.id || profile.customer_id;
+          if (id && (typeof id === 'number' || typeof id === 'string')) {
+            setCurrentUserId(id);
+          }
+        }
+      } catch (err) {
+        console.error('获取当前用户ID失败:', err);
+      }
+    };
+    
+    fetchCurrentUserId();
+  }, []);
 
   // 判断是否是查看其他用户的页面
   // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
-  const isOtherUser = !!otherId;
+  const isOtherUser = !!otherId && String(otherId) !== String(currentUserId);
   
+  // 判断是否显示返回按钮
+  // 1. 查看他人主页时始终显示
+  // 2. 查看自己主页时，如果有 userId 参数(从其他页面跳转)则显示，否则不显示(从底部导航进入)
+  const shouldShowBackButton = isOtherUser || !!userId;
+
   // 获取用户信息（如果是其他用户，传递 otherId）
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   
@@ -219,8 +245,8 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white relative">
-        {/* 返回按钮 - 查看他人主页时显示 */}
-        {isOtherUser && (
+        {/* 返回按钮 - 查看他人主页或从其他页面跳转时显示 */}
+        {shouldShowBackButton && (
           <button
             onClick={() => navigate(-1)}
             className="absolute top-6 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"
