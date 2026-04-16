@@ -53,7 +53,8 @@ export default function ProfilePage() {
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
 
   // 判断是否是查看其他用户的页面
-  const isOtherUser = !!otherId || !!userId;
+  // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
+  const isOtherUser = !!otherId;
   
   // 获取用户信息（如果是其他用户，传递 otherId）
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);

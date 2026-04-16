@@ -39,7 +39,8 @@ export default function DesktopProfilePage() {
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
   
   // 判断是否是查看其他用户的页面
-  const isOtherUser = !!otherId || !!userId;
+  // 严格判断：只有明确传入了otherId时，才是查看他人主页
+  const isOtherUser = !!otherId;
   
   const { profile, loading: profileLoading, error: profileError, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
