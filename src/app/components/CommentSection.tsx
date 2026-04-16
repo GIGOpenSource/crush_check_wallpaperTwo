@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { createComment, toggleCommentLike, deleteComment, getUserProfile } from '../../api/wallpaper';
+import { getAuthToken } from '../../api/request';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { Send, Heart, Trash2 } from 'lucide-react';
@@ -11,6 +13,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ wallpaperId }: CommentSectionProps) {
+  const navigate = useNavigate();
   const { message } = App.useApp();
   const { comments, loading, error, hasMore, loadMore, refresh, total } =
     useWallpaperComments(wallpaperId);
@@ -65,6 +68,17 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
   const handleSubmitComment = async () => {
     if (!commentContent.trim() || submitting) return;
 
+    // 检查是否登录
+    const token = getAuthToken();
+    if (!token) {
+      message.warning('请先登录后再发表评论');
+      // 延迟一下跳转，让用户看到提示
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
+
     setSubmitting(true);
     try {
       await createComment({
@@ -74,9 +88,10 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
       setCommentContent('');
       // 刷新评论列表
       refresh();
+      message.success('评论发表成功');
     } catch (err) {
       console.error('发表评论失败:', err);
-      // TODO: 显示错误提示
+      message.error('发表评论失败，请重试');
     } finally {
       setSubmitting(false);
     }
@@ -91,6 +106,16 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
 
   // 删除评论
   const handleDeleteComment = (commentId: number | string) => {
+    // 检查是否登录
+    const token = getAuthToken();
+    if (!token) {
+      message.warning('请先登录后再操作');
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
+
     Modal.confirm({
       title: '确认删除',
       content: '删除后将无法恢复，确定要删除这条评论吗？',
@@ -119,6 +144,17 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
   // 点赞/取消点赞评论
   const handleToggleLike = async (commentId: number | string) => {
     if (likingCommentId === commentId) return; // 防止重复点击
+
+    // 检查是否登录
+    const token = getAuthToken();
+    if (!token) {
+      message.warning('请先登录后再点赞');
+      // 延迟一下跳转，让用户看到提示
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
 
     setLikingCommentId(commentId);
     try {

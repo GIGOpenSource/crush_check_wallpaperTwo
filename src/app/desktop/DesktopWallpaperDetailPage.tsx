@@ -14,6 +14,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
+import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import CommentSection from '../components/CommentSection';
 import {
@@ -115,9 +116,24 @@ export default function DesktopWallpaperDetailPage() {
     }
   };
   const handleCollect = async () => {
+    // 检查是否登录
+    const token = getAuthToken();
+    if (!token) {
+      message.warning('请先登录后再收藏');
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
+
     console.log("开始收藏");
-    const res = await recordWallpaperCollect(wallpaper.id) as { data: { collected: boolean } };
-    setIsLiked(res.data.collected);
+    try {
+      const res = await recordWallpaperCollect(wallpaper.id) as { data: { collected: boolean } };
+      setIsLiked(res.data.collected);
+    } catch (err) {
+      console.error('收藏失败:', err);
+      message.error('操作失败，请重试');
+    }
   };
 
   const handleShare = () => {

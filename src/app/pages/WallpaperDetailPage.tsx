@@ -14,6 +14,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
+import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import CommentSection from '../components/CommentSection';
 import {
@@ -109,11 +110,22 @@ export default function WallpaperDetailPage() {
     }
   };
   const handleCollect = async () => {
+    // 检查是否登录
+    const token = getAuthToken();
+    if (!token) {
+      message.warning('请先登录后再收藏');
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
+
     try {
       await recordWallpaperCollect(wallpaper.id);
       setIsLiked((prev) => !prev);
-    } catch {
-      // 收藏失败处理
+    } catch (err) {
+      console.error('收藏失败:', err);
+      message.error('操作失败，请重试');
     }
   };
 
