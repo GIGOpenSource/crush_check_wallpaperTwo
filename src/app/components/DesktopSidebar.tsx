@@ -71,7 +71,7 @@ export function DesktopSidebar() {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-200">
-          <p className="text-xs text-gray-500">© 2026 MarkWallpapers</p>
+          <p className="text-xs text-gray-500">© 2026 MarkWallpaperss</p>
         </div>
       </div>
     </aside>
