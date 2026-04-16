@@ -9,7 +9,7 @@ import { toggleFollowUser } from '../../api/wallpaper';
 export default function FollowersPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { users, loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowersList();
+  const { users = [], loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowersList();
 
   // 处理关注/取消关注
   const handleToggleFollow = async (userId: number | string) => {

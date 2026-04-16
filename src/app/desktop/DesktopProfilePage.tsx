@@ -49,14 +49,7 @@ export default function DesktopProfilePage() {
     hasMore: favoritesHasMore, 
     loadMore: favoritesLoadMore,
     error: favoritesError 
-  } = !isOtherUser ? useMyCollections() : { 
-    wallpapers: [], 
-    loading: false, 
-    loadingMore: false,
-    hasMore: false, 
-    loadMore: () => {},
-    error: null 
-  };
+  } = useMyCollections();
 
   const { 
     wallpapers: uploadedWallpapers, 
@@ -66,19 +59,11 @@ export default function DesktopProfilePage() {
     loadMore: uploadsLoadMore,
     error: uploadsError,
     refresh: refreshUploads
-  } = !isOtherUser ? useMyUploads() : { 
-    wallpapers: [], 
-    loading: false, 
-    loadingMore: false,
-    hasMore: false, 
-    loadMore: () => {},
-    error: null,
-    refresh: () => {}
-  };
+  } = useMyUploads();
 
   // 获取关注列表
   const {
-    users: followingUsers,
+    users: followingUsers = [],
     loading: followingLoading,
     loadingMore: followingLoadingMore,
     error: followingError,
@@ -89,7 +74,7 @@ export default function DesktopProfilePage() {
 
   // 获取粉丝列表
   const {
-    users: followersUsers,
+    users: followersUsers = [],
     loading: followersLoading,
     loadingMore: followersLoadingMore,
     error: followersError,
@@ -545,7 +530,7 @@ export default function DesktopProfilePage() {
                         disabled={followersLoadingMore}
                         className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                       >
-                        {followersLoadingMore ? t.common.loading : '加载更多'}
+                        {followersLoadingMore ? t.common.loading : t.profile.loadMoreText}
                       </button>
                     </div>
                   )}
@@ -559,7 +544,7 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : favoritesError ? (
                     <div className="py-16 text-center">
-                      <p className="text-red-500">加载失败，请重试</p>
+                      <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : favoriteWallpapers.length > 0 ? (
                     <>
@@ -572,7 +557,7 @@ export default function DesktopProfilePage() {
                             disabled={favoritesLoadingMore}
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                           >
-                            {favoritesLoadingMore ? t.common.loading : '加载更多'}
+                            {favoritesLoadingMore ? t.common.loading : t.profile.loadMoreText}
                           </button>
                         </div>
                       )}
@@ -600,7 +585,7 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : uploadsError ? (
                     <div className="py-16 text-center">
-                      <p className="text-red-500">加载失败，请重试</p>
+                      <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : uploadedWallpapers.length > 0 ? (
                     <>
@@ -617,7 +602,7 @@ export default function DesktopProfilePage() {
                             disabled={uploadsLoadingMore}
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                           >
-                            {uploadsLoadingMore ? t.common.loading : '加载更多'}
+                            {uploadsLoadingMore ? t.common.loading : t.profile.loadMoreText}
                           </button>
                         </div>
                       )}

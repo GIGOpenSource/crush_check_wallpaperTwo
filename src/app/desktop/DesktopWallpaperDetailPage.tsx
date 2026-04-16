@@ -1,5 +1,5 @@
 import { App } from 'antd';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
@@ -50,8 +50,10 @@ export default function DesktopWallpaperDetailPage() {
   }>({ open: false, message: '' });
   
   // 判断是否是自己的壁纸
-  const isOwnWallpaper = wallpaper?.uploader && currentProfile && 
-    String(wallpaper.uploader.id) === String(currentProfile.id);
+  const isOwnWallpaper = useMemo(() => {
+    if (!wallpaper?.uploader || !currentProfile) return false;
+    return String(wallpaper.uploader.id) === String(currentProfile.id);
+  }, [wallpaper?.uploader?.id, currentProfile?.id]);
 
   useEffect(() => {
     console.log("wallpaper", wallpaper);

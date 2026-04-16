@@ -9,7 +9,6 @@ import type { FollowUserItem } from '../../api/wallpaper';
  */
 export function useFollowingList(pageSize: number = 20) {
   const { viewMode } = useView();
-  const isDesktop = viewMode === 'desktop';
   
   const [users, setUsers] = useState<FollowUserItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,30 +137,36 @@ export function useFollowingList(pageSize: number = 20) {
     }
   }, [pageSize]);
 
-  // 首次加载
+  // 使用 ref 存储 loadData 的最新引用
+  const loadDataRef = useRef(loadData);
   useEffect(() => {
-    loadData(1, false);
+    loadDataRef.current = loadData;
+  }, [loadData]);
+
+  // 首次加载 - 每次组件挂载时执行
+  useEffect(() => {
+    loadDataRef.current(1, false);
     
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [loadData]);
+  }, []);
 
   // 加载更多
   const loadMore = useCallback(() => {
     if (!loadingMore && hasMore) {
-      loadData(currentPage + 1, true);
+      loadDataRef.current(currentPage + 1, true);
     }
-  }, [currentPage, loadingMore, hasMore, loadData]);
+  }, [currentPage, loadingMore, hasMore]);
 
   // 刷新列表
   const refresh = useCallback(() => {
     setCurrentPage(1);
     setHasMore(true);
-    loadData(1, false);
-  }, [loadData]);
+    loadDataRef.current(1, false);
+  }, []);
 
   return {
     users,
@@ -181,7 +186,6 @@ export function useFollowingList(pageSize: number = 20) {
  */
 export function useFollowersList(pageSize: number = 20) {
   const { viewMode } = useView();
-  const isDesktop = viewMode === 'desktop';
   
   const [users, setUsers] = useState<FollowUserItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -318,30 +322,36 @@ export function useFollowersList(pageSize: number = 20) {
     }
   }, [pageSize]);
 
-  // 首次加载
+  // 使用 ref 存储 loadData 的最新引用
+  const loadDataRef = useRef(loadData);
   useEffect(() => {
-    loadData(1, false);
+    loadDataRef.current = loadData;
+  }, [loadData]);
+
+  // 首次加载 - 每次组件挂载时执行
+  useEffect(() => {
+    loadDataRef.current(1, false);
     
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [loadData]);
+  }, []);
 
   // 加载更多
   const loadMore = useCallback(() => {
     if (!loadingMore && hasMore) {
-      loadData(currentPage + 1, true);
+      loadDataRef.current(currentPage + 1, true);
     }
-  }, [currentPage, loadingMore, hasMore, loadData]);
+  }, [currentPage, loadingMore, hasMore]);
 
   // 刷新列表
   const refresh = useCallback(() => {
     setCurrentPage(1);
     setHasMore(true);
-    loadData(1, false);
-  }, [loadData]);
+    loadDataRef.current(1, false);
+  }, []);
 
   return {
     users,

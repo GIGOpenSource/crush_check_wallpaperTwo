@@ -58,8 +58,7 @@ export default function ProfilePage() {
   // 获取用户信息（如果是其他用户，传递 otherId）
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   
-  // 获取上传列表（只有自己的页面才显示上传和收藏）
-  const myUploads = useMyUploads();
+  // 始终调用 Hook，避免条件调用违反 React Hooks 规则
   const { 
     wallpapers: uploadedWallpapers, 
     loading: uploadsLoading, 
@@ -68,17 +67,9 @@ export default function ProfilePage() {
     hasMore: uploadsHasMore,
     loadMore: uploadsLoadMore,
     refresh: refreshUploads
-  } = !isOtherUser ? myUploads : { 
-    wallpapers: [], 
-    loading: false, 
-    loadingMore: false,
-    error: null,
-    hasMore: false,
-    loadMore: () => {},
-    refresh: () => {}
-  };
+  } = useMyUploads();
 
-  // 获取收藏列表（只有自己的页面才显示）
+  // 获取收藏列表
   const { 
     wallpapers: favoriteWallpapers, 
     loading: favoritesLoading, 
@@ -86,18 +77,11 @@ export default function ProfilePage() {
     error: favoritesError,
     hasMore: favoritesHasMore,
     loadMore: favoritesLoadMore 
-  } = !isOtherUser ? useMyCollections() : { 
-    wallpapers: [], 
-    loading: false, 
-    loadingMore: false,
-    error: null,
-    hasMore: false,
-    loadMore: () => {}
-  };
+  } = useMyCollections();
 
   // 获取关注列表
   const {
-    users: followingUsers,
+    users: followingUsers = [],
     loading: followingLoading,
     loadingMore: followingLoadingMore,
     error: followingError,
@@ -108,7 +92,7 @@ export default function ProfilePage() {
 
   // 获取粉丝列表
   const {
-    users: followersUsers,
+    users: followersUsers = [],
     loading: followersLoading,
     loadingMore: followersLoadingMore,
     error: followersError,

@@ -26,11 +26,14 @@ function mergeDedupe(prev: Wallpaper[], batch: Wallpaper[]): Wallpaper[] {
 /** 映射 API 响应到 Wallpaper 数组 */
 function mapResponse(raw: unknown): Wallpaper[] {
   const items = extractWallpaperItemsFromResponse(raw);
+  if (!items || !Array.isArray(items)) return [];
+  
   return items
     .map((item) => {
+      if (!item) return undefined;
       return mapRecordToWallpaper(item);
     })
-    .filter((w) => w.id && wallpaperListCoverUrl(w));
+    .filter((w): w is Wallpaper => w !== undefined && w.id !== undefined && wallpaperListCoverUrl(w) !== undefined);
 }
 
 /** 获取总数 */
@@ -60,7 +63,9 @@ function pickTotal(raw: unknown): number | undefined {
  */
 export function useMyUploads() {
   const { viewMode } = useView();
-  const platform = viewMode === 'mobile' ? 'PHONE' : 'PC';
+  const platform: 'PHONE' | 'PC' = viewMode === 'mobile' ? 'PHONE' : 'PC';
+  // 直接使用 platform 初始化 ref，不再通过 useEffect 更新
+  const platformRef = useRef(platform);
 
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [total, setTotal] = useState<number | undefined>(undefined);
@@ -86,7 +91,7 @@ export function useMyUploads() {
     getMyUploads({
       currentPage: 1,
       pageSize: PAGE_SIZE,
-      platform,
+      platform: platformRef.current,
     })
       .then((raw) => {
         if (cancelled) return;
@@ -112,7 +117,13 @@ export function useMyUploads() {
     return () => {
       cancelled = true;
     };
-  }, [platform]);
+  }, []);
+
+  // 使用 ref 存储 loadFirstPage 的最新引用
+  const loadFirstPageRef = useRef(loadFirstPage);
+  useEffect(() => {
+    loadFirstPageRef.current = loadFirstPage;
+  }, [loadFirstPage]);
 
   /** 加载更多 */
   const loadMore = useCallback(() => {
@@ -125,7 +136,7 @@ export function useMyUploads() {
     getMyUploads({
       currentPage: nextPage,
       pageSize: PAGE_SIZE,
-      platform,
+      platform: platformRef.current,
     })
       .then((raw) => {
         const mapped = mapResponse(raw);
@@ -144,17 +155,17 @@ export function useMyUploads() {
         fetchingRef.current = false;
         setLoadingMore(false);
       });
-  }, [hasMore, loading, loadingMore, error, platform]);
+  }, [hasMore, loading, loadingMore, error]);
 
   /** 刷新数据 */
   const refresh = useCallback(() => {
-    loadFirstPage();
-  }, [loadFirstPage]);
+    loadFirstPageRef.current();
+  }, []);
 
-  // 首次加载
+  // 首次加载 - 每次组件挂载时执行
   useEffect(() => {
-    loadFirstPage();
-  }, [loadFirstPage]);
+    loadFirstPageRef.current();
+  }, []);
 
   return {
     wallpapers,

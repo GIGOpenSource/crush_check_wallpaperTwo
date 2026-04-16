@@ -85,7 +85,9 @@ export function useUserProfile(otherId?: string | number) {
         abortControllerRef.current.abort();
       }
     };
-  }, [fetchProfile]);
+    // 依赖 otherId 而不是 fetchProfile，避免无限循环
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otherId]);
 
   // 暴露刷新方法
   const refresh = useCallback(() => {

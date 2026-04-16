@@ -1,5 +1,5 @@
 import { App } from 'antd';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
@@ -50,8 +50,10 @@ export default function WallpaperDetailPage() {
   }>({ open: false, message: '' });
 
   // 判断是否是自己的壁纸
-  const isOwnWallpaper = wallpaper?.uploader && currentProfile && 
-    String(wallpaper.uploader.id) === String(currentProfile.id);
+  const isOwnWallpaper = useMemo(() => {
+    if (!wallpaper?.uploader || !currentProfile) return false;
+    return String(wallpaper.uploader.id) === String(currentProfile.id);
+  }, [wallpaper?.uploader?.id, currentProfile?.id]);
 
   if (loading) {
     return (
