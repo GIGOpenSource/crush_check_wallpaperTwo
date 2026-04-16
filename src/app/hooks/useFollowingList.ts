@@ -50,7 +50,7 @@ export function useFollowingList(pageSize: number = 20) {
       });
 
       // 检查请求是否被取消
-      if (abortController.signal.aborted) return;
+      // if (abortController.signal.aborted) return;
 
       // 详细调试日志
       console.log('=== 关注列表调试 ===');
@@ -63,6 +63,8 @@ export function useFollowingList(pageSize: number = 20) {
       const responseData = response as any;
       let userList: FollowUserItem[] = [];
       let total = 0;
+        userList = responseData.data.results;
+        total = responseData.data.pagination?.total || responseData.data.total || userList.length;
 
       console.log('4. responseData:', responseData);
       console.log('5. responseData.data:', responseData?.data);
@@ -108,6 +110,17 @@ export function useFollowingList(pageSize: number = 20) {
       console.log('===================');
 
       console.log('关注列表数据:', { userList, total, response: responseData });
+      
+      // 详细调试：检查用户数据结构
+      if (userList.length > 0) {
+        console.log('📋 [Debug] 第一条用户数据示例:', userList[0]);
+        console.log('📋 [Debug] 用户数据包含的字段:', Object.keys(userList[0]));
+        console.log('📋 [Debug] 是否有nickname:', 'nickname' in userList[0]);
+        console.log('📋 [Debug] 是否有avatar_url:', 'avatar_url' in userList[0]);
+      } else {
+        console.log('📋 [Debug] 当前页无用户数据');
+      }
+      
       setUsers(prev => isLoadMore ? [...prev, ...userList] : userList);
       setTotal(total);
       setCurrentPage(page);
@@ -209,7 +222,7 @@ export function useFollowersList(pageSize: number = 20) {
       });
 
       // 检查请求是否被取消
-      if (abortController.signal.aborted) return;
+      // if (abortController.signal.aborted) return;
 
       // 详细调试日志
       console.log('=== 粉丝列表调试 ===');
@@ -222,6 +235,8 @@ export function useFollowersList(pageSize: number = 20) {
       const responseData = response as any;
       let userList: FollowUserItem[] = [];
       let total = 0;
+       userList = responseData.data.results;
+        total = responseData.data.pagination?.total || responseData.data.total || userList.length;
 
       console.log('4. responseData:', responseData);
       console.log('5. responseData.data:', responseData?.data);
@@ -267,6 +282,25 @@ export function useFollowersList(pageSize: number = 20) {
       console.log('===================');
 
       console.log('粉丝列表数据:', { userList, total, response: responseData });
+      
+      // 调试：检查用户数据结构
+      if (userList.length > 0) {
+        console.log('📋 第一条用户数据示例:', userList[0]);
+        console.log('📋 用户数据包含的字段:', Object.keys(userList[0]));
+        console.log('📋 是否有nickname:', 'nickname' in userList[0]);
+        console.log('📋 是否有avatar_url:', 'avatar_url' in userList[0]);
+      }
+      
+      // 验证用户信息完整性
+      const hasCompleteUserInfo = userList.length > 0 && userList[0].nickname !== undefined;
+      
+      if (userList.length > 0 && !hasCompleteUserInfo) {
+        console.warn('⚠️ 接口返回的关系记录缺少用户详细信息');
+        console.warn('💡 建议：检查后端是否应返回完整的用户信息，或使用不同的接口');
+        // 暂时不清空列表，让前端尝试显示（可能会显示默认头像和Unknown）
+        // 这样可以确认是数据问题还是渲染问题
+      }
+      
       setUsers(prev => isLoadMore ? [...prev, ...userList] : userList);
       setTotal(total);
       setCurrentPage(page);

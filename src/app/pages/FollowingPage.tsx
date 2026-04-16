@@ -3,30 +3,24 @@ import { useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Users, UserPlus } from 'lucide-react';
-
-// 临时用户数据类型（待后端接口实现后更新）
-interface FollowUser {
-  id: number | string;
-  username: string;
-  nickname?: string;
-  avatar_url?: string;
-  avatar?: string;
-  is_following?: boolean;
-  upload_count?: number;
-  follower_count?: number;
-}
+import { useFollowingList } from '../hooks/useFollowingList';
+import { toggleFollowUser } from '../../api/wallpaper';
 
 export default function FollowingPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { users, loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowingList();
 
-  // TODO: 待实现 - 调用API获取关注列表
-  // const { following, loading, loadMore, hasMore } = useFollowingList();
-  
-  // 临时模拟数据
-  const following: FollowUser[] = [];
-  const loading = false;
-  const hasMore = false;
+  // 处理关注/取消关注
+  const handleToggleFollow = async (userId: number | string) => {
+    try {
+      await toggleFollowUser(userId);
+      // 刷新列表
+      refresh();
+    } catch (err) {
+      console.error('操作失败:', err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
@@ -51,9 +45,19 @@ export default function FollowingPage() {
           <div className="px-4 py-16 text-center">
             <div className="text-gray-500">{t.common.loading}</div>
           </div>
-        ) : following.length > 0 ? (
+        ) : error ? (
+          <div className="px-4 py-16 text-center">
+            <div className="text-red-500">{error}</div>
+            <button
+              onClick={refresh}
+              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              {t.common.retry}
+            </button>
+          </div>
+        ) : users.length > 0 ? (
           <div className="space-y-2">
-            {following.map((user) => (
+            {users.map((user) => (
               <div
                 key={user.id}
                 className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
@@ -61,8 +65,8 @@ export default function FollowingPage() {
                 {/* Avatar */}
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                   <img
-                    src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username)}`}
-                    alt={user.nickname || user.username}
+                    src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || '')}`}
+                    alt={user.nickname || user.username || 'User'}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -70,7 +74,7 @@ export default function FollowingPage() {
                 {/* User Info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">
-                    {user.nickname || user.username}
+                    {user.nickname || user.username || 'Unknown'}
                   </h3>
                   <div className="text-sm text-gray-500 flex items-center gap-2">
                     <span>{user.upload_count || 0} {t.profile.uploaded}</span>
@@ -81,13 +85,14 @@ export default function FollowingPage() {
 
                 {/* Follow Button */}
                 <button
+                  onClick={() => handleToggleFollow(user.id)}
                   className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    user.is_following
+                    user.is_followed || user.is_following
                       ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  {user.is_following ? t.profile.unfollow : t.profile.follow}
+                  {user.is_followed || user.is_following ? t.profile.unfollow : t.profile.follow}
                 </button>
               </div>
             ))}
@@ -96,10 +101,11 @@ export default function FollowingPage() {
             {hasMore && (
               <div className="px-4 py-6 text-center">
                 <button
-                  onClick={() => {/* TODO: 加载更多 */}}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
                 >
-                  {t.common.loading}
+                  {loadingMore ? t.common.loading : t.common.loadMore}
                 </button>
               </div>
             )}
