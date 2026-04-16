@@ -726,12 +726,24 @@ export function getFollowersList(params: FollowersListParams) {
  * @param followingId - 用户ID（关注列表/粉丝列表中的id）
  */
 export function toggleFollowUser(followingId: number | string) {
-  console.log(' [toggleFollowUser] 被调用');
-  console.log('🔵 followingId:', followingId, '类型:', typeof followingId);
+  console.log('=== [toggleFollowUser] 调试信息 ===');
+  console.log('🔵 传入的 followingId:', followingId);
+  console.log('🔵 followingId 类型:', typeof followingId);
   console.log('🔵 followingId 是否为空:', !followingId);
+  console.log('🔵 followingId 是否为 undefined:', followingId === undefined);
+  console.log('🔵 followingId 是否为 null:', followingId === null);
+  
+  // 验证参数
+  if (!followingId && followingId !== 0) {
+    console.error('❌ 错误: followingId 为空或未定义！');
+    console.error('   请检查调用处是否正确传递了 user.id');
+    throw new Error('followingId 不能为空');
+  }
   
   const requestData = { following_id: followingId };
-  console.log('📦 requestData:', requestData);
+  console.log('📦 请求数据 requestData:', requestData);
+  console.log('📦 following_id 的值:', requestData.following_id);
+  console.log('=====================================');
   
   return http.post<{ is_followed: boolean }>(`/api/wallpapers/followers/toggle/`, requestData);
 }

@@ -125,16 +125,30 @@ export async function request<T = unknown>(
   }
 
   if (data !== undefined && data !== null) {
+    console.log(' [request] 检测到 data 参数');
+    console.log('🔍 data 类型:', typeof data);
+    console.log('🔍 data 是否为 FormData:', data instanceof FormData);
+    console.log('🔍 data 内容:', data);
+    
     // 特殊处理 FormData：不要设置 Content-Type，让浏览器自动设置 boundary
     if (data instanceof FormData) {
       init.body = data;
       // 删除之前设置的 Content-Type，让浏览器自动处理
       delete requestHeaders['Content-Type'];
+      console.log('📤 [request] FormData 请求:', { url, method });
     } else {
       // 普通 JSON 数据
       requestHeaders['Content-Type'] = 'application/json';
       init.body = JSON.stringify(data);
+      console.log('📤 [request] JSON 请求:', { 
+        url, 
+        method, 
+        body: init.body,
+        parsedBody: data
+      });
     }
+  } else {
+    console.log('⚠️ [request] data 参数为空:', { data, isUndefined: data === undefined, isNull: data === null });
   }
 
   const response = await fetch(url, init);
@@ -166,14 +180,30 @@ export async function request<T = unknown>(
 }
 
 export const http = {
-  get: <T = unknown>(path: string, options?: RequestOptions) =>
-    request<T>(path, { method: 'GET', ...options }),
-  post: <T = unknown>(path: string, options?: RequestOptions) =>
-    request<T>(path, { method: 'POST', ...options }),
-  put: <T = unknown>(path: string, options?: RequestOptions) =>
-    request<T>(path, { method: 'PUT', ...options }),
-  patch: <T = unknown>(path: string, options?: RequestOptions) =>
-    request<T>(path, { method: 'PATCH', ...options }),
-  delete: <T = unknown>(path: string, options?: RequestOptions) =>
-    request<T>(path, { method: 'DELETE', ...options }),
+  get: <T = unknown>(
+    path: string,
+    options?: Omit<RequestOptions, 'method' | 'data'>,
+  ) => request<T>(path, { ...options, method: 'GET' }),
+  post: <T = unknown>(
+    path: string,
+    data?: unknown,
+    options?: Omit<RequestOptions, 'method' | 'data'>,
+  ) => request<T>(path, { ...options, method: 'POST', data }),
+  put: <T = unknown>(
+    path: string,
+    data?: unknown,
+    options?: Omit<RequestOptions, 'method' | 'data'>,
+  ) => request<T>(path, { ...options, method: 'PUT', data }),
+  patch: <T = unknown>(
+    path: string,
+    data?: unknown,
+    options?: Omit<RequestOptions, 'method' | 'data'>,
+  ) => request<T>(path, { ...options, method: 'PATCH', data }),
+  delete: <T = unknown>(
+    path: string,
+    options?: Omit<RequestOptions, 'method' | 'data'>,
+  ) => request<T>(path, { ...options, method: 'DELETE' }),
 };
+
+/** @deprecated 请使用 API_ORIGIN；与历史代码兼容 */
+export const API_BASE_URL = API_ORIGIN;

@@ -13,6 +13,11 @@ export default function FollowersPage() {
 
   // 处理关注/取消关注
   const handleToggleFollow = async (userId: number | string) => {
+    console.log('=== [handleToggleFollow] 调用信息 ===');
+    console.log('🔵 userId:', userId);
+    console.log('🔵 userId 类型:', typeof userId);
+    console.log('🔵 userId 是否为空:', !userId);
+    
     try {
       await toggleFollowUser(userId);
       // 刷新列表

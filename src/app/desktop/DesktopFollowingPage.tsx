@@ -91,7 +91,11 @@ export default function DesktopFollowingPage() {
                         {/* Follow Button */}
                         <button
                           onClick={() => handleToggleFollow(user.id)}
-                          className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300`}
+                          className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            user.is_following
+                              ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          }`}
                         >
                           {user.is_following ? t.profile.unfollow : t.profile.follow}
                         </button>

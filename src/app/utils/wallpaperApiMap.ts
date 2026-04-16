@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ORIGIN } from '../../api/request';
+import { API_BASE_URL } from '../../api/request';
 import type { User, Wallpaper, WallpaperTag } from '../types';
 
 const listUploaderPlaceholder: User = {
@@ -45,7 +45,7 @@ function resolutionFromItem(item: Record<string, unknown>): string {
 function resolveMediaUrl(url: string): string {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  const base = API_ORIGIN.replace(/\/$/, '');
+  const base = API_BASE_URL.replace(/\/$/, '');
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 

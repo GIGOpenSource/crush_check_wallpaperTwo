@@ -231,13 +231,19 @@ export default function DesktopProfilePage() {
                     {isOtherUser ? (
                       <button
                         onClick={async () => {
+                          console.log(' [DesktopProfilePage] 点击关注/取消关注按钮');
+                          console.log('👤 otherId:', otherId, '类型:', typeof otherId);
+                          console.log('👤 profile.id:', profile?.id, '类型:', typeof profile?.id);
+                          
                           if (followingActionId) return;
                           
                           // 使用路由参数中的 otherId 作为 following_id
                           const targetUserId = otherId || profile?.id;
+                          console.log('🎯 目标用户ID (following_id):', targetUserId);
                           
                           setFollowingActionId(targetUserId!);
                           try {
+                            console.log('📡 准备调用 toggleFollowUser，参数:', targetUserId);
                             await toggleFollowUser(targetUserId!);
                             // 乐观更新
                             message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
@@ -451,13 +457,19 @@ export default function DesktopProfilePage() {
                           
                           {/* 操作按钮 */}
                           <button
-                            onClick={() => handleToggleFollow(user.id, true)}
+                            onClick={() => handleToggleFollow(user.id, user.is_following || false)}
                             disabled={followingActionId === user.id}
-                            className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200`}
+                            className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
+                              user.is_following
+                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                            }`}
                           >
                             {followingActionId === user.id
                               ? t.common.loading
-                              : t.profile.unfollow}
+                              : user.is_following
+                              ? t.profile.unfollow
+                              : t.profile.followBack}
                           </button>
                         </div>
                       ))}

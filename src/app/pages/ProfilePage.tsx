@@ -231,14 +231,15 @@ export default function ProfilePage() {
               {isOtherUser ? (
                 <button
                   onClick={async () => {
+                    console.log(' [ProfilePage] 点击关注/取消关注按钮');
+                    console.log('👤 profile.id:', profile.id, '类型:', typeof profile.id);
+                    console.log('👤 profile:', profile);
+                    
                     if (followingActionId) return;
-                    
-                    // 使用路由参数中的 otherId 作为 following_id
-                    const targetUserId = otherId || profile?.id;
-                    
-                    setFollowingActionId(targetUserId!);
+                    setFollowingActionId(profile.id);
                     try {
-                      await toggleFollowUser(targetUserId!);
+                      console.log('📡 准备调用 toggleFollowUser，参数:', profile.id);
+                      await toggleFollowUser(profile.id);
                       // 乐观更新
                       message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
                       // 刷新用户信息
@@ -447,13 +448,19 @@ export default function ProfilePage() {
                     
                     {/* 操作按钮 */}
                     <button
-                      onClick={() => handleToggleFollow(user.id, true)}
+                      onClick={() => handleToggleFollow(user.id, user.is_following || false)}
                       disabled={followingActionId === user.id}
-                      className={`px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200`}
+                      className={`px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
+                        user.is_following
+                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
                     >
                       {followingActionId === user.id
                         ? t.common.loading
-                        : t.profile.unfollow}
+                        : user.is_following
+                        ? t.profile.unfollow
+                        : t.profile.followBack}
                     </button>
                   </div>
                 ))}
