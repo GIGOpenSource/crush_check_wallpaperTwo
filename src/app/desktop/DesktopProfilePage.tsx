@@ -548,7 +548,7 @@ export default function DesktopProfilePage() {
                             {followingActionId === user.id
                               ? t.common.loading
                               : user.is_followed
-                              ? t.profile.unfollow
+                              ? t.profile.mutualFollow
                               : t.profile.followBack}
                           </button>
                         </div>

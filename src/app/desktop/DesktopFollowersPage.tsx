@@ -58,46 +58,43 @@ export default function DesktopFollowersPage() {
                 {users.map((user) => (
                   <div
                     key={user.id}
-                    className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                    className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                   >
                     <div className="flex items-start gap-4">
-                      {/* Avatar - Clickable */}
-                      <button
-                        onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
-                        className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
-                      >
+                      {/* Avatar */}
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all">
                         <img
                           src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || '')}`}
                           alt={user.nickname || user.username || 'User'}
                           className="w-full h-full object-cover"
                         />
-                      </button>
+                      </div>
 
                       {/* User Info */}
                       <div className="flex-1 min-w-0">
-                        {/* Username - Clickable */}
-                        <button
-                          onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
-                          className="font-semibold text-gray-900 truncate mb-1 hover:text-blue-600 transition-colors w-full text-left"
-                        >
+                        <div className="font-semibold text-gray-900 truncate mb-1 hover:text-blue-600 transition-colors w-full text-left">
                           {user.nickname || user.username || 'Unknown'}
-                        </button>
+                        </div>
                         <div className="text-sm text-gray-500 flex items-center gap-2 mb-3">
                           <span>{user.upload_count || 0} {t.profile.uploaded}</span>
                           <span>•</span>
                           <span>{user.follower_count || 0} {t.profile.followers}</span>
                         </div>
 
-                        {/* Follow Button */}
+                        {/* Follow Button - Stop propagation to prevent card click */}
                         <button
-                          onClick={() => handleToggleFollow(user.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleFollow(user.id);
+                          }}
                           className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                             user.is_following
                               ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                               : 'bg-blue-600 text-white hover:bg-blue-700'
                           }`}
                         >
-                          {user.is_following ? t.profile.unfollow : t.profile.followBack}
+                          {user.is_followed ? t.profile.mutualFollow : t.profile.followBack}
                         </button>
                       </div>
                     </div>
