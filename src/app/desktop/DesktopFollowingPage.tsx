@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { App } from 'antd';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Users, UserPlus } from 'lucide-react';
@@ -9,16 +10,25 @@ import { toggleFollowUser } from '../../api/wallpaper';
 export default function DesktopFollowingPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { message } = App.useApp();
   const { users = [], loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowingList();
 
-  // 处理关注/取消关注
+  // 每次进入页面时重新请求数据
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  // 处理取消关注
   const handleToggleFollow = async (userId: number | string) => {
     try {
       await toggleFollowUser(userId);
+      // 显示成功提示
+      message.success(t.profile.unfollowSuccess);
       // 刷新列表
       refresh();
     } catch (err) {
       console.error('操作失败:', err);
+      message.error(t.profile.followFailed);
     }
   };
 

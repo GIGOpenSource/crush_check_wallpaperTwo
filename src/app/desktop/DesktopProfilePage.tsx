@@ -104,6 +104,15 @@ export default function DesktopProfilePage() {
     refresh: refreshFollowers
   } = useFollowersList();
 
+  // 每次切换到关注或粉丝Tab时，重新请求数据
+  useEffect(() => {
+    if (activeTab === 'following') {
+      refreshFollowing();
+    } else if (activeTab === 'followers') {
+      refreshFollowers();
+    }
+  }, [activeTab, refreshFollowing, refreshFollowers]);
+
   // 删除壁纸
   const handleDeleteWallpaper = async (id: number | string) => {
     Modal.confirm({
@@ -470,7 +479,7 @@ export default function DesktopProfilePage() {
                           
                           {/* 操作按钮 */}
                           <button
-                            onClick={() => handleToggleFollow(user.id, user.is_following || false)}
+                            onClick={() => handleToggleFollow(user.id, true)}
                             disabled={followingActionId === user.id}
                             className="px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200"
                           >

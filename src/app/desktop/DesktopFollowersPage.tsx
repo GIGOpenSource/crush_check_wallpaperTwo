@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -10,6 +10,11 @@ export default function DesktopFollowersPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { users = [], loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowersList();
+
+  // 每次进入页面时重新请求数据
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   // 处理关注/取消关注
   const handleToggleFollow = async (userId: number | string) => {
