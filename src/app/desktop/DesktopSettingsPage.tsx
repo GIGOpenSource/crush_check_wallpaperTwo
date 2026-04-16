@@ -107,7 +107,10 @@ export default function DesktopSettingsPage() {
                   <ChevronRight size={20} className="text-gray-400" />
                 </motion.div>
                 
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
+                <div 
+                  onClick={() => navigate('/site-info/privacy')}
+                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-purple-100 rounded-xl">
                       <Shield size={24} className="text-purple-600" />
@@ -272,7 +275,10 @@ export default function DesktopSettingsPage() {
                 <h2 className="text-xl font-bold text-gray-900">{t.settings.about}</h2>
               </div>
               <div className="divide-y divide-gray-100">
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
+                <div 
+                  onClick={() => navigate('/site-info/help')}
+                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-gray-100 rounded-xl">
                       <HelpCircle size={24} className="text-gray-600" />
@@ -285,7 +291,10 @@ export default function DesktopSettingsPage() {
                   <ChevronRight size={20} className="text-gray-400" />
                 </div>
                 
-                <div className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
+                <div 
+                  onClick={() => navigate('/site-info/about')}
+                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-gray-100 rounded-xl">
                       <Palette size={24} className="text-gray-600" />

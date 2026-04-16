@@ -646,6 +646,26 @@ export function updateNotificationSettings(data: UpdateNotificationSettingsParam
 }
 
 /**
+ * 站点信息类型（隐私政策、帮助中心、关于）
+ */
+export type SiteInfo = {
+  /** 内容标题 */
+  title?: string;
+  /** 内容正文（HTML或纯文本） */
+  content?: string;
+  [key: string]: unknown;
+};
+
+/**
+ * 获取站点信息
+ * GET /api/site/{type}/
+ * @param type - 信息类型: 'privacy' | 'help' | 'about'
+ */
+export function getSiteInfo(type: 'privacy' | 'help' | 'about') {
+  return http.get<SiteInfo>(`/api/site/${type}/`);
+}
+
+/**
  * 关注/粉丝用户数据类型
  * 根据实际接口返回格式定义
  */

@@ -10,6 +10,7 @@ import ProfilePage from './wrappers/ProfilePage';
 import EditProfilePage from './wrappers/EditProfilePage';
 import UploadPage from './wrappers/UploadPage';
 import SettingsPage from './wrappers/SettingsPage';
+import SiteInfoPage from './wrappers/SiteInfoPageWrapper';
 import LoginPage from './wrappers/LoginPage';
 import RegisterPage from './wrappers/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -134,6 +135,10 @@ export const router = createHashRouter([
           {
             path: 'settings',
             element: <SettingsPage />
+          },
+          {
+            path: 'site-info/:type',
+            element: <SiteInfoPage />
           },
           {
             path: 'notifications',

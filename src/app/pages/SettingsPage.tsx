@@ -11,7 +11,6 @@ import {
   LogOut,
   ChevronRight,
   ArrowLeft,
-  Globe,
   Sun,
   Moon,
   Heart,
@@ -50,17 +49,6 @@ export default function SettingsPage() {
     });
   };
 
-  const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  ];
-
-  const currentLanguage = languageOptions.find((lang) => lang.code === profile?.language);
-
   const settingsSections = [
     {
       title: t.settings.accountSettings,
@@ -70,13 +58,6 @@ export default function SettingsPage() {
           label: t.settings.profileSettings,
           onClick: () => navigate('/profile/edit'),
           chevron: true,
-        },
-        {
-          icon: Globe,
-          label: (currentLanguage?.flag ?? '') + ' ' + (currentLanguage?.name ?? ''),
-          onClick: () => {},
-          chevron: true,
-          isLanguage: true,
         },
         {
           icon: isDarkMode ? Moon : Sun,
@@ -130,19 +111,19 @@ export default function SettingsPage() {
         {
           icon: Shield,
           label: t.settings.privacyPolicy,
-          onClick: () => {},
+          onClick: () => navigate('/site-info/privacy'),
           chevron: true,
         },
         {
           icon: HelpCircle,
           label: t.settings.helpSupport,
-          onClick: () => {},
+          onClick: () => navigate('/site-info/help'),
           chevron: true,
         },
         {
           icon: Palette,
           label: t.settings.aboutApp,
-          onClick: () => {},
+          onClick: () => navigate('/site-info/about'),
           chevron: true,
         },
       ],
@@ -218,36 +199,6 @@ export default function SettingsPage() {
             </div>
           </div>
         ))}
-
-        {/* Language Selector */}
-        <div className="bg-white px-4 py-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            {t.settings.language}
-          </h2>
-          <div className="grid grid-cols-2 gap-2">
-            {languageOptions.map((lang) => (
-              <motion.button
-                key={lang.code}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setLanguage(lang.code as any)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${
-                  language === lang.code
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <span className="text-2xl">{lang.flag}</span>
-                <span
-                  className={`font-medium text-sm ${
-                    language === lang.code ? 'text-blue-600' : 'text-gray-700'
-                  }`}
-                >
-                  {lang.name}
-                </span>
-              </motion.button>
-            ))}
-          </div>
-        </div>
 
         {/* Logout Button */}
         <div className="px-4">
