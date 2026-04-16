@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { App, Modal } from 'antd';
 import {
@@ -16,10 +16,15 @@ import {
   Globe,
   Sun,
   Moon,
+  Heart,
+  MessageCircle,
+  Reply,
+  UserPlus,
 } from 'lucide-react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken } from '../../api/request';
 import { motion } from 'motion/react';
 
@@ -28,13 +33,8 @@ export default function DesktopSettingsPage() {
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
   const { profile } = useUserProfile();
+  const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState({
-    likes: true,
-    comments: true,
-    follows: true,
-    uploads: true,
-  });
 
   const handleLogout = () => {
     modal.confirm({
@@ -53,12 +53,12 @@ export default function DesktopSettingsPage() {
   };
 
   const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
+    { code: 'en', name: 'English', flag: '🇬' },
+    { code: 'ja', name: '日本語', flag: '🇯' },
     { code: 'ko', name: '한국어', flag: '🇰🇷' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'fr', name: 'Français', flag: '🇫' },
   ];
 
   return (
@@ -202,15 +202,43 @@ export default function DesktopSettingsPage() {
               </div>
               <div className="divide-y divide-gray-100">
                 {[
-                  { key: 'likes' as const, label: t.settings.notificationLikes, description: t.settings.notificationLikesDesc },
-                  { key: 'comments' as const, label: t.settings.notificationComments, description: t.settings.notificationCommentsDesc },
-                  { key: 'follows' as const, label: t.settings.notificationFollows, description: t.settings.notificationFollowsDesc },
-                  { key: 'uploads' as const, label: t.settings.notificationUploads, description: t.settings.notificationUploadsDesc },
+                  { 
+                    key: 'enable_like_notification' as const, 
+                    label: t.settings.notificationLikes, 
+                    description: t.settings.notificationLikesDesc,
+                    icon: Heart,
+                    iconColor: 'text-red-600',
+                    iconBg: 'bg-red-100',
+                  },
+                  { 
+                    key: 'enable_comment_notification' as const, 
+                    label: t.settings.notificationComments, 
+                    description: t.settings.notificationCommentsDesc,
+                    icon: MessageCircle,
+                    iconColor: 'text-blue-600',
+                    iconBg: 'bg-blue-100',
+                  },
+                  { 
+                    key: 'enable_reply_notification' as const, 
+                    label: t.settings.notificationReplies, 
+                    description: t.settings.notificationRepliesDesc,
+                    icon: Reply,
+                    iconColor: 'text-green-600',
+                    iconBg: 'bg-green-100',
+                  },
+                  { 
+                    key: 'enable_follow_notification' as const, 
+                    label: t.settings.notificationFollows, 
+                    description: t.settings.notificationFollowsDesc,
+                    icon: UserPlus,
+                    iconColor: 'text-purple-600',
+                    iconBg: 'bg-purple-100',
+                  },
                 ].map((item) => (
                   <div key={item.key} className="px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-green-100 rounded-xl">
-                        <Bell size={24} className="text-green-600" />
+                      <div className={`p-3 ${item.iconBg} rounded-xl`}>
+                        <item.icon size={24} className={item.iconColor} />
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">{item.label}</h3>
@@ -218,19 +246,17 @@ export default function DesktopSettingsPage() {
                       </div>
                     </div>
                     <button
-                      onClick={() => setNotifications(prev => ({ 
-                        ...prev, 
-                        [item.key]: !prev[item.key] 
-                      }))}
+                      onClick={() => updateSetting(item.key, !notificationSettings?.[item.key])}
+                      disabled={settingsLoading}
                       className={`relative w-14 h-7 rounded-full transition-colors ${
-                        notifications[item.key] ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
+                        notificationSettings?.[item.key] ? 'bg-blue-600' : 'bg-gray-300'
+                      } ${settingsLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <motion.div
                         layout
                         className="absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md"
                         animate={{ 
-                          left: notifications[item.key] ? '30px' : '2px' 
+                          left: notificationSettings?.[item.key] ? '30px' : '2px' 
                         }}
                         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                       />

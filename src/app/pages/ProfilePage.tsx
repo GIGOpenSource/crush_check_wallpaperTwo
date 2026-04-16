@@ -77,11 +77,6 @@ export default function ProfilePage() {
   // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
   const isOtherUser = !!otherId && String(otherId) !== String(currentUserId);
   
-  // 判断是否显示返回按钮
-  // 1. 查看他人主页时始终显示
-  // 2. 查看自己主页时，如果有 userId 参数(从其他页面跳转)则显示，否则不显示(从底部导航进入)
-  const shouldShowBackButton = isOtherUser || !!userId;
-
   // 获取用户信息（如果是其他用户，传递 otherId）
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   
@@ -245,8 +240,8 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white relative">
-        {/* 返回按钮 - 查看他人主页或从其他页面跳转时显示 */}
-        {shouldShowBackButton && (
+        {/* 返回按钮 - 查看他人主页时显示 */}
+        {isOtherUser && (
           <button
             onClick={() => navigate(-1)}
             className="absolute top-6 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"

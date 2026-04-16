@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { App, Modal } from 'antd';
 import {
@@ -14,10 +14,15 @@ import {
   Globe,
   Sun,
   Moon,
+  Heart,
+  MessageCircle,
+  Reply,
+  UserPlus,
 } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken } from '../../api/request';
 import { motion } from 'motion/react';
 
@@ -26,13 +31,8 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
   const { profile } = useUserProfile();
+  const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState({
-    likes: true,
-    comments: true,
-    follows: true,
-    uploads: true,
-  });
 
   const handleLogout = () => {
     modal.confirm({
@@ -91,32 +91,36 @@ export default function SettingsPage() {
       title: t.settings.notifications,
       items: [
         {
-          icon: Bell,
+          icon: Heart,
           label: t.settings.notificationLikes,
           toggle: true,
-          value: notifications.likes,
-          onChange: (val: boolean) => setNotifications({ ...notifications, likes: val }),
+          value: notificationSettings?.enable_like_notification ?? false,
+          onChange: (val: boolean) => updateSetting('enable_like_notification', val),
+          updating: settingsLoading || false,
         },
         {
-          icon: Bell,
+          icon: MessageCircle,
           label: t.settings.notificationComments,
           toggle: true,
-          value: notifications.comments,
-          onChange: (val: boolean) => setNotifications({ ...notifications, comments: val }),
+          value: notificationSettings?.enable_comment_notification ?? false,
+          onChange: (val: boolean) => updateSetting('enable_comment_notification', val),
+          updating: settingsLoading || false,
         },
         {
-          icon: Bell,
+          icon: Reply,
+          label: t.settings.notificationReplies,
+          toggle: true,
+          value: notificationSettings?.enable_reply_notification ?? false,
+          onChange: (val: boolean) => updateSetting('enable_reply_notification', val),
+          updating: settingsLoading || false,
+        },
+        {
+          icon: UserPlus,
           label: t.settings.notificationFollows,
           toggle: true,
-          value: notifications.follows,
-          onChange: (val: boolean) => setNotifications({ ...notifications, follows: val }),
-        },
-        {
-          icon: Bell,
-          label: t.settings.notificationUploads,
-          toggle: true,
-          value: notifications.uploads,
-          onChange: (val: boolean) => setNotifications({ ...notifications, uploads: val }),
+          value: notificationSettings?.enable_follow_notification ?? false,
+          onChange: (val: boolean) => updateSetting('enable_follow_notification', val),
+          updating: settingsLoading || false,
         },
       ],
     },
@@ -188,11 +192,14 @@ export default function SettingsPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        item.onChange?.(!item.value);
+                        if (!item.updating) {
+                          item.onChange?.(!item.value);
+                        }
                       }}
+                      disabled={item.updating}
                       className={`relative w-12 h-6 rounded-full transition-colors ${
                         item.value ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
+                      } ${item.updating ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <motion.div
                         layout

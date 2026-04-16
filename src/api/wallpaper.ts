@@ -610,6 +610,42 @@ export function deleteNotification(notificationId: number | string) {
 }
 
 /**
+ * 通知设置类型
+ */
+export type NotificationSettings = {
+  /** 点赞通知开关 */
+  enable_like_notification: boolean;
+  /** 评论通知开关 */
+  enable_comment_notification: boolean;
+  /** 回复通知开关 */
+  enable_reply_notification: boolean;
+  /** 关注通知开关 */
+  enable_follow_notification: boolean;
+};
+
+/**
+ * 获取通知设置
+ * GET /api/notifications/notification-settings/
+ */
+export function getNotificationSettings() {
+  return http.get<NotificationSettings>('/api/notifications/notification-settings/');
+}
+
+/**
+ * 更新通知设置参数
+ */
+export type UpdateNotificationSettingsParams = Partial<NotificationSettings>;
+
+/**
+ * 更新通知设置
+ * POST /api/notifications/update-notification-settings/
+ * @param data - 要更新的通知设置项
+ */
+export function updateNotificationSettings(data: UpdateNotificationSettingsParams) {
+  return http.post<NotificationSettings>('/api/notifications/update-notification-settings/', data);
+}
+
+/**
  * 关注/粉丝用户数据类型
  * 根据实际接口返回格式定义
  */
