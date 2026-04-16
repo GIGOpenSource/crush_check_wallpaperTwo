@@ -459,17 +459,11 @@ export default function DesktopProfilePage() {
                           <button
                             onClick={() => handleToggleFollow(user.id, user.is_following || false)}
                             disabled={followingActionId === user.id}
-                            className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
-                              user.is_following
-                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                : 'bg-blue-600 text-white hover:bg-blue-700'
-                            }`}
+                            className="px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200"
                           >
                             {followingActionId === user.id
                               ? t.common.loading
-                              : user.is_following
-                              ? t.profile.unfollow
-                              : t.profile.followBack}
+                              : t.profile.unfollow}
                           </button>
                         </div>
                       ))}
