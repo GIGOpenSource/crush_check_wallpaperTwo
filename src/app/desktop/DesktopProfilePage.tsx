@@ -101,21 +101,21 @@ export default function DesktopProfilePage() {
   // 删除壁纸
   const handleDeleteWallpaper = async (id: number | string) => {
     Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除这个壁纸吗？此操作不可恢复。',
-      okText: '确认删除',
+      title: t.profile.confirmDelete,
+      content: t.profile.deleteWallpaperConfirm,
+      okText: t.profile.confirmDeleteText,
       okType: 'danger',
-      cancelText: '取消',
+      cancelText: t.profile.cancelText,
       onOk: async () => {
         setDeletingId(id);
         try {
           await deleteWallpaper(id);
-          message.success('删除成功');
+          message.success(t.profile.deleteSuccess);
           // 刷新列表
           refreshUploads();
         } catch (err) {
           console.error('删除失败:', err);
-          message.error('删除失败，请重试');
+          message.error(t.profile.deleteFailed);
         } finally {
           setDeletingId(null);
         }
@@ -129,7 +129,7 @@ export default function DesktopProfilePage() {
     try {
       await toggleFollowUser(userId);
       // 乐观更新UI
-      message.success(currentIsFollowing ? '已取消关注' : '已关注');
+      message.success(currentIsFollowing ? t.profile.unfollowSuccess : t.profile.followSuccess);
       // 刷新列表
       if (activeTab === 'following') {
         refreshFollowing();
@@ -138,7 +138,7 @@ export default function DesktopProfilePage() {
       }
     } catch (err) {
       console.error('关注操作失败:', err);
-      message.error('操作失败，请重试');
+      message.error(t.profile.followFailed);
     } finally {
       setFollowingActionId(null);
     }
@@ -168,7 +168,7 @@ export default function DesktopProfilePage() {
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
             >
-              重新加载
+              {t.common.retry}
             </button>
           </div>
         </div>
@@ -183,12 +183,12 @@ export default function DesktopProfilePage() {
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-gray-500 text-center">
-            <p>请先登录</p>
+            <p>{t.profile.pleaseLogin}</p>
             <button
               onClick={() => navigate('/login')}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
             >
-              去登录
+              {t.profile.goToLogin}
             </button>
           </div>
         </div>
@@ -218,9 +218,9 @@ export default function DesktopProfilePage() {
                   <div className="flex-1">
                     <h1 className="text-3xl font-bold mb-2">{profile.nickname || profile.username}</h1>
                     <div className="flex items-center gap-3 text-white/90 mb-3">
-                      <span>等级 {profile.level || 0}</span>
+                      <span>{t.profile.level} {profile.level || 0}</span>
                       <span>•</span>
-                      <span>{profile.points || 0} 积分</span>
+                      <span>{profile.points || 0} {t.profile.points}</span>
                     </div>
                     {/* 根据是否是其他用户显示不同按钮 */}
                     {isOtherUser ? (
@@ -231,12 +231,12 @@ export default function DesktopProfilePage() {
                           try {
                             await toggleFollowUser(profile.id);
                             // 乐观更新
-                            message.success((profile as any).is_followed ? '已取消关注' : '已关注');
+                            message.success((profile as any).is_followed ? t.profile.unfollowSuccess : t.profile.followSuccess);
                             // 刷新用户信息
                             refreshProfile();
                           } catch (err) {
                             console.error('关注操作失败:', err);
-                            message.error('操作失败，请重试');
+                            message.error(t.profile.followFailed);
                           } finally {
                             setFollowingActionId(null);
                           }
@@ -260,7 +260,7 @@ export default function DesktopProfilePage() {
                         className="bg-white text-blue-600 py-2 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-white/90 transition-colors shadow-lg"
                       >
                         <Upload size={16} />
-                        <span>上传壁纸</span>
+                        <span>{t.profile.uploadWallpaper}</span>
                       </button>
                     )}
                   </div>
@@ -409,7 +409,7 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : followingError ? (
                     <div className="py-16 text-center">
-                      <p className="text-red-500">加载失败，请重试</p>
+                      <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followingUsers.length > 0 ? (
                     <div className="divide-y divide-gray-100 bg-white rounded-xl shadow-sm">
@@ -466,7 +466,7 @@ export default function DesktopProfilePage() {
                         disabled={followingLoadingMore}
                         className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                       >
-                        {followingLoadingMore ? t.common.loading : '加载更多'}
+                        {followingLoadingMore ? t.common.loading : t.profile.loadMoreText}
                       </button>
                     </div>
                   )}
@@ -480,7 +480,7 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : followersError ? (
                     <div className="py-16 text-center">
-                      <p className="text-red-500">加载失败，请重试</p>
+                      <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followersUsers.length > 0 ? (
                     <div className="divide-y divide-gray-100 bg-white rounded-xl shadow-sm">
