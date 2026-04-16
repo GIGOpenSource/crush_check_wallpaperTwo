@@ -18,7 +18,9 @@ import FollowingPage from './wrappers/FollowingPage';
 import FollowersPage from './wrappers/FollowersPage';
 import { LanguageToggle } from './components/LanguageToggle';
 import { ViewModeToggle } from './components/ViewModeToggle';
+import { MobileQuickActions } from './components/MobileQuickActions';
 import { setNavigateFunction } from '../api/request';
+import { useView } from './contexts/ViewContext';
 
 // 用于设置navigate函数的组件
 function NavigateInitializer() {
@@ -35,7 +37,8 @@ function NavigateInitializer() {
 // 不需要显示视图切换按钮的路由
 const HIDDEN_TOGGLE_ROUTES = ['/login', '/register'];
 
-function ToggleButtons() {
+// 桌面端切换按钮组件
+function DesktopToggleButtons() {
   const location = useLocation();
   const shouldHide = HIDDEN_TOGGLE_ROUTES.some(route => 
     location.pathname === route || location.pathname.startsWith(route + '/')
@@ -53,12 +56,33 @@ function ToggleButtons() {
   );
 }
 
+// 移动端快捷操作按钮组件
+function MobileToggleButtons() {
+  const location = useLocation();
+  const shouldHide = HIDDEN_TOGGLE_ROUTES.some(route => 
+    location.pathname === route || location.pathname.startsWith(route + '/')
+  );
+
+  if (shouldHide) {
+    return null;
+  }
+
+  return <MobileQuickActions />;
+}
+
+// 根据视图模式切换按钮
+function SmartToggleButtons() {
+  const { viewMode } = useView();
+  
+  return viewMode === 'mobile' ? <MobileToggleButtons /> : <DesktopToggleButtons />;
+}
+
 function RootLayout() {
   return (
     <>
       <NavigateInitializer />
       <Outlet />
-      <ToggleButtons />
+      <SmartToggleButtons />
     </>
   );
 }

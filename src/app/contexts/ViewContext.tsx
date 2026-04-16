@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type ViewMode = 'mobile' | 'desktop';
 
@@ -10,11 +10,35 @@ interface ViewContextType {
 
 const ViewContext = createContext<ViewContextType | undefined>(undefined);
 
+// 检测设备类型
+function getDefaultViewMode(): ViewMode {
+  // 优先使用用户上次保存的选择
+  const savedMode = localStorage.getItem('viewMode');
+  if (savedMode === 'mobile' || savedMode === 'desktop') {
+    return savedMode;
+  }
+  
+  // 如果没有保存的选择，根据设备类型自动判断
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    || window.innerWidth < 768;
+  
+  return isMobile ? 'mobile' : 'desktop';
+}
+
 export function ViewProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewMode] = useState<ViewMode>('desktop');
+  const [viewMode, setViewModeState] = useState<ViewMode>(getDefaultViewMode());
+
+  // 保存用户选择到 localStorage
+  useEffect(() => {
+    localStorage.setItem('viewMode', viewMode);
+  }, [viewMode]);
+
+  const setViewMode = (mode: ViewMode) => {
+    setViewModeState(mode);
+  };
 
   const toggleViewMode = () => {
-    setViewMode((prev) => (prev === 'mobile' ? 'desktop' : 'mobile'));
+    setViewModeState((prev) => (prev === 'mobile' ? 'desktop' : 'mobile'));
   };
 
   return (
