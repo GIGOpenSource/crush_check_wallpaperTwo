@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { getUserProfile } from '../../api/wallpaper';
+import { getUserProfile, getOtherUserProfile } from '../../api/wallpaper';
 import type { UserProfile } from '../../api/wallpaper';
 
 /** 管理用户个人信息的 Hook */
-export function useUserProfile() {
+export function useUserProfile(otherId?: string | number) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,10 @@ export function useUserProfile() {
     setError(null);
 
     try {
-      const res = await getUserProfile();
+      // 根据是否有 otherId 决定调用哪个接口
+      const res = otherId 
+        ? await getOtherUserProfile(otherId)
+        : await getUserProfile();
       
       // 检查请求是否被取消
       if (controller.signal.aborted) return;
@@ -33,6 +36,14 @@ export function useUserProfile() {
       const userData = (res as any)?.data || res;
       
       if (userData) {
+        // 调试：打印后端返回的所有字段
+        console.log('=== 用户信息调试 ===');
+        console.log('后端返回的完整数据:', userData);
+        console.log('follower_count:', userData.follower_count);
+        console.log('followers_count:', userData.followers_count);
+        console.log('following_count:', userData.following_count);
+        console.log('====================');
+        
         // 映射后端字段到前端类型
         const profileData: UserProfile = {
           ...userData,
@@ -42,6 +53,10 @@ export function useUserProfile() {
           // 将后端的 collection_count 映射到 favoritesCount
           favoritesCount: userData.collection_count ?? userData.favoritesCount,
           collection_count: userData.collection_count,
+          // 兼容 followers_count 和 follower_count
+          follower_count: userData.follower_count ?? userData.followers_count,
+          // 如果是其他用户，添加 is_followed 字段
+          is_followed: userData.is_followed ?? false,
         };
         setProfile(profileData);
       } else {
@@ -58,9 +73,9 @@ export function useUserProfile() {
         setLoading(false);
       }
     }
-  }, []);
+  }, [otherId]);
 
-  // 首次加载时自动获取
+  // 当 otherId 变化时重新获取
   useEffect(() => {
     fetchProfile(false);
 

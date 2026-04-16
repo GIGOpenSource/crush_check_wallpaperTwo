@@ -27,8 +27,25 @@ export type WallpaperItem = {
   hot_score?: number;
   source_url?: string;
   person_upload?: null;
-  // tags?: TagItem[];
-  // uploader?: UserItem;
+  /** 壁纸标签 */
+  tags?: Array<{
+    id: number | string;
+    name: string;
+  }>;
+  /** 上传者信息 */
+  uploader?: {
+    id: number | string;
+    username: string;
+    nickname?: string;
+    avatar?: string;
+    avatar_url?: string;
+    /** 用户唯一标识 */
+    customer_id?: number | string;
+    level?: number;
+    points?: number;
+    upload_count?: number;
+    follower_count?: number;
+  };
   [key: string]: unknown;
 };
 
@@ -218,6 +235,15 @@ export type UserProfile = {
 /** 获取当前用户个人信息 */
 export function getUserProfile() {
   return http.get<UserProfile>('/api/client/users/profile/');
+}
+
+/**
+ * 获取其他用户个人信息
+ * GET /api/client/users/profile/
+ * 参数: other_id - 其他用户的ID
+ */
+export function getOtherUserProfile(otherId: number | string) {
+  return http.get<UserProfile>('/api/client/users/profile/', { params: { other_id: otherId } });
 }
 
 /** 壁纸标签项 */

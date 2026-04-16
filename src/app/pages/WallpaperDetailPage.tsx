@@ -10,6 +10,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import { useWallpaperComments } from '../hooks/useWallpaperComments';
+import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
@@ -37,6 +38,7 @@ export default function WallpaperDetailPage() {
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const { comments, total: commentTotal } = useWallpaperComments(id || '');
+  const { profile: currentProfile } = useUserProfile();
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -46,6 +48,10 @@ export default function WallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
+
+  // 判断是否是自己的壁纸
+  const isOwnWallpaper = wallpaper?.uploader && currentProfile && 
+    String(wallpaper.uploader.id) === String(currentProfile.id);
 
   if (loading) {
     return (
@@ -160,13 +166,20 @@ export default function WallpaperDetailPage() {
           )}
           {/* 上传者信息 - 只在有uploader时显示 */}
           {wallpaper.uploader && (
-            <Link
-              to={`/profile/${wallpaper.uploader.id}`}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            <button
+              onClick={() => {
+                // 如果是自己的壁纸，跳转到自己的主页；否则跳转到其他用户页面
+                if (isOwnWallpaper) {
+                  navigate('/profile');
+                } else {
+                  navigate(`/profile/${wallpaper.uploader?.id}?other_id=${wallpaper.uploader?.id}`);
+                }
+              }}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 cursor-pointer"
             >
               <User size={16} />
               <span className="text-sm">{wallpaper.uploader.username}</span>
-            </Link>
+            </button>
           )}
         </div>
 

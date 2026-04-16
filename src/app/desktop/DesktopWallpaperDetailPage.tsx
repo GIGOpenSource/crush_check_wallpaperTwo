@@ -10,6 +10,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useGuessYouLikeRelated } from '../hooks/useGuessYouLikeRelated';
 import { useWallpaperDetailFromRoute } from '../hooks/useWallpaperDetailFromRoute';
 import { useWallpaperComments } from '../hooks/useWallpaperComments';
+import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
 import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
@@ -37,6 +38,7 @@ export default function DesktopWallpaperDetailPage() {
   const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const { comments, total: commentTotal } = useWallpaperComments(id || '');
+  const { profile: currentProfile } = useUserProfile();
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
@@ -46,7 +48,12 @@ export default function DesktopWallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
-   useEffect(() => {
+  
+  // 判断是否是自己的壁纸
+  const isOwnWallpaper = wallpaper?.uploader && currentProfile && 
+    String(wallpaper.uploader.id) === String(currentProfile.id);
+
+  useEffect(() => {
     console.log("wallpaper", wallpaper);
     if (wallpaper && wallpaper.is_collected !== undefined) {
       setIsLiked(wallpaper.is_collected);
@@ -283,9 +290,16 @@ export default function DesktopWallpaperDetailPage() {
                 {wallpaper.uploader ? (
                   <div className="bg-white rounded-2xl p-6 shadow-sm">
                     <h4 className="font-semibold text-gray-900 mb-4">{t.wallpaperDetail.uploader}</h4>
-                    <Link
-                      to={`/profile/${wallpaper.uploader.id}`}
-                      className="flex items-center gap-3 hover:bg-gray-50 p-3 rounded-lg transition-colors"
+                    <button
+                      onClick={() => {
+                        // 如果是自己的壁纸，跳转到自己的主页；否则跳转到其他用户页面
+                        if (isOwnWallpaper) {
+                          navigate('/profile');
+                        } else {
+                          navigate(`/profile/${wallpaper.uploader?.id}?other_id=${wallpaper.uploader?.id}`);
+                        }
+                      }}
+                      className="flex items-center gap-3 hover:bg-gray-50 p-3 rounded-lg transition-colors w-full text-left"
                     >
                       {wallpaper.uploader.avatar ? (
                         <img
@@ -305,7 +319,7 @@ export default function DesktopWallpaperDetailPage() {
                           {wallpaper.uploader.points} {t.wallpaperDetail.points}
                         </p>
                       </div>
-                    </Link>
+                    </button>
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl p-6 shadow-sm">

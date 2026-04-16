@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { UploadWallpaperGrid } from '../components/UploadWallpaperGrid';
@@ -44,14 +44,21 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { message } = App.useApp();
+  const { userId } = useParams();
+  const [searchParams] = useSearchParams();
+  const otherId = searchParams.get('other_id');
+  
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
 
-  // 获取用户信息
-  const { profile } = useUserProfile();
+  // 判断是否是查看其他用户的页面
+  const isOtherUser = !!otherId || !!userId;
   
-  // 获取上传列表
+  // 获取用户信息（如果是其他用户，传递 otherId）
+  const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
+  
+  // 获取上传列表（只有自己的页面才显示上传和收藏）
   const myUploads = useMyUploads();
   const { 
     wallpapers: uploadedWallpapers, 
@@ -61,9 +68,17 @@ export default function ProfilePage() {
     hasMore: uploadsHasMore,
     loadMore: uploadsLoadMore,
     refresh: refreshUploads
-  } = myUploads;
+  } = !isOtherUser ? myUploads : { 
+    wallpapers: [], 
+    loading: false, 
+    loadingMore: false,
+    error: null,
+    hasMore: false,
+    loadMore: () => {},
+    refresh: () => {}
+  };
 
-  // 获取收藏列表
+  // 获取收藏列表（只有自己的页面才显示）
   const { 
     wallpapers: favoriteWallpapers, 
     loading: favoritesLoading, 
@@ -71,7 +86,14 @@ export default function ProfilePage() {
     error: favoritesError,
     hasMore: favoritesHasMore,
     loadMore: favoritesLoadMore 
-  } = useMyCollections();
+  } = !isOtherUser ? useMyCollections() : { 
+    wallpapers: [], 
+    loading: false, 
+    loadingMore: false,
+    error: null,
+    hasMore: false,
+    loadMore: () => {}
+  };
 
   // 获取关注列表
   const {
@@ -95,7 +117,7 @@ export default function ProfilePage() {
     refresh: refreshFollowers
   } = useFollowersList();
 
-  // 根据当前Tab显示对应的数据
+  // 根据当前Tab显示对应的数据（其他用户只显示上传）
   const displayLoading = activeTab === 'uploaded' ? uploadsLoading : favoritesLoading;
   const displayLoadingMore = activeTab === 'uploaded' ? uploadsLoadingMore : favoritesLoadingMore;
   const displayError = activeTab === 'uploaded' ? uploadsError : favoritesError;
@@ -190,7 +212,7 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <h1 className="text-2xl font-bold mb-1">{profile.nickname || profile.username}</h1>
                 <div className="flex items-center gap-3 text-sm text-white/90">
                   <span>{t.profile.level} {profile.level || 0}</span>
@@ -198,117 +220,181 @@ export default function ProfilePage() {
                   <span>{profile.points || 0} {t.profile.points}</span>
                 </div>
               </div>
+              {/* 根据是否是其他用户显示不同按钮 */}
+              {isOtherUser ? (
+                <button
+                  onClick={async () => {
+                    if (followingActionId) return;
+                    setFollowingActionId(profile.id);
+                    try {
+                      await toggleFollowUser(profile.id);
+                      // 乐观更新
+                      message.success((profile as any).is_followed ? '已取消关注' : '已关注');
+                      // 刷新用户信息
+                      refreshProfile();
+                    } catch (err) {
+                      console.error('关注操作失败:', err);
+                      message.error('操作失败，请重试');
+                    } finally {
+                      setFollowingActionId(null);
+                    }
+                  }}
+                  disabled={followingActionId === profile.id}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
+                    (profile as any).is_followed
+                      ? 'bg-white/20 text-white hover:bg-white/30'
+                      : 'bg-white text-blue-600 hover:bg-white/90'
+                  }`}
+                >
+                  {followingActionId === profile.id 
+                    ? t.common.loading 
+                    : (profile as any).is_followed 
+                    ? t.profile.unfollow 
+                    : t.profile.follow}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate('/settings')}
+                  className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                >
+                  <Settings size={20} />
+                </button>
+              )}
             </div>
-            <button
-              onClick={() => navigate('/settings')}
-              className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-            >
-              <Settings size={20} />
-            </button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <ImageIcon size={18} />
-                <span className="text-2xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</span>
+          {/* 统计卡片 - 查看其他用户时显示所有4个 */}
+          <div className="px-4 pt-6">
+            <div className="space-y-3">
+              {/* 第一行：已上传和收藏 */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <ImageIcon size={18} />
+                    <span className="text-2xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</span>
+                  </div>
+                  <p className="text-xs text-white/80">{t.profile.uploaded}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Heart size={18} />
+                    <span className="text-2xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</span>
+                  </div>
+                  <p className="text-xs text-white/80">{t.profile.favorites}</p>
+                </div>
               </div>
-              <p className="text-xs text-white/80">{t.profile.uploaded}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Heart size={18} />
-                <span className="text-2xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</span>
+              {/* 第二行：关注和粉丝 */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Users size={18} />
+                    <span className="text-2xl font-bold">{profile.following_count ?? 0}</span>
+                  </div>
+                  <p className="text-xs text-white/80">{t.profile.following}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Users size={18} />
+                    <span className="text-2xl font-bold">{profile.follower_count ?? 0}</span>
+                  </div>
+                  <p className="text-xs text-white/80">{t.profile.followers}</p>
+                </div>
               </div>
-              <p className="text-xs text-white/80">{t.profile.favorites}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <Award size={18} />
-                <span className="text-2xl font-bold">{profile.badges?.length ?? 0}</span>
-              </div>
-              <p className="text-xs text-white/80">{t.profile.badges}</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="px-4 mt-4 mb-6">
-        <Link
-          to="/upload"
-          className="profile-upload-btn flex items-center justify-center gap-2 w-full bg-white py-3.5 rounded-3xl no-underline text-blue-600 [&_svg]:shrink-0"
-        >
-          <Upload size={20} />
-          <span className="font-semibold">{t.profile.uploadWallpaper}</span>
-        </Link>
-      </div>
-
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="flex">
-          <button
-            onClick={() => setActiveTab('uploaded')}
-            className="flex-1 relative py-4 font-semibold transition-colors"
+      {/* 上传按钮 - 只有自己的页面才显示 */}
+      {!isOtherUser && (
+        <div className="px-4 mt-4 mb-6">
+          <Link
+            to="/upload"
+            className="profile-upload-btn flex items-center justify-center gap-2 w-full bg-white py-3.5 rounded-3xl no-underline text-blue-600 [&_svg]:shrink-0"
           >
-            <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-gray-500'}>
-              {t.profile.uploaded}
-            </span>
-            {activeTab === 'uploaded' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-              />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('favorites')}
-            className="flex-1 relative py-4 font-semibold transition-colors"
-          >
-            <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-gray-500'}>
-              {t.profile.favorites}
-            </span>
-            {activeTab === 'favorites' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-              />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('following')}
-            className="flex-1 relative py-4 font-semibold transition-colors"
-          >
-            <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
-              {t.profile.following}
-            </span>
-            {activeTab === 'following' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-              />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('followers')}
-            className="flex-1 relative py-4 font-semibold transition-colors"
-          >
-            <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
-              {t.profile.followers}
-            </span>
-            {activeTab === 'followers' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-              />
-            )}
-          </button>
+            <Upload size={20} />
+            <span className="font-semibold">{t.profile.uploadWallpaper}</span>
+          </Link>
         </div>
-      </div>
+      )}
+
+      {/* Tabs - 只有自己的页面才显示Tab栏 */}
+      {!isOtherUser && (
+        <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div className="flex">
+            <button
+              onClick={() => setActiveTab('uploaded')}
+              className="flex-1 relative py-4 font-semibold transition-colors"
+            >
+              <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-gray-500'}>
+                {t.profile.uploaded}
+              </span>
+              {activeTab === 'uploaded' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('favorites')}
+              className="flex-1 relative py-4 font-semibold transition-colors"
+            >
+              <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-gray-500'}>
+                {t.profile.favorites}
+              </span>
+              {activeTab === 'favorites' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('following')}
+              className="flex-1 relative py-4 font-semibold transition-colors"
+            >
+              <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
+                {t.profile.following}
+              </span>
+              {activeTab === 'following' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('followers')}
+              className="flex-1 relative py-4 font-semibold transition-colors"
+            >
+              <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
+                {t.profile.followers}
+              </span>
+              {activeTab === 'followers' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                />
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="py-4">
-        {activeTab === 'following' ? (
+        {/* 查看其他用户时，只显示上传列表 */}
+        {isOtherUser ? (
+          // 其他用户的上传列表
+          <>
+            {uploadedWallpapers.length > 0 && (
+              <div className="px-4">
+                <WallpaperGrid wallpapers={uploadedWallpapers} />
+              </div>
+            )}
+          </>
+        ) : activeTab === 'following' ? (
           // 关注列表
           <>
             {followingLoading ? (
