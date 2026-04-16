@@ -62,17 +62,23 @@ export default function FollowersPage() {
                 key={user.id}
                 className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
               >
-                {/* Avatar */}
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                {/* Avatar - Clickable */}
+                <button
+                  onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                  className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                >
                   <img
                     src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || '')}`}
                     alt={user.nickname || user.username || 'User'}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </button>
 
-                {/* User Info */}
-                <div className="flex-1 min-w-0">
+                {/* User Info - Clickable */}
+                <button
+                  onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                  className="flex-1 min-w-0 text-left hover:text-blue-600 transition-colors"
+                >
                   <h3 className="font-semibold text-gray-900 truncate">
                     {user.nickname || user.username || 'Unknown'}
                   </h3>
@@ -81,18 +87,18 @@ export default function FollowersPage() {
                     <span>•</span>
                     <span>{user.follower_count || 0} {t.profile.followers}</span>
                   </div>
-                </div>
+                </button>
 
                 {/* Follow Button */}
                 <button
                   onClick={() => handleToggleFollow(user.id)}
                   className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    user.is_followed || user.is_following
+                    user.is_following
                       ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  {user.is_followed || user.is_following ? t.profile.unfollow : t.profile.followBack}
+                  {user.is_following ? t.profile.unfollow : t.profile.followBack}
                 </button>
               </div>
             ))}

@@ -166,30 +166,14 @@ export async function request<T = unknown>(
 }
 
 export const http = {
-  get: <T = unknown>(
-    path: string,
-    options?: Omit<RequestOptions, 'method' | 'data'>,
-  ) => request<T>(path, { ...options, method: 'GET' }),
-  post: <T = unknown>(
-    path: string,
-    data?: unknown,
-    options?: Omit<RequestOptions, 'method' | 'data'>,
-  ) => request<T>(path, { ...options, method: 'POST', data }),
-  put: <T = unknown>(
-    path: string,
-    data?: unknown,
-    options?: Omit<RequestOptions, 'method' | 'data'>,
-  ) => request<T>(path, { ...options, method: 'PUT', data }),
-  patch: <T = unknown>(
-    path: string,
-    data?: unknown,
-    options?: Omit<RequestOptions, 'method' | 'data'>,
-  ) => request<T>(path, { ...options, method: 'PATCH', data }),
-  delete: <T = unknown>(
-    path: string,
-    options?: Omit<RequestOptions, 'method' | 'data'>,
-  ) => request<T>(path, { ...options, method: 'DELETE' }),
+  get: <T = unknown>(path: string, options?: RequestOptions) =>
+    request<T>(path, { method: 'GET', ...options }),
+  post: <T = unknown>(path: string, options?: RequestOptions) =>
+    request<T>(path, { method: 'POST', ...options }),
+  put: <T = unknown>(path: string, options?: RequestOptions) =>
+    request<T>(path, { method: 'PUT', ...options }),
+  patch: <T = unknown>(path: string, options?: RequestOptions) =>
+    request<T>(path, { method: 'PATCH', ...options }),
+  delete: <T = unknown>(path: string, options?: RequestOptions) =>
+    request<T>(path, { method: 'DELETE', ...options }),
 };
-
-/** @deprecated 请使用 API_ORIGIN；与历史代码兼容 */
-export const API_BASE_URL = API_ORIGIN;

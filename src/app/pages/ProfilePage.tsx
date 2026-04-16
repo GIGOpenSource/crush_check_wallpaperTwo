@@ -59,6 +59,26 @@ export default function ProfilePage() {
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
+  const myCollectionsResult = useMyCollections();
+  const myUploadsResult = useMyUploads();
+  
+  // 查看他人主页时，不显示自己的上传和收藏数据
+  const { 
+    wallpapers: favoriteWallpapers, 
+    loading: favoritesLoading, 
+    loadingMore: favoritesLoadingMore,
+    error: favoritesError,
+    hasMore: favoritesHasMore,
+    loadMore: favoritesLoadMore 
+  } = isOtherUser ? { 
+    wallpapers: [], 
+    loading: false, 
+    loadingMore: false,
+    error: null,
+    hasMore: false,
+    loadMore: () => {}
+  } : myCollectionsResult;
+
   const { 
     wallpapers: uploadedWallpapers, 
     loading: uploadsLoading, 
@@ -67,17 +87,15 @@ export default function ProfilePage() {
     hasMore: uploadsHasMore,
     loadMore: uploadsLoadMore,
     refresh: refreshUploads
-  } = useMyUploads();
-
-  // 获取收藏列表
-  const { 
-    wallpapers: favoriteWallpapers, 
-    loading: favoritesLoading, 
-    loadingMore: favoritesLoadingMore,
-    error: favoritesError,
-    hasMore: favoritesHasMore,
-    loadMore: favoritesLoadMore 
-  } = useMyCollections();
+  } = isOtherUser ? { 
+    wallpapers: [], 
+    loading: false, 
+    loadingMore: false,
+    error: null,
+    hasMore: false,
+    loadMore: () => {},
+    refresh: () => {}
+  } : myUploadsResult;
 
   // 获取关注列表
   const {
@@ -146,8 +164,13 @@ export default function ProfilePage() {
 
   // 关注/取消关注用户
   const handleToggleFollow = async (userId: number | string, currentIsFollowing: boolean) => {
+    console.log(' [handleToggleFollow] 被调用');
+    console.log('👤 userId:', userId, '类型:', typeof userId);
+    console.log('👤 currentIsFollowing:', currentIsFollowing);
+    
     setFollowingActionId(userId);
     try {
+      console.log('📡 准备调用 toggleFollowUser，参数:', userId);
       await toggleFollowUser(userId);
       // 乐观更新UI
       message.success(currentIsFollowing ? t.profile.unfollowSuccess : t.profile.followSuccess);
@@ -209,11 +232,15 @@ export default function ProfilePage() {
                 <button
                   onClick={async () => {
                     if (followingActionId) return;
-                    setFollowingActionId(profile.id);
+                    
+                    // 使用路由参数中的 otherId 作为 following_id
+                    const targetUserId = otherId || profile?.id;
+                    
+                    setFollowingActionId(targetUserId!);
                     try {
-                      await toggleFollowUser(profile.id);
+                      await toggleFollowUser(targetUserId!);
                       // 乐观更新
-                      message.success((profile as any).is_followed ? t.profile.unfollowSuccess : t.profile.followSuccess);
+                      message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
                       // 刷新用户信息
                       refreshProfile();
                     } catch (err) {
@@ -225,14 +252,14 @@ export default function ProfilePage() {
                   }}
                   disabled={followingActionId === profile.id}
                   className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
-                    (profile as any).is_followed
+                    (profile as any).is_following
                       ? 'bg-white/20 text-white hover:bg-white/30'
                       : 'bg-white text-blue-600 hover:bg-white/90'
                   }`}
                 >
                   {followingActionId === profile.id 
                     ? t.common.loading 
-                    : (profile as any).is_followed 
+                    : (profile as any).is_following 
                     ? t.profile.unfollow 
                     : t.profile.follow}
                 </button>
@@ -396,29 +423,37 @@ export default function ProfilePage() {
                     key={user.id}
                     className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
                   >
-                    {/* 头像 */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100">
+                    {/* 头像 - 可点击跳转到用户主页 */}
+                    <button
+                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                      className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                    >
                       <img
                         src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
                         alt={user.nickname || user.username}
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </button>
                     
-                    {/* 用户信息 */}
-                    <div className="flex-1 min-w-0">
+                    {/* 用户信息 - 可点击跳转到用户主页 */}
+                    <button
+                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                      className="flex-1 min-w-0 text-left hover:text-blue-600 transition-colors"
+                    >
                       <h3 className="font-semibold text-gray-900 truncate text-base">
                         {user.nickname || user.username}
                       </h3>
-                    </div>
+                    </button>
                     
                     {/* 操作按钮 */}
                     <button
                       onClick={() => handleToggleFollow(user.id, true)}
                       disabled={followingActionId === user.id}
-                      className="px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95"
+                      className={`px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200`}
                     >
-                      {followingActionId === user.id ? t.common.loading : t.profile.unfollow}
+                      {followingActionId === user.id
+                        ? t.common.loading
+                        : t.profile.unfollow}
                     </button>
                   </div>
                 ))}
@@ -467,21 +502,27 @@ export default function ProfilePage() {
                     key={user.id}
                     className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
                   >
-                    {/* 头像 */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100">
+                    {/* 头像 - 可点击跳转到用户主页 */}
+                    <button
+                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                      className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                    >
                       <img
                         src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
                         alt={user.nickname || user.username}
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </button>
                     
-                    {/* 用户信息 */}
-                    <div className="flex-1 min-w-0">
+                    {/* 用户信息 - 可点击跳转到用户主页 */}
+                    <button
+                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                      className="flex-1 min-w-0 text-left hover:text-blue-600 transition-colors"
+                    >
                       <h3 className="font-semibold text-gray-900 truncate text-base">
                         {user.nickname || user.username}
                       </h3>
-                    </div>
+                    </button>
                     
                     {/* 操作按钮 */}
                     <button

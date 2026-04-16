@@ -61,20 +61,27 @@ export default function DesktopFollowingPage() {
                     className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start gap-4">
-                      {/* Avatar */}
-                      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                      {/* Avatar - Clickable */}
+                      <button
+                        onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                        className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                      >
                         <img
                           src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || '')}`}
                           alt={user.nickname || user.username || 'User'}
                           className="w-full h-full object-cover"
                         />
-                      </div>
+                      </button>
 
                       {/* User Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 truncate mb-1">
+                        {/* Username - Clickable */}
+                        <button
+                          onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                          className="font-semibold text-gray-900 truncate mb-1 hover:text-blue-600 transition-colors w-full text-left"
+                        >
                           {user.nickname || user.username || 'Unknown'}
-                        </h3>
+                        </button>
                         <div className="text-sm text-gray-500 flex items-center gap-2 mb-3">
                           <span>{user.upload_count || 0} {t.profile.uploaded}</span>
                           <span>•</span>
@@ -84,13 +91,9 @@ export default function DesktopFollowingPage() {
                         {/* Follow Button */}
                         <button
                           onClick={() => handleToggleFollow(user.id)}
-                          className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            user.is_followed || user.is_following
-                              ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                              : 'bg-blue-600 text-white hover:bg-blue-700'
-                          }`}
+                          className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300`}
                         >
-                          {user.is_followed || user.is_following ? t.profile.unfollow : t.profile.follow}
+                          {user.is_following ? t.profile.unfollow : t.profile.follow}
                         </button>
                       </div>
                     </div>
