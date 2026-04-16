@@ -14,6 +14,8 @@ import LoginPage from './wrappers/LoginPage';
 import RegisterPage from './wrappers/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
 import NotificationsPage from './wrappers/NotificationsPage';
+import FollowingPage from './wrappers/FollowingPage';
+import FollowersPage from './wrappers/FollowersPage';
 import { LanguageToggle } from './components/LanguageToggle';
 import { ViewModeToggle } from './components/ViewModeToggle';
 import { setNavigateFunction } from '../api/request';
@@ -112,6 +114,14 @@ export const router = createHashRouter([
           {
             path: 'notifications',
             element: <NotificationsPage />
+          },
+          {
+            path: 'following',
+            element: <FollowingPage />
+          },
+          {
+            path: 'followers',
+            element: <FollowersPage />
           },
           {
             path: 'trending',

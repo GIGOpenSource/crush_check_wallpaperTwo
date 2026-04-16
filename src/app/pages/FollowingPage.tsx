@@ -1,0 +1,132 @@
+import React from 'react';
+import { useNavigate } from 'react-router';
+import { BottomNav } from '../components/BottomNav';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Users, UserPlus } from 'lucide-react';
+
+// 临时用户数据类型（待后端接口实现后更新）
+interface FollowUser {
+  id: number | string;
+  username: string;
+  nickname?: string;
+  avatar_url?: string;
+  avatar?: string;
+  is_following?: boolean;
+  upload_count?: number;
+  follower_count?: number;
+}
+
+export default function FollowingPage() {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  // TODO: 待实现 - 调用API获取关注列表
+  // const { following, loading, loadMore, hasMore } = useFollowingList();
+  
+  // 临时模拟数据
+  const following: FollowUser[] = [];
+  const loading = false;
+  const hasMore = false;
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="px-4 py-4 flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold text-gray-900">{t.profile.following}</h1>
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="py-4">
+        {loading ? (
+          <div className="px-4 py-16 text-center">
+            <div className="text-gray-500">{t.common.loading}</div>
+          </div>
+        ) : following.length > 0 ? (
+          <div className="space-y-2">
+            {following.map((user) => (
+              <div
+                key={user.id}
+                className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+              >
+                {/* Avatar */}
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                  <img
+                    src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username)}`}
+                    alt={user.nickname || user.username}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* User Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 truncate">
+                    {user.nickname || user.username}
+                  </h3>
+                  <div className="text-sm text-gray-500 flex items-center gap-2">
+                    <span>{user.upload_count || 0} {t.profile.uploaded}</span>
+                    <span>•</span>
+                    <span>{user.follower_count || 0} {t.profile.followers}</span>
+                  </div>
+                </div>
+
+                {/* Follow Button */}
+                <button
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    user.is_following
+                      ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {user.is_following ? t.profile.unfollow : t.profile.follow}
+                </button>
+              </div>
+            ))}
+
+            {/* Load More */}
+            {hasMore && (
+              <div className="px-4 py-6 text-center">
+                <button
+                  onClick={() => {/* TODO: 加载更多 */}}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+                >
+                  {t.common.loading}
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="px-4 py-16 text-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <Users size={32} className="text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {t.profile.noFollowingYet}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {t.profile.startFollowing}
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              <UserPlus size={18} />
+              <span>{t.home.discoverWallpapers}</span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+}

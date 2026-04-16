@@ -130,6 +130,14 @@ export const translations = {
       uploadFirstWallpaper: '上传你的第一张壁纸',
       startFavoriting: '开始收藏你喜欢的壁纸',
       settings: '设置',
+      following: '关注',
+      followers: '粉丝',
+      noFollowingYet: '还没有关注',
+      noFollowersYet: '还没有粉丝',
+      startFollowing: '开始关注你感兴趣的用户',
+      followBack: '回关',
+      unfollow: '取消关注',
+      follow: '关注',
     },
     
     // Upload
@@ -332,6 +340,14 @@ export const translations = {
       uploadFirstWallpaper: 'Upload your first wallpaper to get started',
       startFavoriting: 'Start favoriting wallpapers you love',
       settings: 'Settings',
+      following: 'Following',
+      followers: 'Followers',
+      noFollowingYet: 'Not following anyone yet',
+      noFollowersYet: 'No followers yet',
+      startFollowing: 'Start following users you are interested in',
+      followBack: 'Follow Back',
+      unfollow: 'Unfollow',
+      follow: 'Follow',
     },
     
     upload: {
@@ -532,6 +548,14 @@ export const translations = {
       uploadFirstWallpaper: '最初の壁紙をアップロードしましょう',
       startFavoriting: 'お気に入りの壁紙を保存しましょう',
       settings: '設定',
+      following: 'フォロー中',
+      followers: 'フォロワー',
+      noFollowingYet: 'まだフォローしていません',
+      noFollowersYet: 'フォロワーがいません',
+      startFollowing: '興味のあるユーザーをフォローしましょう',
+      followBack: 'フォローバック',
+      unfollow: 'フォロー解除',
+      follow: 'フォロー',
     },
     
     upload: {
@@ -732,6 +756,14 @@ export const translations = {
       uploadFirstWallpaper: '첫 번째 배경화면을 업로드하세요',
       startFavoriting: '좋아하는 배경화면을 저장하세요',
       settings: '설정',
+      following: '팔로잉',
+      followers: '팔로워',
+      noFollowingYet: '아직 팔로우한 사용자가 없습니다',
+      noFollowersYet: '팔로워가 없습니다',
+      startFollowing: '관심 있는 사용자를 팔로우해보세요',
+      followBack: '맞팔로우',
+      unfollow: '언팔로우',
+      follow: '팔로우',
     },
     
     upload: {

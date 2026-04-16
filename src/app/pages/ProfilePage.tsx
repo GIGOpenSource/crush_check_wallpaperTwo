@@ -7,6 +7,7 @@ import { mockWallpapers } from '../mockData';
 import { useMyUploads } from '../hooks/useMyUploads';
 import { useMyCollections } from '../hooks/useMyCollections';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { useFollowingList, useFollowersList } from '../hooks/useFollowingList';
 import {
   Settings,
   Upload,
@@ -16,13 +17,28 @@ import {
   TrendingUp,
   Share2,
   Trash2,
+  Users,
+  UserCheck,
+  UserPlus,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { App, Modal } from 'antd';
-import { deleteWallpaper } from '../../api/wallpaper';
+import { deleteWallpaper, toggleFollowUser } from '../../api/wallpaper';
 
-type TabType = 'uploaded' | 'favorites';
+// 用户数据类型
+interface FollowUser {
+  id: number | string;
+  username: string;
+  nickname?: string;
+  avatar_url?: string;
+  avatar?: string;
+  is_following?: boolean;
+  upload_count?: number;
+  follower_count?: number;
+}
+
+type TabType = 'uploaded' | 'favorites' | 'following' | 'followers';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -30,6 +46,7 @@ export default function ProfilePage() {
   const { message } = App.useApp();
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
+  const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
 
   // 获取用户信息
   const { profile } = useUserProfile();
@@ -56,12 +73,45 @@ export default function ProfilePage() {
     loadMore: favoritesLoadMore 
   } = useMyCollections();
 
+  // 获取关注列表
+  const {
+    users: followingUsers,
+    loading: followingLoading,
+    loadingMore: followingLoadingMore,
+    error: followingError,
+    hasMore: followingHasMore,
+    loadMore: followingLoadMore,
+    refresh: refreshFollowing
+  } = useFollowingList();
+
+  // 获取粉丝列表
+  const {
+    users: followersUsers,
+    loading: followersLoading,
+    loadingMore: followersLoadingMore,
+    error: followersError,
+    hasMore: followersHasMore,
+    loadMore: followersLoadMore,
+    refresh: refreshFollowers
+  } = useFollowersList();
+
   // 根据当前Tab显示对应的数据
   const displayLoading = activeTab === 'uploaded' ? uploadsLoading : favoritesLoading;
   const displayLoadingMore = activeTab === 'uploaded' ? uploadsLoadingMore : favoritesLoadingMore;
   const displayError = activeTab === 'uploaded' ? uploadsError : favoritesError;
-  const displayHasMore = activeTab === 'uploaded' ? uploadsHasMore : favoritesHasMore;
-  const displayLoadMore = activeTab === 'uploaded' ? uploadsLoadMore : favoritesLoadMore;
+
+  // 调试日志
+  useEffect(() => {
+    console.log('=== ProfilePage 调试 ===');
+    console.log('followingUsers:', followingUsers);
+    console.log('followingUsers 长度:', followingUsers.length);
+    console.log('followersUsers:', followersUsers);
+    console.log('followersUsers 长度:', followersUsers.length);
+    console.log('activeTab:', activeTab);
+    console.log('followingLoading:', followingLoading);
+    console.log('followersLoading:', followersLoading);
+    console.log('======================');
+  }, [followingUsers, followersUsers, activeTab]);
 
   // 删除壁纸
   const handleDeleteWallpaper = async (id: number | string) => {
@@ -86,6 +136,27 @@ export default function ProfilePage() {
         }
       },
     });
+  };
+
+  // 关注/取消关注用户
+  const handleToggleFollow = async (userId: number | string, currentIsFollowing: boolean) => {
+    setFollowingActionId(userId);
+    try {
+      await toggleFollowUser(userId);
+      // 乐观更新UI
+      message.success(currentIsFollowing ? '已取消关注' : '已关注');
+      // 刷新列表
+      if (activeTab === 'following') {
+        refreshFollowing();
+      } else if (activeTab === 'followers') {
+        refreshFollowers();
+      }
+    } catch (err) {
+      console.error('关注操作失败:', err);
+      message.error('操作失败，请重试');
+    } finally {
+      setFollowingActionId(null);
+    }
   };
 
   // 未登录状态
@@ -204,12 +275,190 @@ export default function ProfilePage() {
               />
             )}
           </button>
+          <button
+            onClick={() => setActiveTab('following')}
+            className="flex-1 relative py-4 font-semibold transition-colors"
+          >
+            <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
+              {t.profile.following}
+            </span>
+            {activeTab === 'following' && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+              />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('followers')}
+            className="flex-1 relative py-4 font-semibold transition-colors"
+          >
+            <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
+              {t.profile.followers}
+            </span>
+            {activeTab === 'followers' && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+              />
+            )}
+          </button>
         </div>
       </div>
 
       {/* Content */}
       <div className="py-4">
-        {activeTab === 'uploaded' ? (
+        {activeTab === 'following' ? (
+          // 关注列表
+          <>
+            {followingLoading ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-gray-500">{t.common.loading}</div>
+              </div>
+            ) : followingError ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-red-500">加载失败，请重试</div>
+              </div>
+            ) : followingUsers.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {followingUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                  >
+                    {/* 头像 */}
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100">
+                      <img
+                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
+                        alt={user.nickname || user.username}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    {/* 用户信息 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate text-base">
+                        {user.nickname || user.username}
+                      </h3>
+                    </div>
+                    
+                    {/* 操作按钮 */}
+                    <button
+                      onClick={() => handleToggleFollow(user.id, true)}
+                      disabled={followingActionId === user.id}
+                      className="px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95"
+                    >
+                      {followingActionId === user.id ? t.common.loading : t.profile.unfollow}
+                    </button>
+                  </div>
+                ))}
+                {/* 加载更多 */}
+                {followingHasMore && (
+                  <div className="px-4 py-6 text-center">
+                    <button
+                      onClick={followingLoadMore}
+                      disabled={followingLoadingMore}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {followingLoadingMore ? t.common.loading : '加载更多'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="px-4 py-16 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Users size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t.profile.noFollowingYet}
+                </h3>
+                <p className="text-gray-500">
+                  {t.profile.startFollowing}
+                </p>
+              </div>
+            )}
+          </>
+        ) : activeTab === 'followers' ? (
+          // 粉丝列表
+          <>
+            {followersLoading ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-gray-500">{t.common.loading}</div>
+              </div>
+            ) : followersError ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-red-500">加载失败，请重试</div>
+              </div>
+            ) : followersUsers.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {followersUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                  >
+                    {/* 头像 */}
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100">
+                      <img
+                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
+                        alt={user.nickname || user.username}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    {/* 用户信息 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate text-base">
+                        {user.nickname || user.username}
+                      </h3>
+                    </div>
+                    
+                    {/* 操作按钮 */}
+                    <button
+                      onClick={() => handleToggleFollow(user.id, user.is_followed || false)}
+                      disabled={followingActionId === user.id}
+                      className={`px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
+                        user.is_followed
+                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                      }`}
+                    >
+                      {followingActionId === user.id
+                        ? t.common.loading
+                        : user.is_followed
+                        ? t.profile.unfollow
+                        : t.profile.followBack}
+                    </button>
+                  </div>
+                ))}
+                {/* 加载更多 */}
+                {followersHasMore && (
+                  <div className="px-4 py-6 text-center">
+                    <button
+                      onClick={followersLoadMore}
+                      disabled={followersLoadingMore}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                    >
+                      {followersLoadingMore ? t.common.loading : '加载更多'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="px-4 py-16 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <Users size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t.profile.noFollowersYet}
+                </h3>
+                <p className="text-gray-500">
+                  {t.profile.startFollowing}
+                </p>
+              </div>
+            )}
+          </>
+        ) : activeTab === 'uploaded' ? (
           // 上传列表
           <>
             {uploadsLoading ? (

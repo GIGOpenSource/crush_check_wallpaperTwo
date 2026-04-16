@@ -208,6 +208,10 @@ export type UserProfile = {
   favoritesCount?: number;
   /** 收藏数量（后端字段：collection_count） */
   collection_count?: number;
+  /** 关注数量 */
+  following_count?: number;
+  /** 粉丝数量 */
+  follower_count?: number;
   [key: string]: unknown;
 };
 
@@ -577,4 +581,126 @@ export function markAllNotificationsAsRead() {
  */
 export function deleteNotification(notificationId: number | string) {
   return http.delete<void>(`/api/notifications/${notificationId}/`);
+}
+
+/**
+ * 关注/粉丝用户数据类型
+ * 根据实际接口返回格式定义
+ */
+export type FollowUserItem = {
+  /** 用户ID */
+  id: number | string;
+  /** 邮箱 */
+  email?: string;
+  /** 昵称 */
+  nickname?: string;
+  /** 性别: 1-男, 2-女, 其他-未知 */
+  gender?: number;
+  /** 头像URL */
+  avatar_url?: string | null;
+  /** 头像（备用字段） */
+  avatar?: string;
+  /** 用户名（备用字段） */
+  username?: string;
+  /** 是否已关注（用于粉丝列表判断是否回关） */
+  is_followed?: boolean;
+  is_following?: boolean;
+  /** 上传数量 */
+  upload_count?: number;
+  /** 收藏数量 */
+  collection_count?: number;
+  /** 粉丝数量 */
+  follower_count?: number;
+  /** 等级 */
+  level?: number;
+  /** 积分 */
+  points?: number;
+  [key: string]: unknown;
+};
+
+/**
+ * 分页信息
+ */
+export type PaginationInfo = {
+  /** 当前页码 */
+  page: number;
+  /** 每页数量 */
+  page_size: number;
+  /** 总数 */
+  total: number;
+  /** 总页数 */
+  total_pages: number;
+};
+
+/**
+ * 关注/粉丝列表响应
+ * 根据实际接口返回格式定义
+ * 完整格式: { code: 200, message: "success", data: { pagination: {...}, results: [...] } }
+ */
+export type FollowListResponse = {
+  code?: number;
+  message?: string;
+  data?: {
+    /** 分页信息 */
+    pagination?: PaginationInfo;
+    /** 用户列表 */
+    results?: FollowUserItem[];
+    /** 总数（兼容字段） */
+    total?: number;
+    [key: string]: unknown;
+  };
+  /** 分页信息（兼容直接返回的格式） */
+  pagination?: PaginationInfo;
+  /** 用户列表（兼容直接返回的格式） */
+  results?: FollowUserItem[];
+  [key: string]: unknown;
+};
+
+/**
+ * 获取关注列表参数
+ * GET /api/wallpapers/followers/
+ */
+export type FollowingListParams = {
+  /** 当前页码 */
+  currentPage: number;
+  /** 每页数量 */
+  pageSize: number;
+};
+
+/**
+ * 获取关注列表
+ * GET /api/wallpapers/followers/
+ */
+export function getFollowingList(params: FollowingListParams) {
+  return http.get<FollowListResponse>('/api/wallpapers/followers/', { params });
+}
+
+/**
+ * 获取粉丝列表参数
+ * GET /api/wallpapers/followers/my-followers/
+ */
+export type FollowersListParams = {
+  /** 当前页码 */
+  currentPage: number;
+  /** 每页数量 */
+  pageSize: number;
+};
+
+/**
+ * 获取粉丝列表
+ * GET /api/wallpapers/followers/my-followers/
+ */
+export function getFollowersList(params: FollowersListParams) {
+  return http.get<FollowListResponse>('/api/wallpapers/followers/my-followers/', { params });
+}
+
+/**
+ * 关注/取消关注用户
+ * POST /api/wallpapers/followers/toggle/
+ * @param followingId - 用户ID（关注列表/粉丝列表中的id）
+ */
+export function toggleFollowUser(followingId: number | string) {
+  return http.post<{ is_followed: boolean }>(`/api/wallpapers/followers/toggle/`, {
+    following_id: followingId,
+  });
 }
