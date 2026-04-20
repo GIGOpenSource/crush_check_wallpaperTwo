@@ -4,9 +4,11 @@ import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { createComment, toggleCommentLike, deleteComment, getUserProfile } from '../../api/wallpaper';
 import { getAuthToken } from '../../api/request';
 import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import { zhCN, enUS, ja, ko } from 'date-fns/locale';
 import { Send, Heart, Trash2 } from 'lucide-react';
 import { App, Modal } from 'antd';
+import { useLanguage } from '../contexts/LanguageContext';
+import type { Language } from '../locales/translations';
 
 interface CommentSectionProps {
   wallpaperId: string | number;
@@ -15,6 +17,7 @@ interface CommentSectionProps {
 export default function CommentSection({ wallpaperId }: CommentSectionProps) {
   const navigate = useNavigate();
   const { message } = App.useApp();
+  const { t, language } = useLanguage();
   const { comments, loading, error, hasMore, loadMore, refresh, total } =
     useWallpaperComments(wallpaperId);
   const [commentContent, setCommentContent] = useState('');
@@ -51,13 +54,27 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
     fetchUserProfile();
   }, []);
 
+  // 根据当前语言获取 date-fns locale
+  const getDateFnsLocale = () => {
+    switch (language) {
+      case 'zh-CN':
+        return zhCN;
+      case 'ja':
+        return ja;
+      case 'ko':
+        return ko;
+      default:
+        return enUS;
+    }
+  };
+
   // 格式化时间
   const formatTime = (dateString?: string) => {
     if (!dateString) return '';
     try {
       return formatDistanceToNow(new Date(dateString), {
         addSuffix: true,
-        locale: zhCN,
+        locale: getDateFnsLocale(),
       });
     } catch {
       return dateString;
@@ -71,7 +88,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
     // 检查是否登录
     const token = getAuthToken();
     if (!token) {
-      message.warning('请先登录后再发表评论');
+      message.warning(t.comments.loginRequired);
       // 延迟一下跳转，让用户看到提示
       setTimeout(() => {
         navigate('/login');
@@ -88,10 +105,10 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
       setCommentContent('');
       // 刷新评论列表
       refresh();
-      message.success('评论发表成功');
+      message.success(t.comments.submitSuccess);
     } catch (err) {
       console.error('发表评论失败:', err);
-      message.error('发表评论失败，请重试');
+      message.error(t.comments.submitFailed);
     } finally {
       setSubmitting(false);
     }
@@ -109,7 +126,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
     // 检查是否登录
     const token = getAuthToken();
     if (!token) {
-      message.warning('请先登录后再操作');
+      message.warning(t.comments.loginRequired);
       setTimeout(() => {
         navigate('/login');
       }, 500);
@@ -117,11 +134,11 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
     }
 
     Modal.confirm({
-      title: '确认删除',
-      content: '删除后将无法恢复，确定要删除这条评论吗？',
-      okText: '确定删除',
+      title: t.comments.deleteConfirmTitle,
+      content: t.comments.deleteConfirmContent,
+      okText: t.comments.deleteConfirmOk,
       okType: 'danger',
-      cancelText: '取消',
+      cancelText: t.common.cancel,
       onOk: async () => {
         if (deletingCommentId === commentId) return;
 
@@ -130,10 +147,10 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
           await deleteComment(commentId);
           // 删除成功后刷新评论列表
           refresh();
-          message.success('删除成功');
+          message.success(t.comments.deleteSuccess);
         } catch (err) {
           console.error('删除评论失败:', err);
-          message.error('删除失败，请重试');
+          message.error(t.comments.deleteFailed);
         } finally {
           setDeletingCommentId(null);
         }
@@ -148,7 +165,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
     // 检查是否登录
     const token = getAuthToken();
     if (!token) {
-      message.warning('请先登录后再点赞');
+      message.warning(t.comments.loginRequiredLike);
       // 延迟一下跳转，让用户看到提示
       setTimeout(() => {
         navigate('/login');
@@ -161,10 +178,10 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
       await toggleCommentLike(commentId);
       // 点赞成功后刷新评论列表
       refresh();
-      message.success('操作成功');
+      message.success(t.comments.likeSuccess);
     } catch (err) {
       console.error('点赞操作失败:', err);
-      message.error('操作失败，请重试');
+      message.error(t.comments.likeFailed);
     } finally {
       setLikingCommentId(null);
     }
@@ -183,12 +200,12 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500 mb-4">加载评论失败</p>
+        <p className="text-red-500 mb-4">{t.comments.loadFailed}</p>
         <button
           onClick={refresh}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          重试
+          {t.common.retry}
         </button>
       </div>
     );
@@ -206,7 +223,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
             value={commentContent}
             onChange={(e) => setCommentContent(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="写下你的评论..."
+            placeholder={t.comments.placeholder}
             disabled={submitting}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             rows={3}
@@ -214,7 +231,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
           />
           <div className="flex items-center justify-between mt-2">
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {commentContent.length}/500
+              {t.comments.charCount.replace('{{count}}', String(commentContent.length))}
             </span>
             <button
               onClick={handleSubmitComment}
@@ -222,7 +239,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
               className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send size={16} />
-              {submitting ? '发表中...' : '发表'}
+              {submitting ? t.comments.submitting : t.comments.submit}
             </button>
           </div>
         </div>
@@ -231,21 +248,21 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
       {/* 评论列表区域 */}
       {isEmpty ? (
         <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p className="text-lg">暂无评论</p>
-          <p className="text-sm mt-2">成为第一个评论的人吧！</p>
+          <p className="text-lg">{t.comments.noComments}</p>
+          <p className="text-sm mt-2">{t.comments.noCommentsHint}</p>
         </div>
       ) : (
         <>
           {/* 评论总数 */}
           <div className="flex items-center justify-between pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              评论 {total !== undefined && `(${total})`}
+              {t.comments.commentsTitle} {total !== undefined && t.comments.commentsCount.replace('{{count}}', String(total))}
             </h3>
             <button
               onClick={refresh}
               className="text-sm text-blue-500 hover:text-blue-600 transition-colors"
             >
-              刷新
+              {t.comments.refresh}
             </button>
           </div>
 
@@ -261,6 +278,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
                 onDelete={handleDeleteComment}
                 isDeleting={deletingCommentId === comment.id}
                 isOwner={currentCustomerId === comment.customer_info?.id}
+                t={t}
               />
             ))}
           </div>
@@ -272,7 +290,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
                 onClick={loadMore}
                 className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
-                加载更多
+                {t.comments.loadMore}
               </button>
             </div>
           )}
@@ -302,6 +320,7 @@ interface CommentItemProps {
   onDelete?: (commentId: number) => void;
   isDeleting: boolean;
   isOwner: boolean;
+  t: ReturnType<typeof useLanguage>['t'];
 }
 
 const CommentItem = React.memo(function CommentItem({ 
@@ -311,10 +330,11 @@ const CommentItem = React.memo(function CommentItem({
   isLiking,
   onDelete,
   isDeleting,
-  isOwner
+  isOwner,
+  t
 }: CommentItemProps) {
   const isReply = comment.parent_id != null;
-  const username = comment.customer_info?.nickname || '匿名用户';
+  const username = comment.customer_info?.nickname || t.comments.anonymousUser;
   const avatarUrl = comment.customer_info?.avatar_url;
   const likes = comment.like_count || 0;
   const isLiked = comment.is_liked || false;
@@ -348,7 +368,7 @@ const CommentItem = React.memo(function CommentItem({
             {username}
           </span>
           {isReply && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">回复</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{t.comments.reply}</span>
           )}
         </div>
 
@@ -383,7 +403,7 @@ const CommentItem = React.memo(function CommentItem({
                   ? 'text-red-500' 
                   : 'hover:text-red-500'
               }`}
-              title="删除评论"
+              title={t.comments.deleteTooltip}
             >
               <Trash2 size={14} />
             </button>
