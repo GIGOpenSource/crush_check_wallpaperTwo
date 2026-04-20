@@ -11,14 +11,8 @@ interface ViewContextType {
 const ViewContext = createContext<ViewContextType | undefined>(undefined);
 
 // 检测设备类型
-function getDefaultViewMode(): ViewMode {
-  // 优先使用用户上次保存的选择
-  const savedMode = localStorage.getItem('viewMode');
-  if (savedMode === 'mobile' || savedMode === 'desktop') {
-    return savedMode;
-  }
-  
-  // 如果没有保存的选择，根据设备类型自动判断
+function detectDeviceType(): ViewMode {
+  // 检测是否为移动设备
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
     || window.innerWidth < 768;
   
@@ -26,18 +20,29 @@ function getDefaultViewMode(): ViewMode {
 }
 
 export function ViewProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewModeState] = useState<ViewMode>(getDefaultViewMode());
+  const [viewMode, setViewModeState] = useState<ViewMode>(() => {
+    // 始终根据设备类型自动判断，不再读取 localStorage
+    return detectDeviceType();
+  });
 
-  // 保存用户选择到 localStorage
+  // 监听窗口大小变化，自动切换视图模式
   useEffect(() => {
-    localStorage.setItem('viewMode', viewMode);
-  }, [viewMode]);
+    const handleResize = () => {
+      const newMode = detectDeviceType();
+      setViewModeState(newMode);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const setViewMode = (mode: ViewMode) => {
+    // 保留此方法以兼容现有代码，但不再保存到 localStorage
     setViewModeState(mode);
   };
 
   const toggleViewMode = () => {
+    // 保留此方法以兼容现有代码
     setViewModeState((prev) => (prev === 'mobile' ? 'desktop' : 'mobile'));
   };
 

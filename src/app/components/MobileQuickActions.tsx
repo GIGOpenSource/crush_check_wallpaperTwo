@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Globe, Monitor, Smartphone, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
-import { useView } from '../contexts/ViewContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -15,7 +14,6 @@ export const MobileQuickActions: React.FC = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { viewMode, setViewMode } = useView();
   const { language, setLanguage } = useLanguage();
 
   // 判断是否在搜索页面
@@ -89,23 +87,6 @@ export const MobileQuickActions: React.FC = () => {
     }
   };
 
-  const handleClick = () => {
-    // 只有没有拖拽时才切换菜单
-    if (!hasDraggedRef.current) {
-      setIsOpen(!isOpen);
-    }
-  };
-
-  const switchToMobile = () => {
-    setViewMode('mobile');
-    setIsOpen(false);
-  };
-
-  const switchToDesktop = () => {
-    setViewMode('desktop');
-    setIsOpen(false);
-  };
-
   return (
     <div
       ref={buttonRef}
@@ -128,11 +109,11 @@ export const MobileQuickActions: React.FC = () => {
             } right-0 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden min-w-[220px] max-h-[70vh]`}
           >
             {/* 语言切换部分 */}
-            <div className="px-3 py-3 border-b border-gray-100">
+            <div className="px-3 py-3">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
                 语言 / LANGUAGE
               </p>
-              <div className="space-y-1 max-h-[30vh] overflow-y-auto">
+              <div className="space-y-1 max-h-[60vh] overflow-y-auto">
                 {languageOptions.map((lang) => (
                   <button
                     key={lang.code}
@@ -163,49 +144,6 @@ export const MobileQuickActions: React.FC = () => {
                     )}
                   </button>
                 ))}
-              </div>
-            </div>
-
-            {/* 视图切换部分 */}
-            <div className="px-4 py-3">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                视图 / View Mode
-              </p>
-              <div className="space-y-1">
-                <button
-                  onClick={switchToMobile}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors ${
-                    viewMode === 'mobile' ? 'bg-blue-50' : ''
-                  }`}
-                >
-                  <Smartphone size={18} className={viewMode === 'mobile' ? 'text-blue-600' : 'text-gray-600'} />
-                  <span className={`text-sm font-medium ${viewMode === 'mobile' ? 'text-blue-600' : 'text-gray-700'}`}>
-                    移动版
-                  </span>
-                  {viewMode === 'mobile' && (
-                    <motion.div
-                      layoutId="activeView"
-                      className="ml-auto w-2 h-2 bg-blue-600 rounded-full"
-                    />
-                  )}
-                </button>
-                <button
-                  onClick={switchToDesktop}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors ${
-                    viewMode === 'desktop' ? 'bg-blue-50' : ''
-                  }`}
-                >
-                  <Monitor size={18} className={viewMode === 'desktop' ? 'text-blue-600' : 'text-gray-600'} />
-                  <span className={`text-sm font-medium ${viewMode === 'desktop' ? 'text-blue-600' : 'text-gray-700'}`}>
-                    桌面版
-                  </span>
-                  {viewMode === 'desktop' && (
-                    <motion.div
-                      layoutId="activeView"
-                      className="ml-auto w-2 h-2 bg-blue-600 rounded-full"
-                    />
-                  )}
-                </button>
               </div>
             </div>
           </motion.div>
