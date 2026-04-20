@@ -35,7 +35,7 @@ export default function UploadPage() {
           <div className="px-4 py-4 flex items-center gap-2">
             <Upload className="w-5 h-5 text-blue-500" />
             <h1 className="text-lg font-semibold text-gray-900">
-              上传壁纸
+              {t.upload.uploadWallpaper}
             </h1>
           </div>
         </div>
@@ -46,16 +46,16 @@ export default function UploadPage() {
             <Lock className="w-10 h-10 text-gray-400" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            请先登录
+            {t.upload.pleaseLogin}
           </h2>
           <p className="text-gray-500 text-center mb-8">
-            登录后上传您的壁纸作品
+            {t.upload.loginPrompt}
           </p>
           <button
             onClick={() => navigate('/login')}
             className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
           >
-            去登录
+            {t.upload.goToLogin}
           </button>
         </div>
 
@@ -109,9 +109,9 @@ export default function UploadPage() {
       const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {
         Modal.error({
-          title: '图片过大',
-          content: '图片大小不能超过10MB，请选择更小的图片或压缩后再上传。',
-          okText: '知道了',
+          title: t.upload.imageTooLarge,
+          content: t.upload.imageTooLargeMessage,
+          okText: t.common.gotIt,
           centered: true,
         });
         // 清空文件选择
@@ -143,7 +143,7 @@ export default function UploadPage() {
 
   const handleSubmit = async () => {
     if (!selectedFile || !title.trim()) {
-      setUploadError('请选择图片并填写标题');
+      setUploadError(t.upload.selectImageAndTitle);
       return;
     }
 
@@ -176,7 +176,7 @@ export default function UploadPage() {
       }, 2000);
     } catch (error) {
       console.error('Upload failed:', error);
-      setUploadError('上传失败，请重试');
+      setUploadError(t.upload.uploadFailed);
       setCurrentStep('review');
     } finally {
       setIsUploading(false);
@@ -327,7 +327,7 @@ export default function UploadPage() {
                   />
                   <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
                     <Upload size={32} className="text-blue-600 mx-auto mb-2" />
-                    <p className="text-sm text-blue-600 font-medium">点击更换图片</p>
+                    <p className="text-sm text-blue-600 font-medium">{t.upload.changeImage}</p>
                   </div>
                 </label>
                 <button
