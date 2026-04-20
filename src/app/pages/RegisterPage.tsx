@@ -6,10 +6,12 @@ import { ApiError } from '../../api/request';
 import { registerUser } from '../../api/auth';
 import { BottomNav } from '../components/BottomNav';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function RegisterPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,19 +22,19 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password || !confirmPassword) {
-      message.warning('请完整填写注册信息');
+      message.warning(t.register.fillAllFields);
       return;
     }
     
     // 密码正则校验：最少8位，必须包含字母和数字
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(password)) {
-      message.error('密码必须至少8位，且包含字母和数字');
+      message.error(t.register.passwordRequirement);
       return;
     }
     
     if (password !== confirmPassword) {
-      message.error('两次输入的密码不一致');
+      message.error(t.register.passwordMismatch);
       return;
     }
     
@@ -48,13 +50,13 @@ export default function RegisterPage() {
       const responseData = response as any;
       if (responseData && responseData.code !== undefined && responseData.code !== 200) {
         // 业务失败：提取错误信息
-        const errorMessage = responseData.message || '注册失败';
+        const errorMessage = responseData.message || t.register.registerFailed;
         message.error(errorMessage);
         return;
       }
       
       // 注册成功
-      message.success('注册成功，请登录');
+      message.success(t.register.registerSuccess);
       navigate('/login');
     } catch (error) {
       // 处理HTTP错误（非2xx状态码）
@@ -79,10 +81,10 @@ export default function RegisterPage() {
         if (error.message && error.message !== 'Request failed') {
           message.error(error.message);
         } else {
-          message.error('注册失败，请稍后重试');
+          message.error(t.register.registerFailed);
         }
       } else {
-        message.error('注册失败，请稍后重试');
+        message.error(t.register.registerFailed);
       }
     } finally {
       setSubmitting(false);
@@ -104,7 +106,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.2 }}
             className="text-3xl font-bold text-white text-center mb-2"
           >
-            创建账号
+            {t.register.createAccount}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -112,7 +114,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.3 }}
             className="text-white/80 text-center text-sm"
           >
-            注册后即可上传壁纸并收藏你喜欢的内容
+            {t.register.registerToUpload}
           </motion.p>
         </div>
       </div>
@@ -129,7 +131,7 @@ export default function RegisterPage() {
             {/* 邮箱输入 */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                邮箱地址
+                {t.register.emailAddress}
               </label>
               <div className="relative">
                 <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -137,7 +139,7 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="请输入邮箱"
+                  placeholder={t.register.emailPlaceholder}
                   className="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 outline-none text-gray-900 placeholder:text-gray-400 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 />
               </div>
@@ -146,7 +148,7 @@ export default function RegisterPage() {
             {/* 密码输入 */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                设置密码
+                {t.register.setPassword}
               </label>
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -154,7 +156,7 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="请输入密码"
+                  placeholder={t.register.passwordPlaceholder}
                   className="w-full pl-11 pr-12 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 outline-none text-gray-900 placeholder:text-gray-400 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 />
                 <button
@@ -167,14 +169,14 @@ export default function RegisterPage() {
               </div>
               <p className="mt-2 flex items-start gap-2 text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
                 <Info size={14} className="mt-0.5 shrink-0 text-blue-500" />
-                <span>密码必须至少8位，且包含字母和数字</span>
+                <span>{t.register.passwordHint}</span>
               </p>
             </div>
 
             {/* 确认密码输入 */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                确认密码
+                {t.register.confirmPassword}
               </label>
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -182,7 +184,7 @@ export default function RegisterPage() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="请再次输入密码"
+                  placeholder={t.register.confirmPasswordPlaceholder}
                   className="w-full pl-11 pr-12 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 outline-none text-gray-900 placeholder:text-gray-400 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 />
                 <button
@@ -207,7 +209,7 @@ export default function RegisterPage() {
               ) : (
                 <>
                   <UserPlus size={18} />
-                  注册
+                  {t.register.registerButton}
                 </>
               )}
             </motion.button>
@@ -216,9 +218,9 @@ export default function RegisterPage() {
           {/* 登录链接 */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              已有账号？
+              {t.register.hasAccount}
               <Link to="/login" className="ml-1 font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                立即登录
+                {t.register.loginNow}
               </Link>
             </p>
           </div>
@@ -231,7 +233,7 @@ export default function RegisterPage() {
           transition={{ delay: 0.6 }}
           className="mt-6 text-center text-xs text-gray-400"
         >
-          注册即表示您同意我们的服务条款和隐私政策
+          {t.register.termsAgreement}
         </motion.p>
       </main>
 

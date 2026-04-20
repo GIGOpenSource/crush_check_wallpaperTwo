@@ -4,10 +4,12 @@ import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, UserPlus, Info } from 'lucide-react';
 import { ApiError } from '../../api/request';
 import { registerUser } from '../../api/auth';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function DesktopRegisterPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,19 +18,19 @@ export default function DesktopRegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password || !confirmPassword) {
-      message.warning('请完整填写注册信息');
+      message.warning(t.register.fillAllFields);
       return;
     }
     
     // 密码正则校验：最少8位，必须包含字母和数字
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(password)) {
-      message.error('密码必须至少8位，且包含字母和数字');
+      message.error(t.register.passwordRequirement);
       return;
     }
     
     if (password !== confirmPassword) {
-      message.error('两次输入的密码不一致');
+      message.error(t.register.passwordMismatch);
       return;
     }
     setSubmitting(true);
@@ -43,13 +45,13 @@ export default function DesktopRegisterPage() {
       const responseData = response as any;
       if (responseData && responseData.code !== undefined && responseData.code !== 200) {
         // 业务失败：提取错误信息
-        const errorMessage = responseData.message || '注册失败';
+        const errorMessage = responseData.message || t.register.registerFailed;
         message.error(errorMessage);
         return;
       }
       
       // 注册成功
-      message.success('注册成功，请登录');
+      message.success(t.register.registerSuccess);
       navigate('/login');
     } catch (error) {
       // 处理HTTP错误（非2xx状态码）
@@ -74,10 +76,10 @@ export default function DesktopRegisterPage() {
         if (error.message && error.message !== 'Request failed') {
           message.error(error.message);
         } else {
-          message.error('注册失败，请稍后重试');
+          message.error(t.register.registerFailed);
         }
       } else {
-        message.error('注册失败，请稍后重试');
+        message.error(t.register.registerFailed);
       }
     } finally {
       setSubmitting(false);
@@ -88,8 +90,8 @@ export default function DesktopRegisterPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <div className="max-w-lg mx-auto px-5 pt-10 pb-12">
-          <h1 className="text-3xl font-bold">创建账号</h1>
-          <p className="mt-2 text-white/85">注册后即可上传壁纸并收藏你喜欢的壁纸</p>
+          <h1 className="text-3xl font-bold">{t.register.createAccount}</h1>
+          <p className="mt-2 text-white/85">{t.register.registerToUpload}</p>
         </div>
       </header>
 
@@ -97,46 +99,46 @@ export default function DesktopRegisterPage() {
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">邮箱</span>
+              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.emailAddress}</span>
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Mail size={18} className="text-gray-400" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="请输入邮箱"
+                  placeholder={t.register.emailPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
               </div>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">密码</span>
+              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.setPassword}</span>
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Lock size={18} className="text-gray-400" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="请输入密码"
+                  placeholder={t.register.passwordPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <p className="mt-2 flex items-start gap-1.5 text-sm text-gray-500">
                 <Info size={16} className="mt-0.5 shrink-0" />
-                <span>密码必须至少8位，且包含字母和数字</span>
+                <span>{t.register.passwordHint}</span>
               </p>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">确认密码</span>
+              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.confirmPassword}</span>
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Lock size={18} className="text-gray-400" />
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="请再次输入密码"
+                  placeholder={t.register.confirmPasswordPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
               </div>
@@ -148,14 +150,14 @@ export default function DesktopRegisterPage() {
               className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 text-white disabled:opacity-60"
             >
               <UserPlus size={18} />
-              {submitting ? '注册中...' : '注册'}
+              {submitting ? t.common.loading : t.register.registerButton}
             </button>
           </form>
 
           <p className="mt-5 text-center text-sm text-gray-600">
-            已有账号？
+            {t.register.hasAccount}
             <Link to="/login" className="ml-1 font-medium text-blue-600">
-              去登录
+              {t.register.loginNow}
             </Link>
           </p>
         </div>

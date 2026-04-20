@@ -6,10 +6,12 @@ import { ApiError, setAuthToken } from '../../api/request';
 import { extractApiErrorMessage, extractApiToken, isApiSuccess, loginUser } from '../../api/auth';
 import { BottomNav } from '../components/BottomNav';
 import { motion } from 'motion/react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function LoginPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +20,11 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) {
-      message.warning('请填写邮箱和密码');
+      message.warning(t.login.fillEmailAndPassword);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      message.warning('请输入正确的邮箱地址');
+      message.warning(t.login.invalidEmail);
       return;
     }
     setSubmitting(true);
@@ -32,22 +34,22 @@ export default function LoginPage() {
         password,
       });
       if (!isApiSuccess(res)) {
-        message.error(extractApiErrorMessage(res) || '登录失败，请稍后重试');
+        message.error(extractApiErrorMessage(res) || t.login.loginFailed);
         return;
       }
       const token = extractApiToken(res);
       if (!token) {
-        message.error('登录成功但未返回 token，请联系后端检查登录接口返回');
+        message.error(t.login.loginSuccessNoToken);
         return;
       }
       setAuthToken(token);
-      message.success('登录成功');
+      message.success(t.login.loginSuccess);
       navigate('/');
     } catch (error) {
       if (error instanceof ApiError) {
-        message.error(extractApiErrorMessage(error.data) || error.message || '登录失败，请稍后重试');
+        message.error(extractApiErrorMessage(error.data) || error.message || t.login.loginFailed);
       } else {
-        message.error('登录失败，请稍后重试');
+        message.error(t.login.loginFailed);
       }
     } finally {
       setSubmitting(false);
@@ -69,7 +71,7 @@ export default function LoginPage() {
             transition={{ delay: 0.2 }}
             className="text-3xl font-bold text-white text-center mb-2"
           >
-            欢迎回来
+            {t.login.welcomeBack}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -77,7 +79,7 @@ export default function LoginPage() {
             transition={{ delay: 0.3 }}
             className="text-white/80 text-center text-sm"
           >
-            登录后继续浏览和收藏你喜欢的壁纸
+            {t.login.loginToContinue}
           </motion.p>
         </div>
       </div>
@@ -94,7 +96,7 @@ export default function LoginPage() {
             {/* 邮箱输入 */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                邮箱地址
+                {t.login.emailAddress}
               </label>
               <div className="relative">
                 <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -102,7 +104,7 @@ export default function LoginPage() {
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="请输入邮箱"
+                  placeholder={t.login.emailPlaceholder}
                   className="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 outline-none text-gray-900 placeholder:text-gray-400 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 />
               </div>
@@ -111,7 +113,7 @@ export default function LoginPage() {
             {/* 密码输入 */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                密码
+                {t.login.password}
               </label>
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -119,7 +121,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="请输入密码"
+                  placeholder={t.login.passwordPlaceholder}
                   className="w-full pl-11 pr-12 h-12 rounded-xl border-2 border-gray-200 bg-gray-50 outline-none text-gray-900 placeholder:text-gray-400 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 />
                 <button
@@ -144,7 +146,7 @@ export default function LoginPage() {
               ) : (
                 <>
                   <LogIn size={18} />
-                  登录
+                  {t.login.loginButton}
                 </>
               )}
             </motion.button>
@@ -153,9 +155,9 @@ export default function LoginPage() {
           {/* 注册链接 */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              还没有账号？
+              {t.login.noAccount}
               <Link to="/register" className="ml-1 font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                立即注册
+                {t.login.registerNow}
               </Link>
             </p>
           </div>
@@ -168,7 +170,7 @@ export default function LoginPage() {
           transition={{ delay: 0.6 }}
           className="mt-6 text-center text-xs text-gray-400"
         >
-          登录即表示您同意我们的服务条款和隐私政策
+          {t.login.termsAgreement}
         </motion.p>
       </main>
 

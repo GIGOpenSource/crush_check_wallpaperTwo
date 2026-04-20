@@ -53,9 +53,9 @@ export default function SettingsPage() {
   const handleLogout = async () => {
     modal.confirm({
       title: t.settings.logOut,
-      content: '确定要退出登录吗？',
-      okText: '确定',
-      cancelText: '取消',
+     content: t.settings.logOutConfirm,
+      okText: t.common.confirm,
+      cancelText: t.common.cancel,
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
