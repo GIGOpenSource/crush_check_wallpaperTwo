@@ -13,9 +13,9 @@ export function ViewModeToggle() {
     umengclick('filter_click_device');
     // 使用 antd Modal 提示下载app开发中
     Modal.info({
-      title: '提示',
-      content: '下载app开发中',
-      okText: '我知道了',
+      title: t.common.tip,
+      content: t.common.appDownloadInProgress,
+      okText: t.common.gotIt,
       centered: true,
     });
   };

@@ -294,6 +294,7 @@ export const translations = {
       loadFailed: 'Failed to load. Please try again.',
       tip: 'Notice',
       gotIt: 'OK',
+      appDownloadInProgress: 'App download is under development',
     },
     
     nav: {
@@ -563,6 +564,7 @@ export const translations = {
       loadFailed: '読み込みに失敗しました。しばらくしてからお試しください。',
       tip: 'お知らせ',
       gotIt: 'OK',
+      appDownloadInProgress: 'アプリのダウンロードは開発中です',
     },
     
     nav: {
@@ -832,6 +834,7 @@ export const translations = {
       loadFailed: '불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
       tip: '알림',
       gotIt: '확인',
+      appDownloadInProgress: '앱 다운로드는 개발 중입니다',
     },
     
     nav: {
@@ -1101,6 +1104,7 @@ export const translations = {
       loadFailed: 'Error al cargar. Inténtalo de nuevo más tarde.',
       tip: 'Aviso',
       gotIt: 'Entendido',
+      appDownloadInProgress: 'La descarga de la aplicación está en desarrollo',
     },
     
     nav: {
@@ -1369,6 +1373,7 @@ export const translations = {
       loadFailed: 'Échec du chargement. Veuillez réessayer plus tard.',
       tip: 'Information',
       gotIt: 'OK',
+      appDownloadInProgress: 'Le téléchargement de l\'application est en développement',
     },
     
     nav: {
