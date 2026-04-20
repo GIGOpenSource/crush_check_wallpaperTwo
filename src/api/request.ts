@@ -2,7 +2,7 @@
 let navigateFunction: ((path: string, options?: any) => void) | null = null;
 
 // 存储当前语言的引用，用于在请求头中添加 Accept-Language
-let currentLanguage: string = 'zh-CN';
+let currentLanguage: string = 'en';
 
 export function setNavigateFunction(navigate: (path: string, options?: any) => void) {
   navigateFunction = navigate;

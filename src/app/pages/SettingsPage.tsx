@@ -17,6 +17,7 @@ import {
   MessageCircle,
   Reply,
   UserPlus,
+  Globe,
 } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -32,6 +33,21 @@ export default function SettingsPage() {
   const { profile } = useUserProfile();
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  const languageOptions = [
+    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
+    { code: 'en', name: 'English', flag: '🇬' },
+    { code: 'ja', name: '日本語', flag: '🇯' },
+    { code: 'ko', name: '한국어', flag: '🇰' },
+    { code: 'es', name: 'Español', flag: '🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫' },
+  ];
+
+  const handleLanguageChange = (langCode: string) => {
+    setLanguage(langCode);
+    setShowLanguageModal(false);
+  };
 
   const handleLogout = () => {
     modal.confirm({
@@ -58,6 +74,13 @@ export default function SettingsPage() {
           label: t.settings.profileSettings,
           onClick: () => navigate('/profile/edit'),
           chevron: true,
+        },
+        {
+          icon: Globe,
+          label: t.settings.language,
+          onClick: () => setShowLanguageModal(true),
+          chevron: true,
+          value: languageOptions.find(lang => lang.code === language)?.name || 'English',
         },
         {
           icon: isDarkMode ? Moon : Sun,
@@ -166,7 +189,12 @@ export default function SettingsPage() {
                     <div className="p-2 bg-gray-100 rounded-lg">
                       <item.icon size={20} className="text-gray-700" />
                     </div>
-                    <span className="font-medium text-gray-900">{item.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">{item.label}</span>
+                      {item.value && typeof item.value === 'string' && (
+                        <span className="text-sm text-gray-500">{item.value}</span>
+                      )}
+                    </div>
                   </div>
                   
                   {item.toggle && (
@@ -218,6 +246,44 @@ export default function SettingsPage() {
           <p className="text-xs text-gray-400 mt-1">{t.settings.copyright}</p>
         </div>
       </div>
+
+      {/* Language Selection Modal */}
+      <Modal
+        title={t.settings.language}
+        open={showLanguageModal}
+        onCancel={() => setShowLanguageModal(false)}
+        footer={null}
+        className="rounded-2xl"
+      >
+        <div className="space-y-2 py-2">
+          {languageOptions.map((lang) => (
+            <motion.button
+              key={lang.code}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleLanguageChange(lang.code)}
+              className={`w-full flex items-center justify-between p-4 rounded-xl transition-all ${
+                language === lang.code
+                  ? 'bg-blue-50 border-2 border-blue-500'
+                  : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{lang.flag}</span>
+                <span className={`font-medium ${language === lang.code ? 'text-blue-600' : 'text-gray-900'}`}>
+                  {lang.name}
+                </span>
+              </div>
+              {language === lang.code && (
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
+            </motion.button>
+          ))}
+        </div>
+      </Modal>
 
       <BottomNav />
     </div>

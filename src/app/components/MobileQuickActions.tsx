@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Globe, Monitor, Smartphone, ChevronDown, ChevronUp } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { useView } from '../contexts/ViewContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -8,37 +8,41 @@ import { motion, AnimatePresence } from 'motion/react';
 export const MobileQuickActions: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 100 }); // 默认右侧居中位置
+  const [position, setPosition] = useState({ x: 12, y: 8 }); // 调整按钮位置，往上移动
   const buttonRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const hasDraggedRef = useRef(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { viewMode, setViewMode } = useView();
   const { language, setLanguage } = useLanguage();
 
+  // 判断是否在首页
+  const isHomePage = location.pathname === '/' || location.pathname === '/markwallpapers' || location.pathname === '';
+
   const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
+    { code: 'en', name: 'English', flag: '🇬' },
+    { code: 'ja', name: '日本語', flag: '🇯' },
     { code: 'ko', name: '한국어', flag: '🇰🇷' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'fr', name: 'Français', flag: '🇫' },
   ];
 
   const currentLanguage = languageOptions.find((lang) => lang.code === language);
 
-  // 记住上次的位置
+  // 首页固定位置在右上角
   useEffect(() => {
-    const savedPosition = localStorage.getItem('mobileQuickActionsPosition');
-    if (savedPosition) {
-      try {
-        setPosition(JSON.parse(savedPosition));
-      } catch (e) {
-        console.error('Failed to parse position from localStorage', e);
-      }
+    if (isHomePage) {
+      setPosition({ x: 12, y: 8 }); // 同步更新 useEffect 中的位置
     }
-  }, []);
+  }, [isHomePage]);
+
+  // 如果不是首页，不渲染任何内容（必须在所有Hooks之后）
+  if (!isHomePage) {
+    return null;
+  }
 
   const savePosition = (pos: { x: number; y: number }) => {
     localStorage.setItem('mobileQuickActionsPosition', JSON.stringify(pos));
@@ -77,7 +81,10 @@ export const MobileQuickActions: React.FC = () => {
 
   const handleDragEnd = () => {
     setIsDragging(false);
-    savePosition(position);
+    // 只在搜索页面保存拖拽位置
+    if (isSearchPage) {
+      savePosition(position);
+    }
   };
 
   const handleClick = () => {
@@ -114,7 +121,9 @@ export const MobileQuickActions: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 right-0 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden min-w-[220px] max-h-[70vh]"
+            className={`absolute ${
+              isSearchPage ? 'top-12' : 'top-11'
+            } right-0 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden min-w-[220px] max-h-[70vh]`}
           >
             {/* 语言切换部分 */}
             <div className="px-4 py-3 border-b border-gray-100">
@@ -197,31 +206,18 @@ export const MobileQuickActions: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* 主按钮 */}
+      {/* 主按钮 - 固定在首页右上角 */}
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="w-14 h-14 rounded-full bg-blue-600 shadow-lg flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-all"
-        onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
-        onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
-        onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd}
-        onTouchStart={(e) => {
-          const touch = e.touches[0];
-          handleDragStart(touch.clientX, touch.clientY);
-        }}
-        onTouchMove={(e) => {
-          const touch = e.touches[0];
-          handleDragMove(touch.clientX, touch.clientY);
-        }}
-        onTouchEnd={handleDragEnd}
-        onClick={handleClick}
+        className="w-9 h-9 rounded-xl bg-white hover:bg-gray-50 border border-gray-300 shadow-sm flex items-center justify-center cursor-pointer transition-all"
+        onClick={() => setIsOpen(!isOpen)}
       >
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
-          className="text-white"
+          className="text-gray-600"
         >
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          <ChevronDown size={16} />
         </motion.div>
       </motion.button>
     </div>

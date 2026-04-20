@@ -1,17 +1,29 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { translations, Language, TranslationKey } from '../locales/translations';
+import { translations, Language } from '../locales/translations';
 import { setCurrentLanguage } from '../../api/request';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: TranslationKey;
+  t: typeof translations[Language];
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// 从 localStorage 读取保存的语言，如果没有则默认为英文
+const getInitialLanguage = (): Language => {
+  const saved = localStorage.getItem('app-language');
+  return (saved as Language) || 'en';
+};
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('zh-CN');
+  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
+
+  // 封装 setLanguage，同时保存到 localStorage
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('app-language', lang);
+  };
 
   const t = translations[language];
 

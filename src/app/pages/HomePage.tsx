@@ -4,7 +4,7 @@ import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { BottomNav } from '../components/BottomNav';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useView } from '../contexts/ViewContext';
 import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
