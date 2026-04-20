@@ -63,7 +63,7 @@ export default function DesktopSettingsPage() {
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: 'CN' },
-    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'en', name: 'English', flag: 'EN' },
     { code: 'ja', name: '日本語', flag: 'JP' },
     { code: 'ko', name: '한국어', flag: 'KR' },
     { code: 'es', name: 'Español', flag: 'ES' },

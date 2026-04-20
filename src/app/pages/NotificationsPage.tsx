@@ -8,6 +8,41 @@ import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification 
 import { App, Modal } from 'antd';
 import { getAuthToken } from '../../api/request';
 import { BottomNav } from '../components/BottomNav';
+import { useLanguage } from '../contexts/LanguageContext';
+
+/**
+ * 辅助函数：处理带参数的翻译
+ * 例如：t('notifications.minutesAgo', { count: 5 }) => "5分钟前"
+ */
+function translateWithParams(
+  t: any,
+  key: string,
+  params?: Record<string, any>
+): string {
+  const keys = key.split('.');
+  let value: any = t;
+  
+  for (const k of keys) {
+    if (value && typeof value === 'object') {
+      value = value[k];
+    } else {
+      return key; // 找不到翻译时返回 key
+    }
+  }
+  
+  if (typeof value !== 'string') {
+    return key;
+  }
+  
+  // 如果有参数，进行替换
+  if (params) {
+    return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+      return params[paramKey] !== undefined ? String(params[paramKey]) : match;
+    });
+  }
+  
+  return value;
+}
 
 /**
  * 消息列表页面 - 移动端
@@ -15,6 +50,11 @@ import { BottomNav } from '../components/BottomNav';
 export default function MobileNotificationsPage() {
   const navigate = useNavigate();
   const token = getAuthToken();
+  const { t } = useLanguage();
+  
+  // 封装带参数的翻译函数
+  const tr = (key: string, params?: Record<string, any>) => 
+    translateWithParams(t, key, params);
   
   // 如果未登录，显示需要登录的提示
   if (!token) {
@@ -25,7 +65,7 @@ export default function MobileNotificationsPage() {
           <div className="px-4 py-4 flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-              消息通知
+              {t.notifications.title}
             </h1>
           </div>
         </div>
@@ -36,16 +76,16 @@ export default function MobileNotificationsPage() {
             <Lock className="w-10 h-10 text-gray-400" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            请先登录
+            {t.notifications.loginRequired}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-center mb-8">
-            登录后查看您的消息通知
+            {t.notifications.loginPrompt}
           </p>
           <button
             onClick={() => navigate('/login')}
             className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
           >
-            去登录
+            {t.notifications.goToLogin}
           </button>
         </div>
 
@@ -70,10 +110,10 @@ export default function MobileNotificationsPage() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return '刚刚';
-    if (diffMins < 60) return `${diffMins}分钟前`;
-    if (diffHours < 24) return `${diffHours}小时前`;
-    if (diffDays < 7) return `${diffDays}天前`;
+    if (diffMins < 1) return t.notifications.justNow;
+    if (diffMins < 60) return tr('notifications.minutesAgo', { count: diffMins });
+    if (diffHours < 24) return tr('notifications.hoursAgo', { count: diffHours });
+    if (diffDays < 7) return tr('notifications.daysAgo', { count: diffDays });
     return date.toLocaleDateString('zh-CN');
   };
 
@@ -86,10 +126,10 @@ export default function MobileNotificationsPage() {
       await markNotificationAsRead(notificationId);
       refresh();
       refreshUnreadCount();
-      message.success('已标记为已读');
+      message.success(t.notifications.markAsReadSuccess);
     } catch (err) {
       console.error('标记已读失败:', err);
-      message.error('操作失败，请重试');
+      message.error(t.notifications.operationFailed);
     } finally {
       setProcessingId(null);
     }
@@ -101,20 +141,20 @@ export default function MobileNotificationsPage() {
       await markAllNotificationsAsRead();
       refresh();
       refreshUnreadCount();
-      message.success('已将所有消息标记为已读');
+      message.success(t.notifications.markAllAsReadSuccess);
     } catch (err) {
       console.error('标记全部已读失败:', err);
-      message.error('操作失败，请重试');
+      message.error(t.notifications.operationFailed);
     }
   };
 
   // 删除消息
   const handleDelete = (notificationId: number | string) => {
     Modal.confirm({
-      title: '确认删除',
-      content: '删除后将无法恢复，确定要删除这条消息吗？',
-      okText: '确定删除',
-      cancelText: '取消',
+      title: t.notifications.confirmDelete,
+      content: t.notifications.deleteMessageConfirm,
+      okText: t.notifications.deleteConfirmText,
+      cancelText: t.notifications.cancelText,
       okButtonProps: { danger: true },
       onOk: async () => {
         if (processingId === notificationId) return;
@@ -124,10 +164,10 @@ export default function MobileNotificationsPage() {
           await deleteNotification(notificationId);
           refresh();
           refreshUnreadCount();
-          message.success('删除成功');
+          message.success(t.notifications.deleteSuccess);
         } catch (err) {
           console.error('删除失败:', err);
-          message.error('删除失败，请重试');
+          message.error(t.notifications.deleteFailed);
         } finally {
           setProcessingId(null);
         }
@@ -150,11 +190,11 @@ export default function MobileNotificationsPage() {
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-              消息通知
+              {t.notifications.title}
             </h1>
             {total !== undefined && (
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                ({total} 条消息)
+                ({tr('notifications.messagesCount', { count: total })})
               </span>
             )}
           </div>
@@ -163,14 +203,14 @@ export default function MobileNotificationsPage() {
         {/* 未读数量和全部已读按钮 */}
         <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            {unreadCount > 0 ? `${unreadCount} 条消息未读` : '全部已读'}
+            {unreadCount > 0 ? tr('notifications.unreadMessages', { count: unreadCount }) : t.notifications.allRead}
           </span>
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
               className="text-sm text-blue-500 hover:text-blue-600 transition-colors"
             >
-              全部已读
+              {t.notifications.markAllAsRead}
             </button>
           )}
         </div>
@@ -198,19 +238,19 @@ export default function MobileNotificationsPage() {
           // 错误状态
           <div className="text-center py-12">
             <div className="text-gray-400 dark:text-gray-600 text-5xl mb-3">⚠️</div>
-            <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">加载失败</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">{t.notifications.loadFailed}</p>
             <button
               onClick={refresh}
               className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
             >
-              重试
+              {t.notifications.retry}
             </button>
           </div>
         ) : notifications.length === 0 ? (
           // 空状态
           <div className="text-center py-12">
             <div className="text-gray-300 dark:text-gray-700 text-5xl mb-3">🔔</div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">暂无消息通知</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{t.notifications.noNotifications}</p>
           </div>
         ) : (
           // 消息列表
@@ -242,7 +282,7 @@ export default function MobileNotificationsPage() {
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                        {(notification.sender?.nickname || '系')[0]}
+                        {(notification.sender?.nickname || t.notifications.systemNotification)[0]}
                       </div>
                     )}
 
@@ -253,7 +293,7 @@ export default function MobileNotificationsPage() {
                           {/* 第一行：标题（大字）+ 未读蓝点 */}
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                              {notification.sender?.nickname || notification.title || '系统通知'}
+                              {notification.sender?.nickname || notification.title || t.notifications.systemNotification}
                             </h3>
                             {isUnread && (
                               <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
@@ -297,7 +337,7 @@ export default function MobileNotificationsPage() {
                                 onClick={() => handleMarkAsRead(notification.id)}
                                 disabled={processingId === notification.id}
                                 className="p-2 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-full transition-colors disabled:opacity-50"
-                                aria-label="标记为已读"
+                                aria-label={t.notifications.markAsRead}
                               >
                                 <Check size={16} />
                               </button>
@@ -306,7 +346,7 @@ export default function MobileNotificationsPage() {
                               onClick={() => handleDelete(notification.id)}
                               disabled={processingId === notification.id}
                               className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full transition-colors disabled:opacity-50"
-                              aria-label="删除消息"
+                              aria-label={t.notifications.deleteMessage}
                             >
                               <Trash2 size={16} />
                             </button>
@@ -327,7 +367,7 @@ export default function MobileNotificationsPage() {
                   disabled={loadingMore}
                   className="px-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
-                  {loadingMore ? '加载中...' : '加载更多'}
+                  {loadingMore ? t.notifications.loading : t.notifications.loadMore}
                 </button>
               </div>
             )}
