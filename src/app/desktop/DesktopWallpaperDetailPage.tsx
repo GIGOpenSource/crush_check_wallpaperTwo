@@ -133,7 +133,7 @@ export default function DesktopWallpaperDetailPage() {
     // 检查是否登录
     const token = getAuthToken();
     if (!token) {
-      message.warning('请先登录后再收藏');
+      // message.warning('请先登录后再收藏');
       setTimeout(() => {
         navigate('/login');
       }, 500);
@@ -161,10 +161,11 @@ export default function DesktopWallpaperDetailPage() {
       setLocalLikes(res.data.collect_count);
       
       // 显示成功提示
-      message.success(res.data.collected ? '收藏成功' : '已取消收藏');
+      
+      message.success(res.data.collected ? t.wallpaperDetail.collectSuccess : t.wallpaperDetail.collectCanceled);
     } catch (err) {
       console.error('收藏失败:', err);
-      message.error('操作失败，请重试');
+      message.error(err.message);
     }
   };
 
