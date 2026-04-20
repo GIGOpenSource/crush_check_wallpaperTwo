@@ -36,15 +36,15 @@ export default function SettingsPage() {
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
-    { code: 'en', name: 'English', flag: '🇬' },
-    { code: 'ja', name: '日本語', flag: '🇯' },
-    { code: 'ko', name: '한국어', flag: '🇰' },
-    { code: 'es', name: 'Español', flag: '🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫' },
+    { code: 'zh-CN', name: '简体中文', flag: 'CN' },
+    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'ja', name: '日本語', flag: 'JP' },
+    { code: 'ko', name: '한국어', flag: 'KR' },
+    { code: 'es', name: 'Español', flag: 'ES' },
+    { code: 'fr', name: 'Français', flag: 'FR' },
   ];
 
-  const handleLanguageChange = (langCode: string) => {
+  const handleLanguageChange = (langCode: 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr') => {
     setLanguage(langCode);
     setShowLanguageModal(false);
   };
@@ -253,30 +253,36 @@ export default function SettingsPage() {
         open={showLanguageModal}
         onCancel={() => setShowLanguageModal(false)}
         footer={null}
+        width={280}
         className="rounded-2xl"
+        styles={{
+          body: { padding: '12px' }
+        }}
       >
-        <div className="space-y-2 py-2">
+        <div className="space-y-1 py-1">
           {languageOptions.map((lang) => (
             <motion.button
               key={lang.code}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleLanguageChange(lang.code)}
-              className={`w-full flex items-center justify-between p-4 rounded-xl transition-all ${
+              onClick={() => handleLanguageChange(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
                 language === lang.code
                   ? 'bg-blue-50 border-2 border-blue-500'
                   : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{lang.flag}</span>
-                <span className={`font-medium ${language === lang.code ? 'text-blue-600' : 'text-gray-900'}`}>
+              <div className="flex items-center gap-2.5">
+                <span className="text-sm font-bold text-gray-800 w-7 text-center">
+                  {lang.flag}
+                </span>
+                <span className={`text-sm ${language === lang.code ? 'text-blue-600 font-semibold' : 'text-gray-700 font-medium'}`}>
                   {lang.name}
                 </span>
               </div>
               {language === lang.code && (
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               )}

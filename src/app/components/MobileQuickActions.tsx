@@ -18,16 +18,18 @@ export const MobileQuickActions: React.FC = () => {
   const { viewMode, setViewMode } = useView();
   const { language, setLanguage } = useLanguage();
 
+  // 判断是否在搜索页面
+  const isSearchPage = location.pathname === '/search';
   // 判断是否在首页
   const isHomePage = location.pathname === '/' || location.pathname === '/markwallpapers' || location.pathname === '';
 
   const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
-    { code: 'en', name: 'English', flag: '🇬' },
-    { code: 'ja', name: '日本語', flag: '🇯' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫' },
+    { code: 'zh-CN', name: '简体中文', flag: 'CN' },
+    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'ja', name: '日本語', flag: 'JP' },
+    { code: 'ko', name: '한국어', flag: 'KR' },
+    { code: 'es', name: 'Español', flag: 'ES' },
+    { code: 'fr', name: 'Français', flag: 'FR' },
   ];
 
   const currentLanguage = languageOptions.find((lang) => lang.code === language);
@@ -126,9 +128,9 @@ export const MobileQuickActions: React.FC = () => {
             } right-0 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden min-w-[220px] max-h-[70vh]`}
           >
             {/* 语言切换部分 */}
-            <div className="px-4 py-3 border-b border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                语言 / Language
+            <div className="px-3 py-3 border-b border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
+                语言 / LANGUAGE
               </p>
               <div className="space-y-1 max-h-[30vh] overflow-y-auto">
                 {languageOptions.map((lang) => (
@@ -137,14 +139,18 @@ export const MobileQuickActions: React.FC = () => {
                     onClick={() => {
                       setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr');
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors ${
-                      language === lang.code ? 'bg-blue-50' : ''
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                      language === lang.code 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 shadow-sm' 
+                        : 'hover:bg-gray-50'
                     }`}
                   >
-                    <span className="text-xl">{lang.flag}</span>
+                    <span className="text-sm font-bold text-gray-800 w-8 text-center">
+                      {lang.flag}
+                    </span>
                     <span
-                      className={`text-sm font-medium ${
-                        language === lang.code ? 'text-blue-600' : 'text-gray-700'
+                      className={`text-sm ${
+                        language === lang.code ? 'text-blue-700 font-semibold' : 'text-gray-600 font-medium'
                       }`}
                     >
                       {lang.name}

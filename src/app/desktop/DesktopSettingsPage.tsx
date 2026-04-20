@@ -53,12 +53,12 @@ export default function DesktopSettingsPage() {
   };
 
   const languageOptions = [
-    { code: 'zh-CN', name: '简体中文', flag: '🇨' },
-    { code: 'en', name: 'English', flag: '🇬' },
-    { code: 'ja', name: '日本語', flag: '🇯' },
-    { code: 'ko', name: '한국어', flag: '🇰🇷' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫' },
+    { code: 'zh-CN', name: '简体中文', flag: 'CN' },
+    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'ja', name: '日本語', flag: 'JP' },
+    { code: 'ko', name: '한국어', flag: 'KR' },
+    { code: 'es', name: 'Español', flag: 'ES' },
+    { code: 'fr', name: 'Français', flag: 'FR' },
   ];
 
   return (
@@ -177,17 +177,20 @@ export default function DesktopSettingsPage() {
                     <motion.button
                       key={lang.code}
                       whileTap={{ scale: 0.97 }}
+                      whileHover={{ scale: 1.02 }}
                       onClick={() => setLanguage(lang.code as any)}
-                      className={`flex items-center gap-3 px-4 py-4 rounded-xl border-2 transition-all ${
+                      className={`flex items-center gap-3 px-5 py-4 rounded-xl border-2 transition-all duration-200 ${
                         language === lang.code
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md'
+                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
                       }`}
                     >
-                      <span className="text-2xl">{lang.flag}</span>
+                      <span className="text-sm font-bold text-gray-800">
+                        {lang.flag}
+                      </span>
                       <span
-                        className={`font-medium ${
-                          language === lang.code ? 'text-blue-600' : 'text-gray-700'
+                        className={`font-semibold ${
+                          language === lang.code ? 'text-blue-700' : 'text-gray-700'
                         }`}
                       >
                         {lang.name}
