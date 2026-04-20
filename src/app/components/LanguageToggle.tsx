@@ -38,7 +38,7 @@ export function LanguageToggle() {
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 h-11 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-shadow"
         title="Change language"
       >
         <span className="text-sm font-semibold">{currentLanguage?.flag}</span>
