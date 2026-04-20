@@ -367,28 +367,28 @@ export default function DesktopProfilePage() {
                     <ImageIcon size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">已上传</div>
+                  <div className="text-white/80 text-sm">{t.profile.uploaded}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Heart size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">收藏</div>
+                  <div className="text-white/80 text-sm">{t.profile.favorites}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Users size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.following_count ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">关注</div>
+                  <div className="text-white/80 text-sm">{t.profile.following}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Users size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.follower_count ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">粉丝</div>
+                  <div className="text-white/80 text-sm">{t.profile.followers}</div>
                 </div>
               </div>
             </div>
@@ -416,7 +416,7 @@ export default function DesktopProfilePage() {
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <Award size={48} className="mx-auto mb-4 text-gray-300" />
-                  <p>还没有获得徽章</p>
+                  <p>{t.profile.noBadgesYet}</p>
                 </div>
               )}
             </section>
