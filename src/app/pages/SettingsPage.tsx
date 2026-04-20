@@ -91,13 +91,13 @@ export default function SettingsPage() {
           chevron: true,
           value: languageOptions.find(lang => lang.code === language)?.name || 'English',
         },
-        {
-          icon: isDarkMode ? Moon : Sun,
-          label: isDarkMode ? t.settings.darkMode : t.settings.lightMode,
-          toggle: true,
-          value: isDarkMode,
-          onChange: setIsDarkMode,
-        },
+        // {
+        //   icon: isDarkMode ? Moon : Sun,
+        //   label: isDarkMode ? t.settings.darkMode : t.settings.lightMode,
+        //   toggle: true,
+        //   value: isDarkMode,
+        //   onChange: setIsDarkMode,
+        // },
       ],
     },
     {
@@ -142,7 +142,7 @@ export default function SettingsPage() {
       items: [
         {
           icon: Shield,
-          label: t.settings.privacyPolicy,
+          label: t.settings.privacySecurity,
           onClick: () => navigate('/site-info/privacy'),
           chevron: true,
         },

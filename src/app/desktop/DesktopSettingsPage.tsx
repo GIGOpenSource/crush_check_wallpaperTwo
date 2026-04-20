@@ -135,7 +135,7 @@ export default function DesktopSettingsPage() {
             </section>
 
             {/* Appearance */}
-            <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            {/* <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">{t.settings.appearance}</h2>
               </div>
@@ -173,7 +173,7 @@ export default function DesktopSettingsPage() {
                   </button>
                 </div>
               </div>
-            </section>
+            </section> */}
 
             {/* Language */}
             <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
