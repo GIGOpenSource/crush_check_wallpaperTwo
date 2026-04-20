@@ -81,7 +81,7 @@ export default function DesktopRegisterPage() {
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <div className="max-w-lg mx-auto px-5 pt-10 pb-12">
           <h1 className="text-3xl font-bold">创建账号</h1>
-          <p className="mt-2 text-white/85">注册后即可上传壁纸并收藏你喜欢的内容</p>
+          <p className="mt-2 text-white/85">注册后即可上传壁纸并收藏你喜欢的壁纸</p>
         </div>
       </header>
 

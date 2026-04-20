@@ -8,6 +8,7 @@ import { useMyUploads } from '../hooks/useMyUploads';
 import { useMyCollections } from '../hooks/useMyCollections';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useFollowingList, useFollowersList } from '../hooks/useFollowingList';
+import { getAuthToken } from '../../api/request';
 import {
   Settings,
   Upload,
@@ -168,6 +169,20 @@ export default function ProfilePage() {
     }
   }, [activeTab, refreshFollowing, refreshFollowers]);
 
+  // 未登录状态 - 查看自己主页时直接跳转登录页
+  useEffect(() => {
+    const token = getAuthToken();
+    const isViewingOwnProfile = !otherId; // 没有 otherId 表示查看自己的主页
+    
+    // 如果是查看自己的主页且未登录，直接跳转登录页
+    if (isViewingOwnProfile && !token && !profileLoading) {
+      message.warning('请先登录后再访问');
+      setTimeout(() => {
+        navigate('/login', { replace: true });
+      }, 500);
+    }
+  }, [profileLoading, otherId, navigate, message]);
+
   // 删除壁纸
   const handleDeleteWallpaper = async (id: number | string) => {
     Modal.confirm({
@@ -219,19 +234,25 @@ export default function ProfilePage() {
     }
   };
 
-  // 未登录状态
+  // 未登录状态或加载中的渲染逻辑
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500 text-center">
-          <p>{t.profile.pleaseLogin}</p>
-          <button
-            onClick={() => navigate('/login')}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
-          >
-            {t.profile.goToLogin}
-          </button>
-        </div>
+        {!otherId ? (
+          <div className="text-gray-500">
+            <p>加载中...</p>
+          </div>
+        ) : (
+          <div className="text-gray-500 text-center">
+            <p>{t.profile.pleaseLogin}</p>
+            <button
+              onClick={() => navigate('/login')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              {t.profile.goToLogin}
+            </button>
+          </div>
+        )}
       </div>
     );
   }

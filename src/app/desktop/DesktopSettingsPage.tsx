@@ -26,6 +26,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken } from '../../api/request';
+import { logoutUser } from '../../api/auth';
 import { motion } from 'motion/react';
 
 export default function DesktopSettingsPage() {
@@ -36,18 +37,26 @@ export default function DesktopSettingsPage() {
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     modal.confirm({
       title: t.settings.logOut,
       content: '确定要退出登录吗？',
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk: () => {
-        // 清除 token
-        setAuthToken('');
-        // 跳转到登录页（保持当前视图模式）
-        navigate('/login', { replace: true });
+      onOk: async () => {
+        try {
+          // 调用后端退出登录接口
+          await logoutUser();
+        } catch (err) {
+          console.error('退出登录接口调用失败:', err);
+          // 即使接口失败，也继续清除本地 token
+        } finally {
+          // 清除本地 token
+          setAuthToken('');
+          // 跳转到登录页（保持当前视图模式）
+          navigate('/login', { replace: true });
+        }
       },
     });
   };

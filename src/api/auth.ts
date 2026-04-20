@@ -19,6 +19,11 @@ export function loginUser(payload: LoginPayload) {
   return http.post('/api/client/users/login/', payload);
 }
 
+/** 退出登录 */
+export function logoutUser() {
+  return http.post('/api/client/users/logout/');
+}
+
 /** 从后端错误响应里尽量提取可展示的错误文案 */
 export function extractApiErrorMessage(data: unknown): string | undefined {
   if (typeof data === 'string') {

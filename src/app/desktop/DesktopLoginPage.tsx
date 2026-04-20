@@ -56,7 +56,7 @@ export default function DesktopLoginPage() {
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
         <div className="max-w-lg mx-auto px-5 pt-10 pb-12">
           <h1 className="text-3xl font-bold">欢迎回来</h1>
-          <p className="mt-2 text-white/85">登录后继续浏览和上传你喜欢的壁纸</p>
+          <p className="mt-2 text-white/85">登录后继续浏览和收藏你喜欢的壁纸</p>
         </div>
       </header>
 

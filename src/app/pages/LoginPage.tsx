@@ -77,7 +77,7 @@ export default function LoginPage() {
             transition={{ delay: 0.3 }}
             className="text-white/80 text-center text-sm"
           >
-            登录后继续浏览和上传你喜欢的壁纸
+            登录后继续浏览和收藏你喜欢的壁纸
           </motion.p>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function DesktopWallpaperDetailPage() {
   const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { wallpaper, loading, error } = useWallpaperDetailFromRoute();
+  const { wallpaper, loading, error, refresh } = useWallpaperDetailFromRoute();
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const { comments, total: commentTotal } = useWallpaperComments(id || '');
   const { profile: currentProfile } = useUserProfile();
@@ -44,6 +44,7 @@ export default function DesktopWallpaperDetailPage() {
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [localLikes, setLocalLikes] = useState<number | null>(null); // 本地管理的收藏数
   const [downloadNotice, setDownloadNotice] = useState<{
     open: boolean;
     message: string;
@@ -128,8 +129,26 @@ export default function DesktopWallpaperDetailPage() {
 
     console.log("开始收藏");
     try {
-      const res = await recordWallpaperCollect(wallpaper.id) as { data: { collected: boolean } };
+      // 调用收藏接口，返回格式: { code: 200, message: "...", data: { collected: boolean, collect_count: number } }
+      const res = await recordWallpaperCollect(wallpaper.id) as { 
+        code: number; 
+        message: string; 
+        data: { collected: boolean; collect_count: number } 
+      };
+      
+      // 检查业务状态码
+      if (res.code !== 200) {
+        message.error(res.message || '操作失败，请重试');
+        return;
+      }
+      
+      // 更新收藏状态
       setIsLiked(res.data.collected);
+      // 直接使用接口返回的 collect_count 更新收藏数，不调用详情接口
+      setLocalLikes(res.data.collect_count);
+      
+      // 显示成功提示
+      message.success(res.data.collected ? '收藏成功' : '已取消收藏');
     } catch (err) {
       console.error('收藏失败:', err);
       message.error('操作失败，请重试');
@@ -277,7 +296,7 @@ export default function DesktopWallpaperDetailPage() {
                         <span>{t.wallpaperDetail.likes}</span>
                       </div>
                       <span className="font-semibold text-gray-900">
-                        {formatNumber(wallpaper.likes)}
+                        {formatNumber(localLikes ?? wallpaper.likes)}
                       </span>
                     </div>
                   </div>
