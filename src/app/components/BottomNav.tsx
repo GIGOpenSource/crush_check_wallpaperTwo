@@ -43,7 +43,7 @@ export function BottomNav() {
                 />
                 {/* 未读消息角标 */}
                 {item.showBadge && unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">
+                  <span className="absolute -top-1 right-0 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center -translate-x-1/2">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}

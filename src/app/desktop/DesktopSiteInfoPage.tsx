@@ -42,7 +42,7 @@ export default function DesktopSiteInfoPage() {
   const getTitle = () => {
     switch (type) {
       case 'privacy':
-        return t.settings.privacyPolicy;
+        return t.settings.privacySecurity;
       case 'help':
         return t.settings.helpSupport;
       case 'about':
