@@ -330,7 +330,7 @@ export default function DesktopNotificationsPage() {
                       disabled={loadingMore}
                       className="px-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loadingMore ? '加载中...' : '加载更多'}
+                      {loadingMore ? t.common.loading :  t.common.loadMore}
                     </button>
                   </div>
                 )}

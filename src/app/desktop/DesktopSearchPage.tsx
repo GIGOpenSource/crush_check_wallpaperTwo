@@ -226,7 +226,7 @@ export default function DesktopSearchPage() {
                           onClick={loadMore}
                           className="px-6 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                          加载更多
+                         {t.common.loadMore}
                         </button>
                       </div>
                     )}

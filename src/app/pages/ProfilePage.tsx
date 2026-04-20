@@ -240,7 +240,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         {!otherId ? (
           <div className="text-gray-500">
-            <p>加载中...</p>
+            <p>{t.common.loading}</p>
           </div>
         ) : (
           <div className="text-gray-500 text-center">

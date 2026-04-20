@@ -233,7 +233,7 @@ export default function SearchPage() {
                   onClick={loadMore}
                   className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
                 >
-                  加载更多
+                   {t.common.loadMore}
                 </button>
               </div>
             )}

@@ -234,7 +234,7 @@ export default function DesktopProfilePage() {
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-gray-500">
-            <p>加载中...</p>
+            <p>{t.common.loading}</p>
           </div>
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function DesktopProfilePage() {
         <div className="flex-1 ml-64 flex items-center justify-center">
           {!otherId ? (
             <div className="text-gray-500">
-              <p>加载中...</p>
+              <p>{t.common.loading}</p>
             </div>
           ) : (
             <div className="text-gray-500 text-center">
