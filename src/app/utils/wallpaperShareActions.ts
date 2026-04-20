@@ -1,3 +1,5 @@
+import { PUBLIC_SITE_ORIGIN } from '../config/publicSite';
+
 export type WallpaperShareChannel = 'twitter' | 'facebook' | 'whatsapp' | 'pinterest';
 
 export async function copyTextToClipboard(text: string): Promise<boolean> {
@@ -24,9 +26,9 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
 
 /** @returns 是否成功打开新窗口（被拦截则为 false） */
 export function openWallpaperShareChannel(channel: WallpaperShareChannel, wallpaperId: string): boolean {
-  // 构建壁纸详情页的完整URL
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const wallpaperUrl = `${origin}/wallpaper/${encodeURIComponent(wallpaperId)}`;
+  // 构建壁纸详情页的完整URL（使用固定的线上域名，包含 base path 和 hash 路由）
+  const origin = PUBLIC_SITE_ORIGIN.replace(/\/$/, '');
+  const wallpaperUrl = `${origin}/#/wallpaper/${encodeURIComponent(wallpaperId)}`;
   const enc = encodeURIComponent(wallpaperUrl);
   
   const href =

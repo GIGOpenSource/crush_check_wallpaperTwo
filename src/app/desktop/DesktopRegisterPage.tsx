@@ -19,6 +19,14 @@ export default function DesktopRegisterPage() {
       message.warning('请完整填写注册信息');
       return;
     }
+    
+    // 密码正则校验：最少8位，必须包含字母和数字
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      message.error('密码必须至少8位，且包含字母和数字');
+      return;
+    }
+    
     if (password !== confirmPassword) {
       message.error('两次输入的密码不一致');
       return;

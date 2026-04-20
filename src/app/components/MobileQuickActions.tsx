@@ -153,16 +153,29 @@ export const MobileQuickActions: React.FC = () => {
       {/* 主按钮 - 固定在首页右上角 */}
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="w-9 h-9 rounded-xl bg-white hover:bg-gray-50 border border-gray-300 shadow-sm flex items-center justify-center cursor-pointer transition-all"
+        className="h-9 px-3 rounded-full bg-white hover:bg-gray-50 border border-gray-300 shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="text-gray-600"
+        <span className="text-sm font-bold text-gray-800">
+          {currentLanguage?.flag || 'CN'}
+        </span>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className="w-4 h-4 text-gray-600"
         >
-          <ChevronDown size={16} />
-        </motion.div>
+          <path d="m5 8 6 6" />
+          <path d="m4 14 6-6 2-3" />
+          <path d="M2 5h12" />
+          <path d="M7 2h1" />
+          <path d="m22 22-5-10-5 10" />
+          <path d="M14 18h6" />
+        </svg>
       </motion.button>
     </div>
   );

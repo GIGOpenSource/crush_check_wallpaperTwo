@@ -446,7 +446,8 @@ export default function DesktopWallpaperDetailPage() {
                     type="button"
                     className="flex flex-col items-center gap-2"
                     onClick={async () => {
-                      await trackAndRunDetailShare(key, wallpaper.id, () =>
+                      const shareUrl = window.location.href;
+                      await trackAndRunDetailShare(key, shareUrl, () =>
                         message.success(t.wallpaperDetail.linkCopied),
                       );
                       setShowShareSheet(false);

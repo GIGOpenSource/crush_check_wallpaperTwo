@@ -21,18 +21,15 @@ const CLICK_EVENT_BY_KEY: Record<Exclude<DetailShareActionKey, 'copy'>, string> 
 /** 壁纸详情分享面板：渠道点击 + 成功/失败（复制 / 打开分享页） */
 export async function trackAndRunDetailShare(
   key: DetailShareActionKey,
-  wallpaperId: string | undefined,
+  shareUrl: string | undefined,
   onCopySuccess: () => void,
 ): Promise<void> {
-  if (!wallpaperId?.trim()) {
+  if (!shareUrl?.trim()) {
     umengclick('share_fail');
     return;
   }
   if (key === 'copy') {
     umengclick('copy_link_click');
-    // 构建完整的壁纸分享URL用于复制
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const shareUrl = `${origin}/wallpaper/${encodeURIComponent(wallpaperId)}`;
     const ok = await copyTextToClipboard(shareUrl);
     if (ok) {
       umengclick('share_success');
@@ -43,7 +40,7 @@ export async function trackAndRunDetailShare(
     return;
   }
   umengclick(CLICK_EVENT_BY_KEY[key]);
-  const opened = openWallpaperShareChannel(CHANNEL_BY_KEY[key], wallpaperId);
+  const opened = openWallpaperShareChannel(CHANNEL_BY_KEY[key], shareUrl);
   if (opened) umengclick('share_success');
   else umengclick('share_fail');
 }

@@ -84,7 +84,7 @@ export function resolveWallpaperListNav(state: unknown, search: string): Wallpap
 
 export function buildWallpaperShareUrl(wallpaperId: string, nav?: WallpaperListNavState): string {
   const origin = PUBLIC_SITE_ORIGIN.replace(/\/$/, '');
-  const path = `/wallpaper/${encodeURIComponent(wallpaperId)}`;
+  const path = `/#/wallpaper/${encodeURIComponent(wallpaperId)}`;
   const qs = nav ? listNavStateToSearchParams(nav).toString() : '';
   return qs ? `${origin}${path}?${qs}` : `${origin}${path}`;
 }
