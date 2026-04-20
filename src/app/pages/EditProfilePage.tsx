@@ -37,13 +37,13 @@ export default function EditProfilePage() {
 
     // 验证文件类型
     if (!file.type.startsWith('image/')) {
-      message.error('请选择图片文件');
+      message.error(t.editProfile.selectImageFile);
       return;
     }
 
     // 验证文件大小（限制5MB）
     if (file.size > 5 * 1024 * 1024) {
-      message.error('图片大小不能超过5MB');
+      message.error(t.editProfile.imageSizeExceeded);
       return;
     }
 
@@ -59,13 +59,13 @@ export default function EditProfilePage() {
       const imageUrl = response.data?.url || response.data?.file_url || response.url;
       if (imageUrl) {
         setAvatarUrl(imageUrl);
-        message.success('头像上传成功');
+        message.success(t.editProfile.avatarUploadSuccess);
       } else {
-        message.error('头像上传失败，未返回图片URL');
+        message.error(t.editProfile.avatarUploadNoUrl);
       }
     } catch (error) {
       console.error('上传头像失败:', error);
-      message.error('头像上传失败，请重试');
+      message.error(t.editProfile.avatarUploadFailed);
     } finally {
       setUploadingAvatar(false);
       // 清空file input，允许重复选择同一文件
@@ -81,7 +81,7 @@ export default function EditProfilePage() {
 
   const handleSave = async () => {
     if (!nickname.trim()) {
-      message.warning('昵称不能为空');
+      message.warning(t.editProfile.nicknameRequired);
       return;
     }
 
@@ -93,7 +93,7 @@ export default function EditProfilePage() {
         avatar_url: avatarUrl.trim() || undefined,
       });
       
-      message.success('保存成功');
+      message.success(t.editProfile.saveSuccess);
       // 刷新用户信息
       await refresh();
       // 返回上一页
@@ -102,22 +102,22 @@ export default function EditProfilePage() {
       }, 500);
     } catch (error) {
       console.error('更新个人信息失败:', error);
-      message.error('保存失败，请重试');
+      message.error(t.editProfile.saveFailed);
     } finally {
       setSaving(false);
     }
   };
 
   const genderOptions = [
-    { value: 0, label: '未知' },
-    { value: 1, label: '男' },
-    { value: 2, label: '女' },
+    { value: 0, label: t.editProfile.genderUnknown },
+    { value: 1, label: t.editProfile.genderMale },
+    { value: 2, label: t.editProfile.genderFemale },
   ];
 
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">请先登录</p>
+        <p className="text-gray-500">{t.editProfile.pleaseLogin}</p>
       </div>
     );
   }
@@ -126,14 +126,14 @@ export default function EditProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="px-4 py-4 flex items-center justify-between">
+        <div className="px-4 py-4 flex items-center">
           <button
             onClick={() => navigate(-1)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <ArrowLeft size={24} className="text-gray-700" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">编辑资料</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t.editProfile.title}</h1>
         </div>
       </header>
 
@@ -142,7 +142,7 @@ export default function EditProfilePage() {
         {/* Avatar Section */}
         <div className="bg-white px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">头像</h3>
+            <h3 className="font-semibold text-gray-900">{t.editProfile.avatar}</h3>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -174,8 +174,8 @@ export default function EditProfilePage() {
               />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-700">点击相机图标选择图片</p>
-              <p className="text-xs text-gray-500 mt-1">支持 JPG、PNG 格式，最大 5MB</p>
+              <p className="text-sm text-gray-700">{t.editProfile.avatarUploadHint}</p>
+              <p className="text-xs text-gray-500 mt-1">{t.editProfile.avatarFormatHint}</p>
             </div>
           </div>
         </div>
@@ -185,14 +185,14 @@ export default function EditProfilePage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
               <User size={18} />
-              昵称
+              {t.editProfile.nickname}
             </h3>
           </div>
           <input
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
-            placeholder="请输入昵称"
+            placeholder={t.editProfile.nicknamePlaceholder}
             maxLength={20}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
@@ -202,7 +202,7 @@ export default function EditProfilePage() {
         {/* Gender Section */}
         <div className="bg-white px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">性别</h3>
+            <h3 className="font-semibold text-gray-900">{t.editProfile.gender}</h3>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {genderOptions.map((option) => (
@@ -226,7 +226,7 @@ export default function EditProfilePage() {
         <div className="px-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
-              💡 提示：修改后将立即生效，其他用户可以看到您的最新信息。
+              💡 {t.editProfile.tipContent}
             </p>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function EditProfilePage() {
             className="w-full py-4 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg"
           >
             <Save size={20} />
-            <span>{saving ? '保存中...' : '保存'}</span>
+            <span>{saving ? t.editProfile.saving : t.editProfile.save}</span>
           </motion.button>
         </div>
       </div>
