@@ -302,8 +302,8 @@ export default function DesktopProfilePage() {
                     <h1 className="text-3xl font-bold mb-2">{profile.nickname || profile.username}</h1>
                     <div className="flex items-center gap-3 text-white/90 mb-3">
                       <span>{t.profile.level} {profile.level || 0}</span>
-                      <span>•</span>
-                      <span>{profile.points || 0} {t.profile.points}</span>
+                      {/* <span>•</span>
+                      <span>{profile.points || 0} {t.profile.points}</span> */}
                     </div>
                     {/* 根据是否是其他用户显示不同按钮 */}
                     {isOtherUser ? (

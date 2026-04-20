@@ -296,8 +296,8 @@ export default function ProfilePage() {
               <h1 className="text-2xl font-bold mb-1">{profile.nickname || profile.username}</h1>
               <div className="flex items-center gap-3 text-sm text-white/90">
                 <span>{t.profile.level} {profile.level || 0}</span>
-                <span>•</span>
-                <span>{profile.points || 0} {t.profile.points}</span>
+                {/* <span>•</span>
+                <span>{profile.points || 0} {t.profile.points}</span> */}
               </div>
             </div>
             {/* 根据是否是其他用户显示关注/取消关注按钮 */}
