@@ -45,6 +45,7 @@ export default function DesktopWallpaperDetailPage() {
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [localLikes, setLocalLikes] = useState<number | null>(null); // 本地管理的收藏数
+  const [localDownloads, setLocalDownloads] = useState<number | null>(null); // 本地管理的下载数
   const [downloadNotice, setDownloadNotice] = useState<{
     open: boolean;
     message: string;
@@ -92,8 +93,20 @@ export default function DesktopWallpaperDetailPage() {
     umengclick('download_start');
     try {
       try {
-        await recordWallpaperDownload(wallpaper.id);
-      } catch {
+        // 调用下载记录接口，获取最新的下载量
+        const res = await recordWallpaperDownload(wallpaper.id) as { 
+          code: number; 
+          message: string; 
+          data: { download_count: number } 
+        };
+        
+        // 检查业务状态码并更新下载量
+        if (res.code === 200 && res.data?.download_count !== undefined) {
+          // 使用局部状态更新下载量
+          setLocalDownloads(res.data.download_count);
+        }
+      } catch (err) {
+        console.error('记录下载失败:', err);
         // 上报失败不影响实际下载流程
       }
       const result = await downloadWallpaperImage(wallpaper.imageUrl, wallpaper.title);
@@ -287,7 +300,7 @@ export default function DesktopWallpaperDetailPage() {
                         <span>{t.wallpaperDetail.downloads}</span>
                       </div>
                       <span className="font-semibold text-gray-900">
-                        {formatNumber(wallpaper.downloads)}
+                        {formatNumber(localDownloads ?? wallpaper.downloads)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
