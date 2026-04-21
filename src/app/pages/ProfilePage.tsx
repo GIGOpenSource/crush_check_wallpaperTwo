@@ -283,8 +283,8 @@ export default function ProfilePage() {
           </button>
         )}
         
-        <div className="px-4 pt-6 pb-8">
-          <div className="flex items-start gap-4 mb-6">
+        <div className={`px-4 ${isOtherUser ? 'pt-20' : 'pt-8'} pb-10`}>
+          <div className="flex items-start gap-4 mb-8">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
               <img
                 src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username)}`}
@@ -341,18 +341,18 @@ export default function ProfilePage() {
           </div>
 
           {/* 统计卡片 - 查看其他用户时显示所有4个 */}
-          <div className="px-4 pt-6">
-            <div className="space-y-3">
+          <div className="px-0 pt-2">
+            <div className="space-y-4">
               {/* 第一行：已上传和收藏 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                   <div className="flex items-center justify-center gap-1 mb-1">
                     <ImageIcon size={18} />
                     <span className="text-2xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</span>
                   </div>
                   <p className="text-xs text-white/80">{t.profile.uploaded}</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                   <div className="flex items-center justify-center gap-1 mb-1">
                     <Heart size={18} />
                     <span className="text-2xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</span>
@@ -361,15 +361,15 @@ export default function ProfilePage() {
                 </div>
               </div>
               {/* 第二行：关注和粉丝 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                   <div className="flex items-center justify-center gap-1 mb-1">
                     <Users size={18} />
                     <span className="text-2xl font-bold">{profile.following_count ?? 0}</span>
                   </div>
                   <p className="text-xs text-white/80">{t.profile.following}</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                   <div className="flex items-center justify-center gap-1 mb-1">
                     <Users size={18} />
                     <span className="text-2xl font-bold">{profile.follower_count ?? 0}</span>

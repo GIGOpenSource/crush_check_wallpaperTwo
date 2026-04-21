@@ -1,5 +1,5 @@
 import { App } from 'antd';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
@@ -40,7 +40,6 @@ export default function WallpaperDetailPage() {
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const { comments, total: commentTotal } = useWallpaperComments(id || '');
   const { profile: currentProfile } = useUserProfile();
-  const [isLiked, setIsLiked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -51,6 +50,16 @@ export default function WallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
+
+  // 初始化喜欢状态使用壁纸的is_collected字段
+  const [isLiked, setIsLiked] = useState(!!wallpaper?.is_collected);
+
+  // 当壁纸数据更新时，同步更新isLiked状态
+  useEffect(() => {
+    if (wallpaper && wallpaper.is_collected !== undefined) {
+      setIsLiked(wallpaper.is_collected);
+    }
+  }, [wallpaper?.is_collected]);
 
   // 判断是否是自己的壁纸
   const isOwnWallpaper = useMemo(() => {
