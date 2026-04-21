@@ -50,6 +50,8 @@ export const translations = {
 
     // Wallpaper Detail
     wallpaperDetail: {
+      systemUpload: "系统上传",
+  uploadBySystem: "此壁纸由系统自动上传",
       download: '下载',
       like: '喜欢',
       liked: '已喜欢',
@@ -479,6 +481,8 @@ register: {
       by: "by",
     },
     wallpaperDetail: {
+       systemUpload: "System Upload",
+  uploadBySystem: "This wallpaper was automatically uploaded by the system",
       download: "Download",
       like: "Like",
       liked: "Liked",
@@ -841,6 +845,8 @@ register: {
       by: "投稿者",
     },
     wallpaperDetail: {
+      systemUpload: "システムアップロード",
+  uploadBySystem: "この壁紙はシステムにより自動的にアップロードされました",
       download: "ダウンロード",
       like: "いいね",
       liked: "いいね済み",
@@ -1203,6 +1209,9 @@ register: {
       by: "작성자",
     },
     wallpaperDetail: {
+      systemUpload: "시스템 업로드",
+  uploadBySystem: "이 배경화면은 시스템에 의해 자동으로 업로드되었습니다",
+
       download: "다운로드",
       like: "좋아요",
       liked: "좋아요 완료",
@@ -1568,6 +1577,8 @@ register: {
   },
 
   wallpaperDetail: {
+     systemUpload: "Subida por sistema",
+  uploadBySystem: "Este fondo de pantalla fue subido automáticamente por el sistema",
     download: 'Descargar',
     like: 'Favorito',
     liked: 'Favorito',
@@ -1942,6 +1953,8 @@ register: {
   },
 
   wallpaperDetail: {
+     systemUpload: "Téléversement système",
+  uploadBySystem: "Ce fond d'écran a été téléversé automatiquement par le système",
     download: 'Télécharger',
     like: 'Favori',
     liked: 'Favori',

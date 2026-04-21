@@ -366,8 +366,9 @@ export default function DesktopWallpaperDetailPage() {
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{wallpaper.uploader.username}</p>
                         <p className="text-sm text-gray-500">
-                          {t.wallpaperDetail.level} {wallpaper.uploader.level} •{' '}
-                          {wallpaper.uploader.points} {t.wallpaperDetail.points}
+                          {t.wallpaperDetail.level} {wallpaper.uploader.level} 
+                          {/* •{' '}
+                          {wallpaper.uploader.points} {t.wallpaperDetail.points} */}
                         </p>
                       </div>
                     </button>
@@ -380,8 +381,8 @@ export default function DesktopWallpaperDetailPage() {
                         <User size={20} className="text-gray-400" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-gray-500">系统上传</p>
-                        <p className="text-sm text-gray-400">此壁纸由系统自动上传</p>
+                        <p className="font-medium text-gray-500">{t.wallpaperDetail.systemUpload}</p>
+                        <p className="text-sm text-gray-400">{t.wallpaperDetail.uploadBySystem}</p>
                       </div>
                     </div>
                   </div>
