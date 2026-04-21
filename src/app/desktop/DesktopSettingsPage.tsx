@@ -47,15 +47,19 @@ export default function DesktopSettingsPage() {
       onOk: async () => {
         try {
           // 调用后端退出登录接口
-          await logoutUser();
+         let res =  await logoutUser();
+         if(res.code == 200){
+           setAuthToken('');
+           navigate('/login', { replace: true });
+         }
         } catch (err) {
           console.error('退出登录接口调用失败:', err);
           // 即使接口失败，也继续清除本地 token
         } finally {
           // 清除本地 token
-          setAuthToken('');
+          // setAuthToken('');
           // 跳转到登录页（保持当前视图模式）
-          navigate('/login', { replace: true });
+          // navigate('/login', { replace: true });
         }
       },
     });
