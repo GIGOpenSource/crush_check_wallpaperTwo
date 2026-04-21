@@ -3,10 +3,13 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
-const MARK_WALLPAPERS_ORIGIN = 'https://markwallpapers.com'
+const MARK_WALLPAPERS_ORIGIN = 'https://www.markwallpapers.com'
 
 export default defineConfig({
     base: '/markwallpapers/',
+    build: {
+      outDir: 'markwallpapers',
+    },
   server: {
     port: 5174,
     strictPort: true,

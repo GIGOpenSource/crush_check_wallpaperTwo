@@ -142,7 +142,7 @@ export default function DesktopProfilePage() {
     
     // 如果是查看自己的主页且未登录，直接跳转登录页
     if (isViewingOwnProfile && !token && !profileLoading) {
-      message.warning('请先登录后再访问');
+      // message.warning('请先登录后再访问');
       setTimeout(() => {
         navigate('/login', { replace: true });
       }, 500);
