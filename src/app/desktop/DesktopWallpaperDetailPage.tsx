@@ -225,6 +225,7 @@ export default function DesktopWallpaperDetailPage() {
                       src={wallpaper.imageUrl}
                       alt={wallpaper.title}
                       className="w-full h-full object-contain"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 </div>

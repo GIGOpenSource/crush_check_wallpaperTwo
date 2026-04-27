@@ -26,8 +26,7 @@ import {
   Image as ImageIcon,
   User,
   ChevronLeft,
-  MessageCircle,
-  Bookmark
+  MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -40,7 +39,6 @@ export default function WallpaperDetailPage() {
   const { relatedWallpapers, loadingRelated } = useGuessYouLikeRelated(id);
   const { comments, total: commentTotal } = useWallpaperComments(id || '');
   const { profile: currentProfile } = useUserProfile();
-  const [isFavorited, setIsFavorited] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [localLikes, setLocalLikes] = useState<number | null>(null); // 本地管理的收藏数
@@ -179,7 +177,7 @@ export default function WallpaperDetailPage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center p-4">
           <button
             type="button"
             onClick={() => {
@@ -189,15 +187,6 @@ export default function WallpaperDetailPage() {
             className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
           >
             <ChevronLeft size={24} className="text-gray-900" />
-          </button>
-          <button
-            onClick={() => setIsFavorited(!isFavorited)}
-            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
-          >
-            <Bookmark
-              size={20}
-              className={isFavorited ? 'text-yellow-500 fill-yellow-500' : 'text-gray-900'}
-            />
           </button>
         </div>
       </header>
