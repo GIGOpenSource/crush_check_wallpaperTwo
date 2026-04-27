@@ -201,10 +201,10 @@ export default function DesktopWallpaperDetailPage() {
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
-                <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} />
-                <span className="font-medium">
+                {/* <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} /> */}
+                {/* <span className="font-medium">
                   {isFavorited ? t.wallpaperDetail.saved : t.wallpaperDetail.save}
-                </span>
+                </span> */}
               </button>
             </div>
             {wallpaper.description && (
