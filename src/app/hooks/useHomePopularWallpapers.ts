@@ -106,7 +106,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
-      order: isHotRoute ? 'hot' : undefined,
+      order: isHotRoute ? 'hot' : 'home',
     })
       .then((raw) => {
         if (cancelled) return;
@@ -151,7 +151,7 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
-      order: isHotRoute ? 'hot' : undefined,
+      order: isHotRoute ? 'hot' : 'home',
     })
       .then((raw) => {
         const mapped = mapResponse(raw);

@@ -80,8 +80,8 @@ export type WallpapersListParams = {
   resolution?: string;
   /** 宽高比筛选，多个值用逗号分隔，如 "16:9,21:9" */
   aspect_ratio?: string;
-  /** 排序方式：latest=最新, views=最多浏览, downloads=最多下载, hot=热门 */
-  order?: 'latest' | 'views' | 'downloads' | 'hot';
+  /** 排序方式：latest=最新, views=最多浏览, downloads=最多下载, hot=热门, home=首页 */
+  order?: 'latest' | 'views' | 'downloads' | 'hot' | 'home';
 };
 
 export function getWallpapersList(params: WallpapersListParams) {

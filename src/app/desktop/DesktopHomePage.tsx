@@ -112,7 +112,7 @@ export default function DesktopHomePage() {
                       >
                         <div className="relative aspect-[21/9] overflow-hidden">
                           <img
-                            src={wallpaperListCoverUrl(wallpaper)}
+                             src={wallpaper.imageUrl}
                             alt={wallpaper.title}
                             className="w-full h-full object-cover"
                           />

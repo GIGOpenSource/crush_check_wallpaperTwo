@@ -59,7 +59,7 @@ export default function DesktopTagDetailPage() {
     <>
      <Helmet>
       {/* 使用 displayTag 的数据动态填充 */}
-      <title>{displayTag?.name ? `${displayTag.name} - 标签` : '加载中...'} | MarkWallpapers</title>
+      <title>{displayTag?.name ? `${displayTag.name} - tags` : '加载中...'}</title>
       <meta 
         name="description" 
         content={displayTag?.description || `查看"${displayTag?.name || ''}"标签下的壁纸，共${formatNumber(displayTag?.wallpaperCount || 0)}张`} 
@@ -70,25 +70,6 @@ export default function DesktopTagDetailPage() {
       <meta property="og:image" content="/default-og-image.jpg" />
       <meta property="og:type" content="website" />
     </Helmet>
-    {/* 调试信息 - 可以在浏览器控制台看到 */}
-    {process.env.NODE_ENV === 'development' && (
-      <div style={{ position: 'fixed', bottom: 10, right: 10, background: 'rgba(0,0,0,0.8)', color: 'white', padding: '10px', zIndex: 9999, fontSize: '12px', borderRadius: '4px' }}>
-        <div>SEO Debug:</div>
-        <div>Title: {displayTag?.name || 'N/A'}</div>
-        <div>Description: {displayTag?.description ? '✓' : '✗ (使用默认)'}</div>
-        <button 
-          onClick={() => {
-            console.log('All meta tags:', document.querySelectorAll('meta'));
-            console.log('Description meta:', document.querySelector('meta[name="description"]'));
-            console.log('OG Title:', document.querySelector('meta[property="og:title"]'));
-            alert('请在浏览器控制台(F12)查看输出的 meta 标签信息');
-          }}
-          style={{ marginTop: '5px', padding: '5px 10px', cursor: 'pointer' }}
-        >
-          检查 Meta 标签
-        </button>
-      </div>
-    )}
     <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
 
@@ -117,7 +98,7 @@ export default function DesktopTagDetailPage() {
               )}
 
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-medium text-gray-700">{t.tags.sortBy}111</span>
+                <span className="text-sm font-medium text-gray-700">{t.tags.sortBy}</span>
                 {sortOptions.map((option) => {
                   const Icon = option.icon;
                   return (

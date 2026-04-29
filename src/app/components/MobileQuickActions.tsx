@@ -18,8 +18,8 @@ export const MobileQuickActions: React.FC = () => {
 
   // 判断是否在搜索页面
   const isSearchPage = location.pathname === '/search';
-  // 判断是否在首页
-  const isHomePage = location.pathname === '/' || location.pathname === '/markwallpapers' || location.pathname === '';
+  // 判断是否在首页（hash模式下，location.pathname 不包含 # 部分）
+  const isHomePage = location.pathname === '/' || location.pathname === '' || location.hash === '' || location.hash === '#/';
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: 'CN' },

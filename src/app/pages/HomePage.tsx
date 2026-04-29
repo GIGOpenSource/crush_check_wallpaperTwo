@@ -102,7 +102,7 @@ export default function HomePage() {
                   >
                     <div className="relative mx-4 aspect-[16/9] rounded-xl overflow-hidden">
                       <img
-                        src={wallpaperListCoverUrl(wallpaper)}
+                         src={wallpaper.imageUrl}
                         alt={wallpaper.title}
                         className="w-full h-full object-cover"
                       />
