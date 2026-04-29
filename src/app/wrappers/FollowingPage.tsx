@@ -1,11 +1,12 @@
 import React from 'react';
 import { useView } from '../contexts/ViewContext';
-import FollowingPage from '../pages/FollowingPage';
+import MobileFollowingPage from '../pages/FollowingPage';
 import DesktopFollowingPage from '../desktop/DesktopFollowingPage';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function FollowingPageWrapper() {
   const { viewMode } = useView();
-  const isDesktop = viewMode === 'desktop';
+  usePageTitle('following');
   
-  return isDesktop ? <DesktopFollowingPage /> : <FollowingPage />;
+  return viewMode === 'mobile' ? <MobileFollowingPage /> : <DesktopFollowingPage />;
 }
