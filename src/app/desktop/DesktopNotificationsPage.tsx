@@ -265,28 +265,38 @@ export default function DesktopNotificationsPage() {
                                 )}
                               </div>
                               
-                              {/* 第一行：显示 extra_data.reply_content */}
+                              {/* 第二行：内容（小字）*/}
                               {(() => {
                                 const type = notification.notification_type;
+                                // 如果是 system, feature, activity 类型，显示 extra_data.content
+                                if ((type === 'system' || type === 'feature' || type === 'activity') && notification.extra_data?.content) {
+                                  return (
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                                      {notification.extra_data.content}
+                                    </p>
+                                  );
+                                }
+                                // 如果是 like, reply, comment 类型，显示 extra_data 内容
                                 if ((type === 'like' || type === 'reply' || type === 'comment') && notification.extra_data) {
-                                  const replyContent = notification.extra_data.reply_content || notification.extra_data.content || '';
-                                  if (replyContent) {
+                                  const content = notification.extra_data.reply_content || notification.extra_data.content || '';
+                                  if (content) {
                                     return (
                                       <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                                        {replyContent}
+                                        {content}
                                       </p>
                                     );
                                   }
                                 }
+                                // 如果没有 extra_data，显示 content_display
+                                if (notification.content_display) {
+                                  return (
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                                      {notification.content_display}
+                                    </p>
+                                  );
+                                }
                                 return null;
                               })()}
-                              
-                              {/* 第二行：显示 content_display */}
-                              {notification.content_display && (
-                                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mt-1">
-                                  {notification.content_display}
-                                </p>
-                              )}
                               
                               {/* 时间 */}
                               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
