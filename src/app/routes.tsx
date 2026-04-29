@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createHashRouter, useNavigate, useLocation, Outlet } from 'react-router';
+import { createBrowserRouter, useNavigate, useLocation, Outlet } from 'react-router';
 import { AplusPageShell } from './analytics/AplusPageShell';
 import HomePage from './wrappers/HomePage';
 import WallpaperDetailPage from './wrappers/WallpaperDetailPage';
@@ -88,88 +88,93 @@ function RootLayout() {
   );
 }
 
-export const router = createHashRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      element: <RootLayout />,
+      children: [
+        {
+          path: '/*',
+          element: <AplusPageShell />,
+          children: [
+            {
+              index: true,
+              element: <HomePage />
+            },
+            {
+              path: 'wallpaper/:id',
+              element: <WallpaperDetailPage />
+            },
+            {
+              path: 'tags',
+              element: <TagsPage />
+            },
+            {
+              path: 'tag/:tagId',
+              element: <TagDetailPage />
+            },
+            {
+              path: 'search',
+              element: <SearchPage />
+            },
+            {
+              path: 'profile',
+              element: <ProfilePage />
+            },
+            {
+              path: 'profile/:userId',
+              element: <ProfilePage />
+            },
+            {
+              path: 'profile/edit',
+              element: <EditProfilePage />
+            },
+            {
+              path: 'upload',
+              element: <UploadPage />
+            },
+            {
+              path: 'settings',
+              element: <SettingsPage />
+            },
+            {
+              path: 'site-info/:type',
+              element: <SiteInfoPage />
+            },
+            {
+              path: 'notifications',
+              element: <NotificationsPage />
+            },
+            {
+              path: 'following',
+              element: <FollowingPage />
+            },
+            {
+              path: 'followers',
+              element: <FollowersPage />
+            },
+            {
+              path: 'trending',
+              element: <HomePage />
+            },
+            {
+              path: 'login',
+              element: <LoginPage />
+            },
+            {
+              path: 'register',
+              element: <RegisterPage />
+            },
+            {
+              path: '*',
+              element: <NotFoundPage />
+            }
+          ]
+        }
+      ]
+    }
+  ],
   {
-    element: <RootLayout />,
-    children: [
-      {
-        path: '/',
-        element: <AplusPageShell />,
-        children: [
-          {
-            index: true,
-            element: <HomePage />
-          },
-          {
-            path: 'wallpaper/:id',
-            element: <WallpaperDetailPage />
-          },
-          {
-            path: 'tags',
-            element: <TagsPage />
-          },
-          {
-            path: 'tag/:tagId',
-            element: <TagDetailPage />
-          },
-          {
-            path: 'search',
-            element: <SearchPage />
-          },
-          {
-            path: 'profile',
-            element: <ProfilePage />
-          },
-          {
-            path: 'profile/:userId',
-            element: <ProfilePage />
-          },
-          {
-            path: 'profile/edit',
-            element: <EditProfilePage />
-          },
-          {
-            path: 'upload',
-            element: <UploadPage />
-          },
-          {
-            path: 'settings',
-            element: <SettingsPage />
-          },
-          {
-            path: 'site-info/:type',
-            element: <SiteInfoPage />
-          },
-          {
-            path: 'notifications',
-            element: <NotificationsPage />
-          },
-          {
-            path: 'following',
-            element: <FollowingPage />
-          },
-          {
-            path: 'followers',
-            element: <FollowersPage />
-          },
-          {
-            path: 'trending',
-            element: <HomePage />
-          },
-          {
-            path: 'login',
-            element: <LoginPage />
-          },
-          {
-            path: 'register',
-            element: <RegisterPage />
-          },
-          {
-            path: '*',
-            element: <NotFoundPage />
-          }
-        ]
-      }
-    ]
+    basename: '/markwallpapers'
   }
-]);
+);

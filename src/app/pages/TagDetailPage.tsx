@@ -8,6 +8,7 @@ import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTagWallpapersList } from '../hooks/useTagWallpapersList';
+import { Helmet } from 'react-helmet-async';
 
 type SortOption = 'relevance' | 'latest' | 'views' | 'downloads';
 
@@ -55,7 +56,19 @@ export default function TagDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+    <>
+      <Helmet>
+        {/* 使用 displayTag 的数据动态填充 SEO */}
+        <title>{displayTag?.name ? `${displayTag.name} - 标签` : '加载中...'} | MarkWallpapers</title>
+        <meta 
+          name="description" 
+          content={displayTag?.description || `查看"${displayTag?.name || ''}"标签下的壁纸，共${formatNumber(displayTag?.wallpaperCount || 0)}张`} 
+        />
+        <meta property="og:title" content={`${displayTag?.name || ''} - 壁纸标签`} />
+        <meta property="og:description" content={displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
+        <meta property="og:image" content="/default-og-image.jpg" />
+      </Helmet>
+      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
@@ -155,6 +168,7 @@ export default function TagDetailPage() {
 
       <BottomNav />
     </div>
+    </>
   );
 }
 
