@@ -6,7 +6,8 @@ import react from '@vitejs/plugin-react'
 const MARK_WALLPAPERS_ORIGIN = 'https://www.markwallpapers.com'
 
 export default defineConfig({
-    base: '/markwallpapers/',
+  base: '/markwallpapers/',
+    // BrowserRouter 模式下移除 base 配置,使用 basename 在路由器中配置
     build: {
       outDir: 'markwallpapers',
     },

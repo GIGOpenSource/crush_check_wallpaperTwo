@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createHashRouter, useNavigate, useLocation, Outlet } from 'react-router';
+import { createBrowserRouter, useNavigate, useLocation, Outlet } from 'react-router';
 import { AplusPageShell } from './analytics/AplusPageShell';
 import HomePage from './wrappers/HomePage';
 import WallpaperDetailPage from './wrappers/WallpaperDetailPage';
@@ -88,7 +88,7 @@ function RootLayout() {
   );
 }
 
-export const router = createHashRouter(
+export const router = createBrowserRouter(
   [
     {
       element: <RootLayout />,
@@ -173,6 +173,8 @@ export const router = createHashRouter(
         }
       ]
     }
-  ]
-  // HashRouter 模式下移除 basename，避免路由匹配问题
+  ],
+  {
+    basename: '/markwallpapers'
+  }
 );
