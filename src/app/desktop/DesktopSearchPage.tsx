@@ -34,17 +34,17 @@ export default function DesktopSearchPage() {
     setQuery(initialQuery);
   }, [initialQuery]);
 
-  // 获取SEO数据
+  // Fetch SEO data
   useEffect(() => {
-    // 构建当前页面的完整URL
+    // Construct the full URL of the current page
     const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.hash}`;
     
-    console.log('🔍 [DesktopSearchPage] 请求SEO数据:', currentUrl);
+    console.log('🔍 [DesktopSearchPage] Requesting SEO data:', currentUrl);
 
     getSeoTdk(currentUrl)
       .then((response) => {
-        console.log('✅ [DesktopSearchPage] SEO数据返回:', response);
-        // 从 results 数组中获取第一条数据
+        console.log('✅ [DesktopSearchPage] SEO data returned:', response);
+        // Get the first item from the results array
         const seoItem = response.data?.results?.[0];
         if (seoItem) {
           setSeoData({
@@ -55,11 +55,11 @@ export default function DesktopSearchPage() {
         }
       })
       .catch((err) => {
-        console.error('❌ [DesktopSearchPage] 获取SEO数据失败:', err);
+        console.error('❌ [DesktopSearchPage] Failed to fetch SEO data:', err);
       });
   }, [query]);
 
-  // 使用真实 API 获取壁纸数据
+  // Fetch wallpaper data using real API
   const {
     wallpapers: filteredWallpapers,
     loading,
@@ -109,15 +109,15 @@ export default function DesktopSearchPage() {
   return (
     <>
       <Helmet>
-        {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
-        <title>{seoData?.title || (query ? `${query} - 搜索结果` : '搜索壁纸')}</title>
+        {/* Prioritize API-returned SEO data, fallback to default data */}
+        <title>{seoData?.title || (query ? `${query} - Search Results` : 'Search Wallpapers')}</title>
         <meta 
           name="description" 
-          content={seoData?.description || (query ? `搜索"${query}"相关的壁纸` : '搜索精美高清壁纸')} 
+          content={seoData?.description || (query ? `Search for wallpapers related to "${query}"` : 'Search beautiful HD wallpapers')} 
         />
-        <meta name="keywords" content={seoData?.keywords || '壁纸, 搜索, 高清壁纸, 桌面壁纸'} />
-        <meta property="og:title" content={seoData?.title || (query ? `${query} - 壁纸搜索` : '搜索壁纸')} />
-        <meta property="og:description" content={seoData?.description || '发现精美的高清壁纸'} />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper, search, HD wallpaper, desktop wallpaper'} />
+        <meta property="og:title" content={seoData?.title || (query ? `${query} - Wallpaper Search` : 'Search Wallpapers')} />
+        <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
       </Helmet>
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />

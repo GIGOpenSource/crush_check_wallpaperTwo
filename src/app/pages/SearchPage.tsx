@@ -115,15 +115,15 @@ export default function SearchPage() {
   return (
     <>
       <Helmet>
-        {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
-        <title>{seoData?.title || (query ? `${query} - 搜索结果` : '搜索壁纸')}</title>
+        {/* Prioritize API-returned SEO data, fallback to default data */}
+        <title>{seoData?.title || (query ? `${query} - Search Results` : 'Search Wallpapers')}</title>
         <meta 
           name="description" 
-          content={seoData?.description || (query ? `搜索"${query}"相关的壁纸` : '搜索精美高清壁纸')} 
+          content={seoData?.description || (query ? `Search for wallpapers related to "${query}"` : 'Search beautiful HD wallpapers')} 
         />
-        <meta name="keywords" content={seoData?.keywords || '壁纸, 搜索, 高清壁纸, 手机壁纸'} />
-        <meta property="og:title" content={seoData?.title || (query ? `${query} - 壁纸搜索` : '搜索壁纸')} />
-        <meta property="og:description" content={seoData?.description || '发现精美的高清壁纸'} />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper, search, HD wallpaper, mobile wallpaper'} />
+        <meta property="og:title" content={seoData?.title || (query ? `${query} - Wallpaper Search` : 'Search Wallpapers')} />
+        <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
       </Helmet>
       <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}

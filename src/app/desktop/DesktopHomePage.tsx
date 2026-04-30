@@ -92,15 +92,15 @@ export default function DesktopHomePage() {
   return (
     <>
       <Helmet>
-        {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
-        <title>{seoData?.title || (isTrendingRoute ? '热门壁纸 - 高清壁纸下载' : '首页 - 发现精美壁纸')}</title>
+        {/* Prioritize API-returned SEO data, fallback to default data */}
+        <title>{seoData?.title || (isTrendingRoute ? 'Trending Wallpapers - HD Wallpaper Downloads' : 'Home - Discover Beautiful Wallpapers')}</title>
         <meta 
           name="description" 
-          content={seoData?.description || (isTrendingRoute ? '浏览最受欢迎的热门高清壁纸，免费下载' : '发现精选的高清壁纸，个性化你的桌面')} 
+          content={seoData?.description || (isTrendingRoute ? 'Browse the most popular trending HD wallpapers, free downloads' : 'Discover curated beautiful HD wallpapers, personalize your desktop')} 
         />
-        <meta name="keywords" content={seoData?.keywords || (isTrendingRoute ? '热门壁纸, 流行壁纸, 高清壁纸' : '壁纸, 高清壁纸, 桌面壁纸, 精选壁纸')} />
-        <meta property="og:title" content={seoData?.title || (isTrendingRoute ? '热门壁纸' : '发现精美壁纸')} />
-        <meta property="og:description" content={seoData?.description || '海量高清壁纸等你来发现'} />
+        <meta name="keywords" content={seoData?.keywords || (isTrendingRoute ? 'trending wallpapers, popular wallpapers, HD wallpapers' : 'wallpaper, HD wallpaper, desktop wallpaper, curated wallpapers')} />
+        <meta property="og:title" content={seoData?.title || (isTrendingRoute ? 'Trending Wallpapers' : 'Discover Beautiful Wallpapers')} />
+        <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
       </Helmet>
       <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
