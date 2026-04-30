@@ -91,9 +91,9 @@ export default function DesktopSiteInfoPage() {
             </div>
           ) : info ? (
             <div className="bg-white rounded-lg p-8 shadow-sm">
-              {info.title && (
+              {/* {info.title && (
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">{info.title}</h2>
-              )}
+              )} */}
               <div
                 className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: info.content ?? '' }}
