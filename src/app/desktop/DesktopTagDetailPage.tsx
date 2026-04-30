@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
@@ -8,6 +8,8 @@ import { ChevronLeft, SlidersHorizontal, Calendar, Eye, Download } from 'lucide-
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTagWallpapersList } from '../hooks/useTagWallpapersList';
 import { Helmet } from 'react-helmet-async'; 
+import { getSeoTdk } from '../../api/wallpaper';
+
 type SortOption = 'relevance' | 'latest' | 'views' | 'downloads';
 
 export default function DesktopTagDetailPage() {
@@ -16,6 +18,7 @@ export default function DesktopTagDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
 
   const state = location.state as TagDetailLocationState | null;
   const meta = state?.tagMeta;
@@ -36,6 +39,33 @@ export default function DesktopTagDetailPage() {
         wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
       }
     : null;
+
+  // 获取SEO数据
+  useEffect(() => {
+    if (!decodedId) return;
+
+    // 构建当前页面的完整URL
+    const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+    
+    console.log('🔍 [DesktopTagDetailPage] 请求SEO数据:', currentUrl);
+
+    getSeoTdk(currentUrl)
+      .then((response) => {
+        console.log('✅ [DesktopTagDetailPage] SEO数据返回:', response);
+        // 从 results 数组中获取第一条数据
+        const seoItem = response.data?.results?.[0];
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.title,
+            description: seoItem.description,
+            keywords: seoItem.keywords,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('❌ [DesktopTagDetailPage] 获取SEO数据失败:', err);
+      });
+  }, [decodedId]);
 
   if (!displayTag) {
     return (
@@ -58,17 +88,15 @@ export default function DesktopTagDetailPage() {
   return (
     <>
      <Helmet>
-      {/* 使用 displayTag 的数据动态填充 */}
-      <title>{displayTag?.name ? `${displayTag.name} - tags` : '加载中...'}</title>
+      {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
+      <title>{seoData?.title || (displayTag?.name ? `${displayTag.name} - tags` : '加载中...')}</title>
       <meta 
         name="description" 
-        content={displayTag?.description || `查看"${displayTag?.name || ''}"标签下的壁纸，共${formatNumber(displayTag?.wallpaperCount || 0)}张`} 
+        content={seoData?.description || displayTag?.description || `查看"${displayTag?.name || ''}"标签下的壁纸，共${formatNumber(displayTag?.wallpaperCount || 0)}张`} 
       />
-      <meta name="keywords" content={`${displayTag?.name || ''}, 标签, 壁纸, 高清壁纸`} />
-      <meta property="og:title" content={`${displayTag?.name || ''} - 壁纸标签`} />
-      <meta property="og:description" content={displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
-      <meta property="og:image" content="/default-og-image.jpg" />
-      <meta property="og:type" content="website" />
+      <meta name="keywords" content={seoData?.keywords || `${displayTag?.name || ''}, 标签, 壁纸, 高清壁纸`} />
+      <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - 壁纸标签`} />
+      <meta property="og:description" content={seoData?.description || displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
     </Helmet>
     <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />

@@ -803,3 +803,43 @@ export function toggleFollowUser(followingId: number | string) {
   
   return http.post<{ is_followed: boolean }>(`/api/wallpapers/followers/toggle/`, requestData);
 }
+
+/**
+ * 获取页面SEO信息（TDK）
+ * GET /api/seo/tdk/
+ * @param url - 页面URL
+ */
+export type SeoTdkItem = {
+  id: number;
+  page_type: string;
+  page_type_display: string;
+  title: string;
+  description: string;
+  keywords: string;
+  url: string;
+  url_content: string;
+  is_active: boolean;
+  is_template: boolean;
+  applied_count: number;
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown;
+};
+
+export type SeoTdkResponse = {
+  code: number;
+  message: string;
+  data: {
+    pagination?: {
+      page: number;
+      page_size: number;
+      total: number;
+      total_pages: number;
+    };
+    results: SeoTdkItem[];
+  };
+};
+
+export function getSeoTdk(url: string) {
+  return http.get<SeoTdkResponse>('/api/seo/tdk/', { params: { url } });
+}

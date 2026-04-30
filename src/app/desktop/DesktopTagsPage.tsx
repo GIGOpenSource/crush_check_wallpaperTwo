@@ -102,7 +102,7 @@ export default function DesktopTagsPage() {
                     transition={{ delay: index * 0.05 }}
                   >
                     <Link
-                      to={`/tag/${encodeURIComponent(tag.id || tag.tag)}`}
+                      to={`/tag/${encodeURIComponent(tag.tag || tag.name)}`}
                       onClick={() => umengclick('filter_click_tag')}
                       state={{
                         tagMeta: {
@@ -158,7 +158,7 @@ export default function DesktopTagsPage() {
                   {filteredTags.map((tag) => (
                     <Link
                       key={tag.tag}
-                      to={`/tag/${encodeURIComponent(tag.id || tag.tag)}`}
+                      to={`/tag/${encodeURIComponent(tag.tag || tag.name)}`}
                       onClick={() => umengclick('filter_click_tag')}
                       state={{
                         tagMeta: {

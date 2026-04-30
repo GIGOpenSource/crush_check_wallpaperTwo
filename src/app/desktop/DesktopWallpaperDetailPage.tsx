@@ -396,7 +396,7 @@ export default function DesktopWallpaperDetailPage() {
                     {wallpaper.tags.map((tag) => (
                       <Link
                         key={tag.id}
-                        to={`/tag/${encodeURIComponent(tag.id)}`}
+                        to={`/tag/${encodeURIComponent(tag.name)}`}
                         onClick={() => umengclick('filter_click_tag')}
                         state={{
                           tagMeta: {

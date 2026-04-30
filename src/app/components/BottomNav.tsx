@@ -13,7 +13,7 @@ export function BottomNav() {
     { icon: Home, label: t.nav.home, path: '/' },
     { icon: Search, label: t.nav.search, path: '/search' },
     { icon: Bell, label: t.nav.notifications, path: '/notifications', showBadge: true },
-    { icon: Upload, label: t.nav.upload, path: '/upload' },
+    { icon: Tag, label: t.nav.tags, path: '/tags' },
     { icon: User, label: t.nav.profile, path: '/profile' }
   ];
 

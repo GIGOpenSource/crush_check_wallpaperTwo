@@ -327,16 +327,16 @@ export default function WallpaperDetailPage() {
             {wallpaper.tags.map((tag) => (
               <Link
                 key={tag.id}
-                to={`/tag/${encodeURIComponent(tag.id)}`}
+                to={`/tag/${encodeURIComponent(tag.name)}`}
                 onClick={() => umengclick('filter_click_tag')}
                 state={{
                   tagMeta: {
                     name: tag.name,
                   },
                 }}
-                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors"
+                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs rounded-full transition-colors"
               >
-                #{tag.name}
+                {tag.name}
               </Link>
             ))}
           </div>

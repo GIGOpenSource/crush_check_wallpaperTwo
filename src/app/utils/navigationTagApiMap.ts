@@ -53,3 +53,18 @@ export function mapNavigationTagResponseToTags(data: unknown): Tag[] {
   const items = extractWallpaperItemsFromResponse(data);
   return items.map(mapRecordToTag).filter((t): t is Tag => t != null);
 }
+
+export function buildTagIdMap(data: unknown): Record<string, string> {
+  const tags = mapNavigationTagResponseToTags(data);
+  const map: Record<string, string> = {};
+  for (const tag of tags) {
+    if (tag.id) {
+      // 优先使用 tag 字段作为 key，如果不存在则使用 name
+      const key = tag.tag || tag.name;
+      if (key) {
+        map[key] = tag.id;
+      }
+    }
+  }
+  return map;
+}

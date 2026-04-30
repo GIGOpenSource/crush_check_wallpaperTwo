@@ -8,6 +8,7 @@ import {
   mapRecordToWallpaper,
   wallpaperListCoverUrl,
 } from '../utils/wallpaperApiMap';
+import { tagCache } from '../utils/tagCache';
 
 const PAGE_SIZE = 20;
 
@@ -80,12 +81,15 @@ export function useTagWallpapersList(tagId: string | undefined, order?: 'latest'
     setError(false);
     fetchingRef.current = true;
 
+    // 尝试从缓存中获取标签ID
+    const resolvedTagId = tagCache.getIdByName(tagId) || tagId;
+    
     getWallpapersList({
       currentPage: 1,
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
-      tag_id: tagId,
+      tag_id: resolvedTagId,
       order,
     })
       .then((raw) => {
@@ -123,12 +127,15 @@ export function useTagWallpapersList(tagId: string | undefined, order?: 'latest'
     fetchingRef.current = true;
     setLoadingMore(true);
 
+    // 尝试从缓存中获取标签ID
+    const resolvedTagId = tagCache.getIdByName(id) || id;
+
     getWallpapersList({
       currentPage: nextPage,
       pageSize: PAGE_SIZE,
       platform,
       media_live: false,
-      tag_id: id,
+      tag_id: resolvedTagId,
       order: currentOrder,
     })
       .then((raw) => {

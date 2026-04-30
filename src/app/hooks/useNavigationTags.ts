@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getHotTags, getAllTags } from '../../api/wallpaper';
 import type { Tag } from '../types';
 import { mapNavigationTagResponseToTags } from '../utils/navigationTagApiMap';
+import { tagCache } from '../utils/tagCache';
 
 type Options = {
   isHot: boolean;
@@ -26,6 +27,8 @@ export function useNavigationTags({ isHot }: Options) {
       setTags(cached.tags);
       setError(false);
       setLoading(false);
+      // 即使使用缓存，也需要确保标签缓存管理器中有数据
+      tagCache.addTags(cached.tags);
       return;
     }
 
@@ -42,6 +45,8 @@ export function useNavigationTags({ isHot }: Options) {
         const mapped = mapNavigationTagResponseToTags(raw);
         setTags(mapped);
         navigationTagsCache.set(isHot, { tags: mapped, ready: true });
+        // 将标签数据添加到缓存管理器中
+        tagCache.addTags(mapped);
       })
       .catch(() => {
         if (!cancelled) {

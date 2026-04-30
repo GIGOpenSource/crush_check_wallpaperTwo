@@ -18,8 +18,14 @@ export const MobileQuickActions: React.FC = () => {
 
   // 判断是否在搜索页面
   const isSearchPage = location.pathname === '/search';
-  // 判断是否在首页（hash模式下，location.pathname 不包含 # 部分）
-  const isHomePage = location.pathname === '/' || location.pathname === '' || location.hash === '' || location.hash === '#/';
+  
+  // 判断是否在首页（兼容 HashRouter 模式）
+  // 在 HashRouter 中，需要同时检查 pathname 和 hash
+  const currentPath = location.hash.replace('#', '') || location.pathname;
+  const isHomePage = 
+    currentPath === '/' || 
+    currentPath === '' || 
+    currentPath === '/trending';
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: 'CN' },
