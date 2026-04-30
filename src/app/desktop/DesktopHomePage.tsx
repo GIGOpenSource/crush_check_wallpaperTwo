@@ -10,12 +10,40 @@ import { formatNumber } from '../utils/format';
 import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
 import { useHomeFeaturedWallpapers } from '../hooks/useHomeFeaturedWallpapers';
 import { wallpaperListCoverUrl } from '../utils/wallpaperApiMap';
+import { Helmet } from 'react-helmet-async';
+import { getSeoTdk } from '../../api/wallpaper';
 
 export default function DesktopHomePage() {
   const { t } = useLanguage();
   const location = useLocation();
   const isTrendingRoute = location.pathname === '/trending';
   const showEditorsBanner = !isTrendingRoute;
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+
+  // 获取SEO数据
+  useEffect(() => {
+    // 构建当前页面的完整URL
+    const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    
+    console.log('🔍 [DesktopHomePage] 请求SEO数据:', currentUrl);
+
+    getSeoTdk(currentUrl)
+      .then((response) => {
+        console.log('✅ [DesktopHomePage] SEO数据返回:', response);
+        // 从 results 数组中获取第一条数据
+        const seoItem = response.data?.results?.[0];
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.title,
+            description: seoItem.description,
+            keywords: seoItem.keywords,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('❌ [DesktopHomePage] 获取SEO数据失败:', err);
+      });
+  }, [isTrendingRoute]);
   const {
     wallpapers: popularWallpapers,
     loading: popularLoading,
@@ -62,7 +90,19 @@ export default function DesktopHomePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <>
+      <Helmet>
+        {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
+        <title>{seoData?.title || (isTrendingRoute ? '热门壁纸 - 高清壁纸下载' : '首页 - 发现精美壁纸')}</title>
+        <meta 
+          name="description" 
+          content={seoData?.description || (isTrendingRoute ? '浏览最受欢迎的热门高清壁纸，免费下载' : '发现精选的高清壁纸，个性化你的桌面')} 
+        />
+        <meta name="keywords" content={seoData?.keywords || (isTrendingRoute ? '热门壁纸, 流行壁纸, 高清壁纸' : '壁纸, 高清壁纸, 桌面壁纸, 精选壁纸')} />
+        <meta property="og:title" content={seoData?.title || (isTrendingRoute ? '热门壁纸' : '发现精美壁纸')} />
+        <meta property="og:description" content={seoData?.description || '海量高清壁纸等你来发现'} />
+      </Helmet>
+      <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
@@ -226,5 +266,6 @@ export default function DesktopHomePage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

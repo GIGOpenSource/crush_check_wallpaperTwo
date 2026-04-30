@@ -8,6 +8,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { tpl } from '../utils/format';
 import { useSearchWallpapers, SearchFilters } from '../hooks/useSearchWallpapers';
 import { useSearchParams } from 'react-router';
+import { Helmet } from 'react-helmet-async';
+import { getSeoTdk } from '../../api/wallpaper';
 
 interface Filters {
   resolution: string[];
@@ -26,10 +28,36 @@ export default function DesktopSearchPage() {
     resolution: [],
     aspectRatio: [],
   });
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
 
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
+
+  // 获取SEO数据
+  useEffect(() => {
+    // 构建当前页面的完整URL
+    const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    
+    console.log('🔍 [DesktopSearchPage] 请求SEO数据:', currentUrl);
+
+    getSeoTdk(currentUrl)
+      .then((response) => {
+        console.log('✅ [DesktopSearchPage] SEO数据返回:', response);
+        // 从 results 数组中获取第一条数据
+        const seoItem = response.data?.results?.[0];
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.title,
+            description: seoItem.description,
+            keywords: seoItem.keywords,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('❌ [DesktopSearchPage] 获取SEO数据失败:', err);
+      });
+  }, [query]);
 
   // 使用真实 API 获取壁纸数据
   const {
@@ -79,8 +107,20 @@ export default function DesktopSearchPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <DesktopSidebar />
+    <>
+      <Helmet>
+        {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
+        <title>{seoData?.title || (query ? `${query} - 搜索结果` : '搜索壁纸')}</title>
+        <meta 
+          name="description" 
+          content={seoData?.description || (query ? `搜索"${query}"相关的壁纸` : '搜索精美高清壁纸')} 
+        />
+        <meta name="keywords" content={seoData?.keywords || '壁纸, 搜索, 高清壁纸, 桌面壁纸'} />
+        <meta property="og:title" content={seoData?.title || (query ? `${query} - 壁纸搜索` : '搜索壁纸')} />
+        <meta property="og:description" content={seoData?.description || '发现精美的高清壁纸'} />
+      </Helmet>
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* Header */}
@@ -246,6 +286,7 @@ export default function DesktopSearchPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }
 
