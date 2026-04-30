@@ -4,10 +4,33 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 
+// tabBar 页面路由列表（精确匹配）
+const TABBAR_ROUTES = ['/', '/search', '/notifications', '/tags', '/profile'];
+
 export function BottomNav() {
   const location = useLocation();
   const { t } = useLanguage();
   const { unreadCount } = useUnreadCount();
+
+  // 判断当前路由是否为 tabBar 页面
+  // 注意：/profile 显示 tabBar，但 /profile/:userId（他人主页）不显示
+  const isTabBarPage = TABBAR_ROUTES.some(route => {
+    // 精确匹配路由
+    if (location.pathname === route) {
+      return true;
+    }
+    // 对于 /profile，需要排除 /profile/:userId 和 /profile/edit 等子路由
+    if (route === '/profile') {
+      return location.pathname === '/profile';
+    }
+    // 其他路由支持前缀匹配
+    return location.pathname.startsWith(route + '/');
+  });
+
+  // 非 tabBar 页面不显示底部导航
+  if (!isTabBarPage) {
+    return null;
+  }
 
   const navItems = [
     { icon: Home, label: t.nav.home, path: '/' },
