@@ -10,6 +10,16 @@ export function DesktopSidebar() {
   const { t } = useLanguage();
   const { unreadCount } = useUnreadCount();
 
+  const handleNavClick = (path: string, isHome?: boolean) => {
+    // Home 菜单特殊处理：直接修改 window.location 确保 URL 带有尾部斜杠
+    if (isHome) {
+      // 使用 window.location.replace 确保 URL 为 /markwallpapers/
+      window.location.pathname = '/markwallpapers/';
+    } else {
+      navigate(path);
+    }
+  };
+
   const navItems = [
     { icon: Home, label: t.nav.home, path: '/' },
     { icon: Search, label: t.nav.search, path: '/search' },

@@ -29,6 +29,20 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    {
+      name: 'force-trailing-slash',
+      configureServer(server) {
+        server.middlewares.use((req: any, res: any, next: any) => {
+          // 如果请求路径是 /markwallpapers（没有尾部斜杠），重定向到 /markwallpapers/
+          if (req.url === '/markwallpapers') {
+            res.writeHead(301, { Location: '/markwallpapers/' });
+            res.end();
+            return;
+          }
+          next();
+        });
+      },
+    },
   ],
   resolve: {
     alias: {

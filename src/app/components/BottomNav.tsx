@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Home, Search, Tag, User, Upload, Bell } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,6 +10,7 @@ const TABBAR_ROUTES = ['/', '/search', '/notifications', '/tags', '/profile'];
 
 export function BottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const { unreadCount } = useUnreadCount();
 
@@ -39,6 +41,16 @@ export function BottomNav() {
     { icon: Tag, label: t.nav.tags, path: '/tags' },
     { icon: User, label: t.nav.profile, path: '/profile' }
   ];
+
+  const handleNavClick = (path: string, isHome?: boolean) => {
+    // Home 菜单特殊处理：直接修改 window.location 确保 URL 带有尾部斜杠
+    if (isHome) {
+      // 使用 window.location.replace 确保 URL 为 /markwallpapers/
+      window.location.pathname = '/markwallpapers/';
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-pb">
