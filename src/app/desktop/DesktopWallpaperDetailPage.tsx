@@ -213,7 +213,7 @@ export default function DesktopWallpaperDetailPage() {
           </div>
         </header>
 
-        <div className="px-6 md:px-8 py-8">
+        <div className="px-6 md:px-10 py-8">
           <div className="max-w-[1800px] mx-auto">
             <div className="grid grid-cols-3 gap-8">
               {/* Main Content - Left Column */}
@@ -257,7 +257,7 @@ export default function DesktopWallpaperDetailPage() {
               </div>
 
               {/* Sidebar - Right Column */}
-              <div className="space-y-6">
+              <div className="space-y-6 pr-1">
                 {/* Action Buttons */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
                   <motion.button
