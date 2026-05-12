@@ -213,8 +213,8 @@ export default function DesktopWallpaperDetailPage() {
           </div>
         </header>
 
-        <div className="px-4 md:px-8 py-8">
-          <div className="max-w-[1400px] mx-auto">
+        <div className="px-6 md:px-8 py-8">
+          <div className="max-w-[1800px] mx-auto">
             <div className="grid grid-cols-3 gap-8">
               {/* Main Content - Left Column */}
               <div className="col-span-2 space-y-6">
