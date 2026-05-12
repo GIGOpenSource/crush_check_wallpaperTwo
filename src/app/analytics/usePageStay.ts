@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
-import { trackPageStaySeconds } from './aplusTracking';
+import { trackPageStaySeconds, reportPageEvent } from './aplusTracking';
 
 export type UsePageStayOptions = {
   onShowCallback?: () => void;
@@ -9,33 +9,56 @@ export type UsePageStayOptions = {
 
 /**
  * 页面停留 page_stay：**仅在离开当前路由时**（pathname/search 变化或卸载）在 effect cleanup 里上报，
- * 携带上一页的停留秒数；进入新页时只记录开始时间，**不会**在此时打 page_stay。
+ * 携带**离开页面**的停留秒数和页面信息；进入新页时只记录开始时间，**不会**在此时打 page_stay。
  */
 export function usePageStay(options: UsePageStayOptions = {}): { clear: () => void } {
   const location = useLocation();
   const startRef = useRef<number | null>(null);
+  const leavingPageRef = useRef<{
+    pathname: string;
+    search: string;
+  } | null>(null);
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
   const clear = () => {
     startRef.current = null;
+    leavingPageRef.current = null;
   };
 
   useEffect(() => {
+    // 记录进入新页面时的开始时间和页面信息
     startRef.current = Date.now();
+    leavingPageRef.current = {
+      pathname: location.pathname,
+      search: location.search,
+    };
     optionsRef.current.onShowCallback?.();
 
     return () => {
       const start = startRef.current;
-      if (start != null) {
+      const leavingPage = leavingPageRef.current;
+      
+      if (start != null && leavingPage != null) {
         const elapsedMs = Date.now() - start;
         const stayDuration = Math.floor(elapsedMs / 1000);
         // 只在离开页面上报；未满 1 秒视为无效（含 React StrictMode 进页立刻卸载的 0 秒）
         if (stayDuration >= 1) {
+          // 友盟埋点
           trackPageStaySeconds(stayDuration);
+          // 同时上报到 /api/track/report/ 接口，使用离开页面的信息
+          reportPageEvent('page_stay', {
+            event_name: '页面停留时长',
+            page_stay: stayDuration,
+            leavingPage: {
+              pathname: leavingPage.pathname,
+              search: leavingPage.search,
+            },
+          });
         }
       }
       startRef.current = null;
+      leavingPageRef.current = null;
       optionsRef.current.onHideCallback?.();
     };
   }, [location.pathname, location.search]);

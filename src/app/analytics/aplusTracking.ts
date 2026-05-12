@@ -43,6 +43,36 @@ function getCoarseDeviceType(): string {
   return 'pc';
 }
 
+/** 获取页面类型映射 */
+function getPageType(pathname?: string): string {
+  if (typeof window === 'undefined') return 'homepage';
+  const path = pathname || window.location.pathname;
+  
+  if (path === '/' || path === '') return 'homepage';
+  if (path.includes('/tags')) return 'tag';
+  if (path.includes('/search')) return 'search';
+  if (path.includes('/detail') || path.includes('/wallpaper/')) return 'retrieve';
+  if (path.includes('/trending') || path.includes('/hot')) return 'trending';
+  if (path.includes('/profile')) return 'profile';
+  
+  return 'homepage';
+}
+
+/** 获取页面名称映射 */
+function getPageName(pathname?: string): string {
+  if (typeof window === 'undefined') return '首页';
+  const path = pathname || window.location.pathname;
+  
+  if (path === '/' || path === '') return '首页';
+  if (path.includes('/tags')) return '标签';
+  if (path.includes('/search')) return '搜索';
+  if (path.includes('/detail') || path.includes('/wallpaper/')) return '详情';
+  if (path.includes('/trending') || path.includes('/hot')) return '热门';
+  if (path.includes('/profile')) return '个人主页';
+  
+  return '首页';
+}
+
 export type AplusRecordParams = {
   userId: string;
   appVersion: string;
@@ -62,6 +92,80 @@ export function getTrackingParams(): AplusRecordParams {
     deviceType: getCoarseDeviceType(),
     region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
   };
+}
+
+/** 页面浏览上报接口参数类型 */
+export type PageViewReportParams = {
+  unique_id: string;
+  app_version: string;
+  event_time: string;
+  page_name: string;
+  page_type: string;
+  device_type: string;
+  region: string;
+  referer: string;
+  page_path: string;
+  event_type: string;
+  event_name?: string;
+  page_stay?: number;
+};
+
+/** 调用 /api/track/report/ 接口上报页面事件 */
+export async function reportPageEvent(
+  eventType: string,
+  extraParams?: {
+    event_name?: string;
+    page_stay?: number;
+    leavingPage?: {
+      pathname: string;
+      search: string;
+    };
+  }
+): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    // 如果有离开页面信息，使用离开页面的信息；否则使用当前页面信息
+    const pathname = extraParams?.leavingPage?.pathname;
+    const search = extraParams?.leavingPage?.search;
+    const pagePath = extraParams?.leavingPage 
+      ? `${extraParams.leavingPage.pathname}${extraParams.leavingPage.search}` || '/'
+      : getCurrentPagePurePath();
+    
+    const params: PageViewReportParams = {
+      unique_id: getOrCreateAnonUserId(),
+      app_version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
+      event_time: formatDateTime(),
+      page_name: getPageName(pathname),
+      page_type: getPageType(pathname),
+      device_type: getCoarseDeviceType(),
+      region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
+      referer: 'https://www.markwallpapers.com/',
+      page_path: pagePath,
+      event_type: eventType,
+      event_name: extraParams?.event_name,
+      page_stay: extraParams?.page_stay,
+    };
+
+    const response = await fetch('/api/track/report/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    });
+
+    if (!response.ok) {
+      console.warn('页面事件上报接口调用失败:', response.status);
+    }
+  } catch (error) {
+    console.error('页面事件上报接口调用异常:', error);
+  }
+}
+
+/** 页面浏览上报（保留原接口用于兼容） */
+export async function reportPageView(): Promise<void> {
+  await reportPageEvent('page_view');
 }
 
 /** 点击等自定义事件：aplus.record(name, 'CLK', params) */
