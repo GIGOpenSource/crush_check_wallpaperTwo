@@ -49,11 +49,20 @@ function getPageType(pathname?: string): string {
   const path = pathname || window.location.pathname;
   
   if (path === '/' || path === '') return 'homepage';
-  if (path.includes('/tags')) return 'tag';
+  if (path.includes('/site-info')) return 'site_info';
+  if (path.includes('/profile/edit')) return 'profile_edit';
+  if (path.includes('/profile')) return 'profile';
+  if (path.includes('/markwallpapers/tag')) return 'tag_detail';
+  if (path.includes('/tags') && !path.includes('/tags/')) return 'tag';
+  if (path.includes('/tags/')) return 'tag_detail';
   if (path.includes('/search')) return 'search';
   if (path.includes('/detail') || path.includes('/wallpaper/')) return 'retrieve';
   if (path.includes('/trending') || path.includes('/hot')) return 'trending';
-  if (path.includes('/profile')) return 'profile';
+  if (path.includes('/notifications')) return 'notifications';
+  if (path.includes('/settings')) return 'settings';
+  if (path.includes('/upload')) return 'upload';
+  if (path.includes('/login')) return 'login';
+  if (path.includes('/register')) return 'register';
   
   return 'homepage';
 }
@@ -64,11 +73,20 @@ function getPageName(pathname?: string): string {
   const path = pathname || window.location.pathname;
   
   if (path === '/' || path === '') return '首页';
-  if (path.includes('/tags')) return '标签';
-  if (path.includes('/search')) return '搜索';
-  if (path.includes('/detail') || path.includes('/wallpaper/')) return '详情';
-  if (path.includes('/trending') || path.includes('/hot')) return '热门';
+  if (path.includes('/site-info')) return '站点信息';
+  if (path.includes('/profile/edit')) return '编辑资料';
   if (path.includes('/profile')) return '个人主页';
+  if (path.includes('/markwallpapers/tag')) return '标签详情';
+  if (path.includes('/tags') && !path.includes('/tags/')) return '标签';
+  if (path.includes('/tags/')) return '标签详情';
+  if (path.includes('/search')) return '搜索';
+  if (path.includes('/detail') || path.includes('/wallpaper/')) return '壁纸详情';
+  if (path.includes('/trending') || path.includes('/hot')) return '热门';
+  if (path.includes('/notifications')) return '消息';
+  if (path.includes('/settings')) return '设置';
+  if (path.includes('/upload')) return '上传';
+  if (path.includes('/login')) return '登录';
+  if (path.includes('/register')) return '注册';
   
   return '首页';
 }
@@ -131,6 +149,15 @@ export async function reportPageEvent(
     const pagePath = extraParams?.leavingPage 
       ? `${extraParams.leavingPage.pathname}${extraParams.leavingPage.search}` || '/'
       : getCurrentPagePurePath();
+    
+    console.log('📊 [reportPageEvent]', {
+      eventType,
+      leavingPage: extraParams?.leavingPage,
+      currentPage: getCurrentPagePurePath(),
+      finalPagePath: pagePath,
+      pageName: getPageName(pathname),
+      pageType: getPageType(pathname),
+    });
     
     const params: PageViewReportParams = {
       unique_id: getOrCreateAnonUserId(),
