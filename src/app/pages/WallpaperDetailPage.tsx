@@ -191,17 +191,22 @@ export default function WallpaperDetailPage() {
         </div>
       </header>
 
-      {/* Full-screen Wallpaper */}
-      <div className="relative w-full aspect-[9/16]">
-        <img
-          src={wallpaper.imageUrl}
-          alt={wallpaper.title}
-          className="w-full h-full object-cover"
-        />
+      {/* Wallpaper Image Container */}
+      <div className="px-4 pt-4">
+        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+          <div className="relative w-full bg-gray-900">
+            <img
+              src={wallpaper.imageUrl}
+              alt={wallpaper.title}
+              className="w-full h-auto object-contain"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="bg-white">
+      <div className="bg-white mt-4 rounded-t-3xl">
         {/* Title and Uploader */}
         <div className="px-4 py-4 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
