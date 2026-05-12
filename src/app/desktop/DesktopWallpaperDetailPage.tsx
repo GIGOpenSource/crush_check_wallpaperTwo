@@ -207,17 +207,24 @@ export default function DesktopWallpaperDetailPage() {
                 </span> */}
               </button>
             </div>
-            {wallpaper.description && (
+            {/* {wallpaper.description && (
               <p className="text-sm text-gray-600 ml-14">{wallpaper.description}</p>
-            )}
+            )} */}
           </div>
         </header>
 
-        <div className="px-8 py-8">
-          <div className="max-w-7xl mx-auto">
+        <div className="px-4 md:px-8 py-8">
+          <div className="max-w-[1400px] mx-auto">
             <div className="grid grid-cols-3 gap-8">
               {/* Main Content - Left Column */}
               <div className="col-span-2 space-y-6">
+                {/* Description - 描述文字放在图片上方 */}
+                {wallpaper.description && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <p className="text-sm text-gray-600 leading-relaxed">{wallpaper.description}</p>
+                  </div>
+                )}
+
                 {/* Wallpaper Image */}
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
                   <div className="relative aspect-video bg-gray-900">
