@@ -167,19 +167,6 @@ export default function DesktopHomePage() {
                                     {wallpaper.description}
                                   </p>
                                 )}
-                                <div className="flex items-center gap-4 text-white/80">
-                                  <span>{wallpaper.resolution}</span>
-                                  <span>•</span>
-                                  <span>
-                                    {formatNumber(wallpaper.views)}{' '}
-                                    {t.wallpaperDetail.views.toLowerCase()}
-                                  </span>
-                                  <span>•</span>
-                                  <span>
-                                    {formatNumber(wallpaper.downloads)}{' '}
-                                    {t.wallpaperDetail.downloads.toLowerCase()}
-                                  </span>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -192,16 +179,16 @@ export default function DesktopHomePage() {
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white/90 transition-all"
                   >
-                    <ChevronLeft size={28} className="text-gray-900" />
+                    <ChevronLeft size={28} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
                   </button>
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white/90 transition-all"
                   >
-                    <ChevronRight size={28} className="text-gray-900" />
+                    <ChevronRight size={28} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
                   </button>
 
                   {!featuredLoading && !featuredError && featuredWallpapers.length > 0 && (

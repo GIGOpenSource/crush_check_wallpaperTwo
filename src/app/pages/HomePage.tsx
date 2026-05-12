@@ -150,7 +150,7 @@ gaoqing        {/* Prioritize API-returned SEO data, fallback to default data */
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
                           <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="text-white text-lg font-semibold mb-1">
+                            <h3 className="text-white text-lg font-semibold mb-1 truncate">
                               {wallpaper.title}
                             </h3>
                             {wallpaper.description && (
@@ -158,13 +158,6 @@ gaoqing        {/* Prioritize API-returned SEO data, fallback to default data */
                                 {wallpaper.description}
                               </p>
                             )}
-                            <div className="flex items-center gap-2 text-white/80 text-sm">
-                              <span>{wallpaper.resolution}</span>
-                              <span>•</span>
-                              <span>{formatNumber(wallpaper.views)} {t.wallpaperDetail.views.toLowerCase()}</span>
-                              <span>•</span>
-                              <span>{formatNumber(wallpaper.downloads)} {t.wallpaperDetail.downloads.toLowerCase()}</span>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -175,16 +168,16 @@ gaoqing        {/* Prioritize API-returned SEO data, fallback to default data */
                 <button
                   type="button"
                   onClick={handlePrev}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                  className="absolute left-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white/90 transition-all"
                 >
-                  <ChevronLeft size={24} className="text-gray-900" />
+                  <ChevronLeft size={24} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
                 </button>
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+                  className="absolute right-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white/90 transition-all"
                 >
-                  <ChevronRight size={24} className="text-gray-900" />
+                  <ChevronRight size={24} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
                 </button>
 
                 <div className="flex items-center justify-center gap-2 mt-4">
