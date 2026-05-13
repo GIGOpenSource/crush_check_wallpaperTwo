@@ -273,10 +273,16 @@ export function getHotTags() {
 /**
  * 获取所有标签列表
  * GET /api/wallpapers/tags/list/
- * 无需参数
  */
 export function getAllTags() {
-  return http.get<TagListResponse>('/api/wallpapers/tags/list/');
+  // 检测设备类型
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    || window.innerWidth < 768;
+  const platform: 'PC' | 'PHONE' = isMobile ? 'PHONE' : 'PC';
+  
+  return http.get<TagListResponse>('/api/wallpapers/tags/list/', {
+    params: { platform },
+  });
 }
 
 // 保留旧接口名称以兼容现有代码
