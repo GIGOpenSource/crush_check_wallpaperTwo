@@ -247,7 +247,7 @@ export default function DesktopNotificationsPage() {
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                            {(notification.sender?.nickname || t.notifications.systemNotification)[0]}
+                            {(notification.sender_info?.nickname || t.notifications.systemNotification)[0]}
                           </div>
                         )}
 
@@ -258,7 +258,7 @@ export default function DesktopNotificationsPage() {
                               {/* 第一行：昵称 + 未读蓝点 */}
                               <div className="flex items-center gap-2 mb-1">
                                 <h3 className="text-base font-medium text-gray-900 dark:text-white truncate">
-                                  {notification.sender?.nickname || notification.title || t.notifications.systemNotification}
+                                  {notification.sender_info?.nickname || notification.title || t.notifications.systemNotification}
                                 </h3>
                                 {isUnread && (
                                   <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
