@@ -153,7 +153,7 @@ export default function DesktopEditProfilePage() {
                 <div className="relative">
                   <div className="w-32 h-32 bg-gray-100 rounded-full overflow-hidden ring-4 ring-gray-100">
                     <img
-                      src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'User')}`}
+                      src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'UN')}`}
                       alt="Avatar"
                       className="w-full h-full object-cover"
                     />

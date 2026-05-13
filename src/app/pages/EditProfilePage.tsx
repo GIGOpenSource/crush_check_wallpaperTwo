@@ -148,7 +148,7 @@ export default function EditProfilePage() {
             <div className="relative">
               <div className="w-20 h-20 bg-gray-100 rounded-full overflow-hidden">
                 <img
-                  src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'User')}`}
+                  src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'UN')}`}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />

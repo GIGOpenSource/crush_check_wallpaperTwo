@@ -287,7 +287,7 @@ export default function ProfilePage() {
           <div className="flex items-start gap-4 mb-8">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
               <img
-                src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username)}`}
+                src={profile.avatar_url || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nickname || profile.username || 'UN')}`}
                 alt={profile.nickname || profile.username}
                 className="w-full h-full object-cover"
               />
@@ -487,33 +487,33 @@ export default function ProfilePage() {
                 {followingUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                   >
-                    {/* 头像 - 可点击跳转到用户主页 */}
-                    <button
-                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                    {/* 头像 */}
+                    <div
                       className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
                     >
                       <img
-                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
+                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'UN') as string)}`}
                         alt={user.nickname || user.username}
                         className="w-full h-full object-cover"
                       />
-                    </button>
+                    </div>
                     
-                    {/* 用户信息 - 可点击跳转到用户主页 */}
-                    <button
-                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
-                      className="flex-1 min-w-0 text-left hover:text-blue-600 transition-colors"
-                    >
-                      <h3 className="font-semibold text-gray-900 truncate text-base">
+                    {/* 用户信息 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
                         {user.nickname || user.username}
                       </h3>
-                    </button>
+                    </div>
                     
-                    {/* 操作按钮 */}
+                    {/* 操作按钮 - 阻止事件冒泡 */}
                     <button
-                      onClick={() => handleToggleFollow(user.id, true)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleFollow(user.id, true);
+                      }}
                       disabled={followingActionId === user.id}
                       className="px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200"
                     >
@@ -566,33 +566,33 @@ export default function ProfilePage() {
                 {followersUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                    className="bg-white px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                   >
-                    {/* 头像 - 可点击跳转到用户主页 */}
-                    <button
-                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
+                    {/* 头像 */}
+                    <div
                       className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
                     >
                       <img
-                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'User') as string)}&background=random`}
+                        src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'UN') as string)}`}
                         alt={user.nickname || user.username}
                         className="w-full h-full object-cover"
                       />
-                    </button>
+                    </div>
                     
-                    {/* 用户信息 - 可点击跳转到用户主页 */}
-                    <button
-                      onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
-                      className="flex-1 min-w-0 text-left hover:text-blue-600 transition-colors"
-                    >
-                      <h3 className="font-semibold text-gray-900 truncate text-base">
+                    {/* 用户信息 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
                         {user.nickname || user.username}
                       </h3>
-                    </button>
+                    </div>
                     
-                    {/* 操作按钮 */}
+                    {/* 操作按钮 - 阻止事件冒泡 */}
                     <button
-                      onClick={() => handleToggleFollow(user.id, user.is_followed || false)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleFollow(user.id, user.is_followed || false);
+                      }}
                       disabled={followingActionId === user.id}
                       className={`px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
                         user.is_followed

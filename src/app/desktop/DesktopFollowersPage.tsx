@@ -70,7 +70,7 @@ export default function DesktopFollowersPage() {
                       {/* Avatar */}
                       <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all">
                         <img
-                          src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || '')}`}
+                          src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || 'UN')}`}
                           alt={user.nickname || user.username || 'User'}
                           className="w-full h-full object-cover"
                         />
