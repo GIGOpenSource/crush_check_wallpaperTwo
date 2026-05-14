@@ -219,25 +219,93 @@ export async function reportPageView(): Promise<void> {
   await reportPageEvent('page_view');
 }
 
-/** 点击等自定义事件：aplus.record(name, 'CLK', params) */
-export function umengClick(name: string): void {
-  const params = getTrackingParams();
-  pushAplusQueue({
-    action: 'aplus.record',
-    arguments: [name, 'CLK', params],
-  });
+/** 点击等自定义事件:调用 /api/track/report 接口 */
+export async function umengClick(name: string): Promise<void> {
+  try {
+    const userId = (() => {
+      try {
+        return localStorage.getItem('user_id') || undefined;
+      } catch {
+        return undefined;
+      }
+    })();
+
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+    const payload: any = {
+      unique_id: getOrCreateAnonUserId(),
+      app_version: import.meta.env.VITE_APP_VERSION ?? '0.0.1',
+      event_time: formatDateTime(),
+      page_name: getPageName(pathname),
+      page_type: getPageType(pathname),
+      device_type: getCoarseDeviceType(),
+      region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
+      referer: typeof document !== 'undefined' ? document.referrer : '',
+      page_path: pathname || '/',
+      event_type: 'click',
+      event_name: name,
+    };
+
+    // 如果用户已登录,添加 user_id
+    if (userId) {
+      payload.user_id = userId;
+    }
+
+    await fetch('/api/track/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.error('上报点击事件失败:', error);
+  }
 }
 
 /** 与 uni 侧小写命名一致的可选别名 */
 export const umengclick = umengClick;
 
-/** 停留/曝光类（与 uni 侧 umengstay 一致，事件类型同为 CLK） */
-export function umengStay(name: string): void {
-  const params = getTrackingParams();
-  pushAplusQueue({
-    action: 'aplus.record',
-    arguments: [name, 'CLK', params],
-  });
+/** 停留/曝光类(调用 /api/track/report 接口) */
+export async function umengStay(name: string): Promise<void> {
+  try {
+    const userId = (() => {
+      try {
+        return localStorage.getItem('user_id') || undefined;
+      } catch {
+        return undefined;
+      }
+    })();
+
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+    const payload: any = {
+      unique_id: getOrCreateAnonUserId(),
+      app_version: import.meta.env.VITE_APP_VERSION ?? '0.0.1',
+      event_time: formatDateTime(),
+      page_name: getPageName(pathname),
+      page_type: getPageType(pathname),
+      device_type: getCoarseDeviceType(),
+      region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
+      referer: typeof document !== 'undefined' ? document.referrer : '',
+      page_path: pathname || '/',
+      event_type: 'click',
+      event_name: name,
+    };
+
+    // 如果用户已登录,添加 user_id
+    if (userId) {
+      payload.user_id = userId;
+    }
+
+    await fetch('/api/track/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.error('上报停留事件失败:', error);
+  }
 }
 
 /** 页面停留时长（秒），供 usePageStay 使用 */
