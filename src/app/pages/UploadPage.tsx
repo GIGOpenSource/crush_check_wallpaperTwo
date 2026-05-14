@@ -147,6 +147,7 @@ export default function UploadPage() {
       return;
     }
 
+    setCurrentStep('uploading');
     setIsUploading(true);
     setUploadError(null);
 
