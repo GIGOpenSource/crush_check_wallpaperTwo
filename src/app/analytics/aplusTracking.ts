@@ -202,6 +202,7 @@ export async function reportPageEvent(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'unique_id':getOrCreateAnonUserId()
       },
       body: JSON.stringify(params),
     });
@@ -250,10 +251,11 @@ export async function umengClick(name: string): Promise<void> {
       payload.user_id = userId;
     }
 
-    await fetch('/api/track/report', {
+    await fetch('/api/track/report/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'unique_id': getOrCreateAnonUserId(),
       },
       body: JSON.stringify(payload),
     });
