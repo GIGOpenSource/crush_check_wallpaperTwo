@@ -46,13 +46,14 @@ function getCoarseDeviceType(): string {
 /** 获取页面类型映射 */
 function getPageType(pathname?: string): string {
   if (typeof window === 'undefined') return 'homepage';
-  const path = pathname || window.location.pathname;
+  // 如果没有传入 pathname，使用当前页面；如果传入了，使用传入的值
+  const path = pathname !== undefined ? pathname : window.location.pathname;
   
   if (path === '/' || path === '') return 'homepage';
   if (path.includes('/site-info')) return 'site_info';
   if (path.includes('/profile/edit')) return 'profile_edit';
   if (path.includes('/profile')) return 'profile';
-  if (path.includes('/markwallpapers/tag')) return 'tag_detail';
+  if (path.includes('/tag/')) return 'tag_detail';  // 修复：匹配 /tag/ 单数形式
   if (path.includes('/tags') && !path.includes('/tags/')) return 'tag';
   if (path.includes('/tags/')) return 'tag_detail';
   if (path.includes('/search')) return 'search';
@@ -70,13 +71,14 @@ function getPageType(pathname?: string): string {
 /** 获取页面名称映射 */
 function getPageName(pathname?: string): string {
   if (typeof window === 'undefined') return '首页';
-  const path = pathname || window.location.pathname;
+  // 如果没有传入 pathname，使用当前页面；如果传入了，使用传入的值
+  const path = pathname !== undefined ? pathname : window.location.pathname;
   
   if (path === '/' || path === '') return '首页';
   if (path.includes('/site-info')) return '站点信息';
   if (path.includes('/profile/edit')) return '编辑资料';
   if (path.includes('/profile')) return '个人主页';
-  if (path.includes('/markwallpapers/tag')) return '标签详情';
+  if (path.includes('/tag/')) return '标签详情';  // 修复：匹配 /tag/ 单数形式
   if (path.includes('/tags') && !path.includes('/tags/')) return '标签';
   if (path.includes('/tags/')) return '标签详情';
   if (path.includes('/search')) return '搜索';
@@ -143,28 +145,37 @@ export async function reportPageEvent(
   if (typeof window === 'undefined') return;
   
   try {
-    // 如果有离开页面信息，使用离开页面的信息；否则使用当前页面信息
-    const pathname = extraParams?.leavingPage?.pathname;
-    const search = extraParams?.leavingPage?.search;
+    // 关键修复：必须使用 leavingPage 的信息，而不是当前 window.location
+    const leavingPagePathname = extraParams?.leavingPage?.pathname;
+    const leavingPageSearch = extraParams?.leavingPage?.search;
+    
+    // 如果有离开页面信息，必须使用离开页面的信息
     const pagePath = extraParams?.leavingPage 
-      ? `${extraParams.leavingPage.pathname}${extraParams.leavingPage.search}` || '/'
+      ? `${leavingPagePathname}${leavingPageSearch || ''}` || '/'
       : getCurrentPagePurePath();
+    
+    // 构建完整的 URL 用于解析（如果是相对路径则添加 origin）
+    const fullPathname = leavingPagePathname 
+      ? (leavingPagePathname.startsWith('http') ? new URL(leavingPagePathname).pathname : leavingPagePathname)
+      : window.location.pathname;
     
     console.log('📊 [reportPageEvent]', {
       eventType,
       leavingPage: extraParams?.leavingPage,
       currentPage: getCurrentPagePurePath(),
+      currentPageLocation: window.location.pathname,
       finalPagePath: pagePath,
-      pageName: getPageName(pathname),
-      pageType: getPageType(pathname),
+      usedPathname: fullPathname,
+      pageName: getPageName(fullPathname),
+      pageType: getPageType(fullPathname),
     });
     
     const params: PageViewReportParams = {
       unique_id: getOrCreateAnonUserId(),
       app_version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
       event_time: formatDateTime(),
-      page_name: getPageName(pathname),
-      page_type: getPageType(pathname),
+      page_name: getPageName(fullPathname),
+      page_type: getPageType(fullPathname),
       device_type: getCoarseDeviceType(),
       region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
       referer: 'https://www.markwallpapers.com/',

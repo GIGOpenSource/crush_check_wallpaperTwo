@@ -27,17 +27,29 @@ export function usePageStay(options: UsePageStayOptions = {}): { clear: () => vo
   };
 
   useEffect(() => {
+    // 关键修复：在 effect 执行时立即保存当前页面信息到局部变量
+    // 这样在 cleanup 函数中可以访问到正确的离开页面信息
+    const enteringPathname = location.pathname;
+    const enteringSearch = location.search;
+    
     // 记录进入新页面时的开始时间和页面信息
     startRef.current = Date.now();
     leavingPageRef.current = {
-      pathname: location.pathname,
-      search: location.search,
+      pathname: enteringPathname,
+      search: enteringSearch,
     };
     optionsRef.current.onShowCallback?.();
 
     return () => {
+      // 关键：使用保存的 leavingPageRef，而不是重新读取 location
       const start = startRef.current;
       const leavingPage = leavingPageRef.current;
+      
+      // 调试日志：确认离开时的页面信息
+      console.log('👋 [usePageStay cleanup]', {
+        savedLeavingPage: leavingPage,
+        currentLocation: { pathname: location.pathname, search: location.search },
+      });
       
       if (start != null && leavingPage != null) {
         const elapsedMs = Date.now() - start;
@@ -47,6 +59,11 @@ export function usePageStay(options: UsePageStayOptions = {}): { clear: () => vo
           // 友盟埋点
           trackPageStaySeconds(stayDuration);
           // 同时上报到 /api/track/report/ 接口，使用离开页面的信息
+          // 关键：确保使用 leavingPage 的 pathname，而不是当前 location 的 pathname
+          console.log('📤 [usePageStay] 上报离开页面数据', {
+            leavingPage: leavingPage,
+            stayDuration: stayDuration,
+          });
           reportPageEvent('page_stay', {
             event_name: '页面停留时长',
             page_stay: stayDuration,
