@@ -9,8 +9,6 @@ import { useNavigationTags } from '../hooks/useNavigationTags';
 import { getTagDisplayName } from '../utils/tagDisplay';
 
 const TRENDING_DISPLAY = 8;
-const HOT_FETCH_PAGE_SIZE = 32;
-const ALL_TAGS_PAGE_SIZE = 100;
 
 export default function DesktopTagsPage() {
   const { t } = useLanguage();
@@ -22,8 +20,6 @@ export default function DesktopTagsPage() {
     error: hotError,
   } = useNavigationTags({
     isHot: true,
-    pageSize: HOT_FETCH_PAGE_SIZE,
-    currentPage: 1,
   });
 
   const {
@@ -32,8 +28,6 @@ export default function DesktopTagsPage() {
     error: allError,
   } = useNavigationTags({
     isHot: false,
-    pageSize: ALL_TAGS_PAGE_SIZE,
-    currentPage: 1,
   });
 
   const popularTags = useMemo(() => hotTags.slice(0, TRENDING_DISPLAY), [hotTags]);
@@ -111,26 +105,23 @@ export default function DesktopTagsPage() {
                           description: tag.description,
                         },
                       }}
-                      className="flex items-center justify-between p-6 bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-xl shadow-sm hover:shadow-md transition-all group"
+                      className="flex items-center p-5 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all group border border-gray-100"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                          <Hash size={24} className="text-blue-600" />
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                          <Hash size={20} className="text-blue-600" />
                         </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">
+                        <div className="min-w-0">
+                          <h3 className="text-base font-bold text-gray-900 truncate">
                             #{getTagDisplayName(tag) || tag.name}
                           </h3>
-                          {tag.description && (
-                            <p className="text-sm text-gray-500 mt-1">{tag.description}</p>
-                          )}
+                          <p className="text-sm text-gray-500 mt-0.5">{t.tags.wallpapers}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-blue-600">
+                      <div className="text-right flex-shrink-0 ml-3">
+                        <p className="text-xl font-bold text-blue-600">
                           {formatNumber(tag.wallpaperCount)}
                         </p>
-                        <p className="text-sm text-gray-500">{t.tags.wallpapers}</p>
                       </div>
                     </Link>
                   </motion.div>
