@@ -128,6 +128,7 @@ export type PageViewReportParams = {
   event_type: string;
   event_name?: string;
   page_stay?: number;
+  user_id?: number | string; // 用户ID，登录时传递，未登录不传
 };
 
 /** 调用 /api/track/report/ 接口上报页面事件 */
@@ -170,6 +171,17 @@ export async function reportPageEvent(
       pageType: getPageType(fullPathname),
     });
     
+    // 获取用户ID（如果已登录）
+    let userId: number | string | undefined;
+    try {
+      const storedUserId = localStorage.getItem('user_id');
+      if (storedUserId) {
+        userId = storedUserId;
+      }
+    } catch (e) {
+      // 忽略读取错误
+    }
+    
     const params: PageViewReportParams = {
       unique_id: getOrCreateAnonUserId(),
       app_version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
@@ -183,6 +195,7 @@ export async function reportPageEvent(
       event_type: eventType,
       event_name: extraParams?.event_name,
       page_stay: extraParams?.page_stay,
+      ...(userId && { user_id: userId }), // 只有登录时才传递 user_id
     };
 
     const response = await fetch('/api/track/report/', {

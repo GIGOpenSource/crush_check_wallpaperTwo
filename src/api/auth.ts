@@ -81,3 +81,32 @@ export function extractApiToken(data: unknown): string {
   }
   return '';
 }
+
+/** 从登录响应中提取 user_id（兼容多种字段名） */
+export function extractApiUserId(data: unknown): number | string | null {
+  if (!data || typeof data !== 'object') return null;
+  const obj = data as Record<string, unknown>;
+  
+  // 直接查找 user_id, id, customer_id 等字段
+  const directKeys = ['user_id', 'userId', 'id', 'customer_id', 'customerId'];
+  for (const key of directKeys) {
+    const v = obj[key];
+    if (v !== undefined && v !== null && (typeof v === 'number' || typeof v === 'string')) {
+      return v;
+    }
+  }
+  
+  // 在 data 嵌套对象中查找
+  const nested = obj.data;
+  if (nested && typeof nested === 'object') {
+    const nestedObj = nested as Record<string, unknown>;
+    for (const key of directKeys) {
+      const v = nestedObj[key];
+      if (v !== undefined && v !== null && (typeof v === 'number' || typeof v === 'string')) {
+        return v;
+      }
+    }
+  }
+  
+  return null;
+}

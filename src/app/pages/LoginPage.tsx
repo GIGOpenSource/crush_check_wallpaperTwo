@@ -3,7 +3,7 @@ import { App } from 'antd';
 import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import { ApiError, setAuthToken } from '../../api/request';
-import { extractApiErrorMessage, extractApiToken, isApiSuccess, loginUser } from '../../api/auth';
+import { extractApiErrorMessage, extractApiToken, extractApiUserId, isApiSuccess, loginUser } from '../../api/auth';
 import { BottomNav } from '../components/BottomNav';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -43,6 +43,17 @@ export default function LoginPage() {
         return;
       }
       setAuthToken(token);
+      
+      // 提取并保存 user_id
+      const userId = extractApiUserId(res);
+      if (userId !== null) {
+        try {
+          localStorage.setItem('user_id', String(userId));
+        } catch (e) {
+          console.error('保存 user_id 失败:', e);
+        }
+      }
+      
       message.success(t.login.loginSuccess);
       navigate('/');
     } catch (error) {

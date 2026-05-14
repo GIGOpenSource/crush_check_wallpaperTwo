@@ -47,19 +47,30 @@ export default function DesktopSettingsPage() {
       onOk: async () => {
         try {
           // 调用后端退出登录接口
-         let res =  await logoutUser();
+          const res: any = await logoutUser();
          if(res.code == 200){
            setAuthToken('');
+           // 清除 user_id
+           try {
+             localStorage.removeItem('user_id');
+           } catch (e) {
+             console.error('清除 user_id 失败:', e);
+           }
            navigate('/login', { replace: true });
          }
         } catch (err) {
           console.error('退出登录接口调用失败:', err);
           // 即使接口失败，也继续清除本地 token
         } finally {
-          // 清除本地 token
-          // setAuthToken('');
+          // 清除本地 token 和 user_id
+          setAuthToken('');
+          try {
+            localStorage.removeItem('user_id');
+          } catch (e) {
+            console.error('清除 user_id 失败:', e);
+          }
           // 跳转到登录页（保持当前视图模式）
-          // navigate('/login', { replace: true });
+          navigate('/login', { replace: true });
         }
       },
     });
