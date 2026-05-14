@@ -233,13 +233,13 @@ export async function umengClick(name: string): Promise<void> {
     const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
     const payload: any = {
       unique_id: getOrCreateAnonUserId(),
-      app_version: import.meta.env.VITE_APP_VERSION ?? '0.0.1',
+      app_version: import.meta.env.VITE_APP_VERSION ?? '1.0.0',
       event_time: formatDateTime(),
       page_name: getPageName(pathname),
       page_type: getPageType(pathname),
       device_type: getCoarseDeviceType(),
       region: typeof navigator !== 'undefined' ? navigator.language || '' : '',
-      referer: typeof document !== 'undefined' ? document.referrer : '',
+      referer:'https://www.markwallpapers.com/',
       page_path: pathname || '/',
       event_type: 'click',
       event_name: name,
