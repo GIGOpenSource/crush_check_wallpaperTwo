@@ -52,6 +52,22 @@ type RequestOptions = {
 const TOKEN_STORAGE_KEY = 'token';
 let memoryToken = '';
 
+const ANON_USER_KEY = 'aplus_anon_device_id';
+function getOrCreateAnonUserId(): string {
+  try {
+    let id = localStorage.getItem(ANON_USER_KEY);
+    if (!id) {
+      id =
+        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(ANON_USER_KEY, id);
+    }
+    return id;
+  } catch {
+    return 'anonymous';
+  }
+}
 export function getAuthToken(): string {
   if (memoryToken) return memoryToken;
   if (typeof window === 'undefined') return '';
@@ -137,6 +153,7 @@ export async function request<T = unknown>(
     Accept: 'application/json',
     'Accept-Language': acceptLanguage,
     ...headers,
+    'unique_id':getOrCreateAnonUserId()
   };
 
   const init: RequestInit = {
