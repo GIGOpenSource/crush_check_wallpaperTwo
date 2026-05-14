@@ -153,7 +153,7 @@ export async function request<T = unknown>(
     Accept: 'application/json',
     'Accept-Language': acceptLanguage,
     ...headers,
-    'unique_id':getOrCreateAnonUserId()
+    'unique-id':getOrCreateAnonUserId()
   };
 
   const init: RequestInit = {

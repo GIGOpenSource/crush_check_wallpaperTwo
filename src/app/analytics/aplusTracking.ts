@@ -202,7 +202,7 @@ export async function reportPageEvent(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'unique_id':getOrCreateAnonUserId()
+        'unique-id':getOrCreateAnonUserId()
       },
       body: JSON.stringify(params),
     });
@@ -255,7 +255,7 @@ export async function umengClick(name: string): Promise<void> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'unique_id': getOrCreateAnonUserId(),
+        'unique-id': getOrCreateAnonUserId(),
       },
       body: JSON.stringify(payload),
     });
