@@ -14,7 +14,7 @@ import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
-import { recordWallpaperDownload ,recordWallpaperCollect, getWallpaperSeoTdk} from '../../api/wallpaper';
+import { recordWallpaperDownload, recordWallpaperCollect, getWallpaperSeoTdk } from '../../api/wallpaper';
 import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import CommentSection from '../components/CommentSection';
@@ -66,15 +66,15 @@ export default function WallpaperDetailPage() {
     if (wallpaper && wallpaper.is_collected !== undefined) {
       setIsLiked(wallpaper.is_collected);
     }
-    
+
   }, [wallpaper?.is_collected]);
 
   // 获取壁纸详情SEO数据 - 只在 id 存在且 seoData 为空时请求
   useEffect(() => {
     if (!id || seoData) return; // 如果已经有SEO数据，不再请求
-    
+
     console.log('🔍 [WallpaperDetailPage] 请求壁纸SEO数据, wallpaper_id:', id);
-    
+
     getWallpaperSeoTdk(id)
       .then((response) => {
         console.log('✅ [WallpaperDetailPage] SEO数据返回:', response);
@@ -128,12 +128,12 @@ export default function WallpaperDetailPage() {
     try {
       try {
         // 调用下载记录接口，获取最新的下载量
-        const res = await recordWallpaperDownload(wallpaper.id) as { 
-          code: number; 
-          message: string; 
-          data: { download_count: number } 
+        const res = await recordWallpaperDownload(wallpaper.id) as {
+          code: number;
+          message: string;
+          data: { download_count: number }
         };
-        
+
         // 检查业务状态码并更新下载量
         if (res.code === 200 && res.data?.download_count !== undefined) {
           // 使用局部状态更新下载量
@@ -176,25 +176,25 @@ export default function WallpaperDetailPage() {
 
     try {
       // 调用收藏接口，返回格式: { code: 200, message: "...", data: { collected: boolean, collect_count: number } }
-      const res = await recordWallpaperCollect(wallpaper.id) as { 
-        code: number; 
-        message: string; 
-        data: { collected: boolean; collect_count: number } 
+      const res = await recordWallpaperCollect(wallpaper.id) as {
+        code: number;
+        message: string;
+        data: { collected: boolean; collect_count: number }
       };
-      
+
       // 检查业务状态码
       if (res.code !== 200) {
         message.error(res.message || '操作失败，请重试');
         return;
       }
-      
+
       // 更新收藏状态
       setIsLiked(res.data.collected);
       // 直接使用接口返回的 collect_count 更新收藏数，不调用详情接口
       setLocalLikes(res.data.collect_count);
-      
+
       // 显示成功提示
-     message.success(res.data.collected ? t.wallpaperDetail.collectSuccess : t.wallpaperDetail.collectCanceled);
+      message.success(res.data.collected ? t.wallpaperDetail.collectSuccess : t.wallpaperDetail.collectCanceled);
     } catch (err) {
       console.error('收藏失败:', err);
       message.error(err.message);
@@ -210,295 +210,294 @@ export default function WallpaperDetailPage() {
     <>
       <Helmet>
         {/* Use SEO data from API */}
-        <title>{seoData?.title || 'Wallpaper Detail'}</title>
-        <meta 
-          name="description" 
-          content={seoData?.description || 'Discover and download beautiful HD wallpapers'} 
+        <title>{seoData?.title || wallpaper?.title || 'Wallpaper Detail'}</title>
+        <meta
+          name="description"
+          content={seoData?.description || wallpaper?.description || 'Download high-quality HD wallpaper for free'}
         />
-        <meta name="keywords" content={seoData?.keywords || 'wallpaper, HD wallpaper, download'} />
-        <meta property="og:title" content={seoData?.title || 'Wallpaper Detail'} />
-        <meta property="og:description" content={seoData?.description || 'High quality wallpaper waiting for you to discover'} />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper, HD wallpaper, desktop wallpaper'} />
+        <meta property="og:title" content={seoData?.title || wallpaper?.title || 'HD Wallpaper'} />
+        <meta property="og:description" content={seoData?.description || wallpaper?.description || 'High-quality wallpaper waiting for you to download'} />
         {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
       </Helmet>
       <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
-        <div className="flex items-center p-4">
-          <button
-            type="button"
-            onClick={() => {
-              umengclick('detail_back');
-              navigate(-1);
-            }}
-            className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
-          >
-            <ChevronLeft size={24} className="text-gray-900" />
-          </button>
-        </div>
-      </header>
-
-      {/* Wallpaper Image Container */}
-      <div className="px-4 pt-4">
-        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
-          <div className="relative w-full bg-gray-900">
-            <img
-              src={wallpaper.imageUrl}
-              alt={wallpaper.title}
-              className="w-full h-auto object-contain"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="bg-white mt-4 rounded-t-3xl">
-        {/* Title and Uploader */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
-          {wallpaper.description && (
-            <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
-          )}
-          {/* 上传者信息 - 只在有uploader时显示 */}
-          {wallpaper.uploader && (
+        {/* Header */}
+        <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
+          <div className="flex items-center p-4">
             <button
+              type="button"
               onClick={() => {
-                // 如果是自己的壁纸，跳转到自己的主页；否则跳转到其他用户页面
-                if (isOwnWallpaper) {
-                  navigate('/profile');
-                } else {
-                  navigate(`/profile/${wallpaper.uploader?.id}?other_id=${wallpaper.uploader?.id}`);
-                }
+                umengclick('detail_back');
+                navigate(-1);
               }}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+              className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
             >
-              <User size={16} />
-              <span className="text-sm">{wallpaper.uploader.username}</span>
+              <ChevronLeft size={24} className="text-gray-900" />
             </button>
-          )}
-        </div>
+          </div>
+        </header>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 px-4 py-4 border-b border-gray-200">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
-              <Eye size={18} />
-              <span className="text-lg font-semibold">{formatNumber(wallpaper.views)}</span>
+        {/* Wallpaper Image Container */}
+        <div className="px-4 pt-4">
+          <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+            <div className="relative w-full bg-gray-900">
+              <img
+                src={wallpaper.imageUrl}
+                alt={wallpaper.title}
+                className="w-full h-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
             </div>
-            <p className="text-xs text-gray-500">{t.wallpaperDetail.views}</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
-              <Download size={18} />
-              <span className="text-lg font-semibold">{formatNumber(localDownloads ?? wallpaper.downloads)}</span>
-            </div>
-            <p className="text-xs text-gray-500">{t.wallpaperDetail.downloads}</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
-              <Heart size={18} />
-              <span className="text-lg font-semibold">{formatNumber(localLikes ?? wallpaper.likes)}</span>
-            </div>
-            <p className="text-xs text-gray-500">{t.wallpaperDetail.likes}</p>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="px-4 py-4 flex gap-3 border-b border-gray-200">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleDownload}
-            disabled={downloading}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
-          >
-            <Download size={20} />
-            {downloading ? t.common.loading : t.wallpaperDetail.download}
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleCollect}
-            className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${
-              isLiked
-                ? 'bg-red-50 border-red-500 text-red-500'
-                : 'bg-white border-gray-300 text-gray-600'
-            }`}
-          >
-            <Heart size={20} className={isLiked ? 'fill-red-500' : ''} />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleShare}
-            className="w-12 h-12 bg-white border-2 border-gray-300 text-gray-600 rounded-full flex items-center justify-center"
-          >
-            <Share2 size={20} />
-          </motion.button>
-        </div>
-
-        {/* Wallpaper Details */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.details}</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">{t.wallpaperDetail.resolution}</span>
-              <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">{t.wallpaperDetail.aspectRatio}</span>
-              <span className="text-gray-900 font-medium">{wallpaper.aspectRatio}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500">{t.wallpaperDetail.uploadDate}</span>
-              <span className="text-gray-900 font-medium">
-                {new Date(wallpaper.uploadDate).toLocaleDateString()}
-              </span>
-            </div>
+        {/* Content */}
+        <div className="bg-white mt-4 rounded-t-3xl">
+          {/* Title and Uploader */}
+          <div className="px-4 py-4 border-b border-gray-200">
+            <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
+            {wallpaper.description && (
+              <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
+            )}
             {/* 上传者信息 - 只在有uploader时显示 */}
             {wallpaper.uploader && (
-              <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
-                <span className="text-gray-500">{t.wallpaperDetail.uploader || '上传者'}</span>
-                <div className="flex items-center gap-2">
-                  {wallpaper.uploader.avatar && (
-                    <img
-                      src={wallpaper.uploader.avatar}
-                      alt={wallpaper.uploader.username}
-                      className="w-6 h-6 rounded-full object-cover"
-                    />
-                  )}
-                  <span className="text-gray-900 font-medium">{wallpaper.uploader.username}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.tagsHeading}</h3>
-          <div className="flex flex-wrap gap-2">
-            {wallpaper.tags.map((tag) => (
-              <Link
-                key={tag.id}
-                to={`/tag/${encodeURIComponent(tag.name)}`}
-                onClick={() => umengclick('filter_click_tag')}
-                state={{
-                  tagMeta: {
-                    name: tag.name,
-                  },
-                }}
-                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs rounded-full transition-colors"
-              >
-                {tag.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Comments Section */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <CommentSection wallpaperId={id || ''} />
-        </div>
-
-        {(loadingRelated || relatedWallpapers.length > 0) && (
-          <div className="py-4">
-            <div className="px-4 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">
-                {t.wallpaperDetail.relatedWallpapers}
-              </h3>
-            </div>
-            {loadingRelated ? (
-              <p className="px-4 py-4 text-center text-sm text-gray-500">{t.common.loading}</p>
-            ) : (
-              <WallpaperGrid wallpapers={relatedWallpapers} />
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Share Bottom Sheet */}
-      <AnimatePresence>
-        {showShareSheet && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowShareSheet(false)}
-              className="fixed inset-0 bg-black/50 z-50"
-            />
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6"
-            >
-              <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {t.wallpaperDetail.shareWallpaper}
-              </h3>
-              <div className="grid grid-cols-5 gap-2 sm:gap-4 mb-4">
-                {(
-                  [
-                    ['copy', t.wallpaperDetail.copyLink],
-                    ['tw', t.wallpaperDetail.shareX],
-                    ['fb', t.wallpaperDetail.shareFacebook],
-                    ['wa', t.wallpaperDetail.shareWhatsApp],
-                    ['pin', t.wallpaperDetail.sharePinterest],
-                  ] as const
-                ).map(([key, label]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className="flex flex-col items-center gap-2"
-                    onClick={async () => {
-                      const shareUrl = window.location.href;
-                      await trackAndRunDetailShare(key, shareUrl, () =>
-                        message.success(t.wallpaperDetail.linkCopied),
-                      );
-                      setShowShareSheet(false);
-                    }}
-                  >
-                    <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Share2 size={24} className="text-gray-600" />
-                    </div>
-                    <span className="text-xs text-gray-600">{label}</span>
-                  </button>
-                ))}
-              </div>
               <button
-                onClick={() => setShowShareSheet(false)}
-                className="w-full py-3 bg-gray-100 text-gray-700 rounded-full font-medium"
+                onClick={() => {
+                  // 如果是自己的壁纸，跳转到自己的主页；否则跳转到其他用户页面
+                  if (isOwnWallpaper) {
+                    navigate('/profile');
+                  } else {
+                    navigate(`/profile/${wallpaper.uploader?.id}?other_id=${wallpaper.uploader?.id}`);
+                  }
+                }}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 cursor-pointer"
               >
-                {t.common.cancel}
+                <User size={16} />
+                <span className="text-sm">{wallpaper.uploader.username}</span>
               </button>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            )}
+          </div>
 
-      <DownloadNoticeAlert
-        open={downloadNotice.open}
-        onOpenChange={(open) =>
-          setDownloadNotice((s) => ({
-            ...s,
-            open,
-            ...(open ? {} : { pendingTabUrl: undefined }),
-          }))
-        }
-        title={t.common.tip}
-        description={downloadNotice.message}
-        actionLabel={t.common.gotIt}
-        onConfirm={() => {
-          const url = downloadNotice.pendingTabUrl;
-          if (url) {
-            openImageUrlInNewTab(url);
-            umengclick('download_success');
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 px-4 py-4 border-b border-gray-200">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+                <Eye size={18} />
+                <span className="text-lg font-semibold">{formatNumber(wallpaper.views)}</span>
+              </div>
+              <p className="text-xs text-gray-500">{t.wallpaperDetail.views}</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+                <Download size={18} />
+                <span className="text-lg font-semibold">{formatNumber(localDownloads ?? wallpaper.downloads)}</span>
+              </div>
+              <p className="text-xs text-gray-500">{t.wallpaperDetail.downloads}</p>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+                <Heart size={18} />
+                <span className="text-lg font-semibold">{formatNumber(localLikes ?? wallpaper.likes)}</span>
+              </div>
+              <p className="text-xs text-gray-500">{t.wallpaperDetail.likes}</p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="px-4 py-4 flex gap-3 border-b border-gray-200">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleDownload}
+              disabled={downloading}
+              className="flex-1 bg-blue-600 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+            >
+              <Download size={20} />
+              {downloading ? t.common.loading : t.wallpaperDetail.download}
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleCollect}
+              className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${isLiked
+                  ? 'bg-red-50 border-red-500 text-red-500'
+                  : 'bg-white border-gray-300 text-gray-600'
+                }`}
+            >
+              <Heart size={20} className={isLiked ? 'fill-red-500' : ''} />
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleShare}
+              className="w-12 h-12 bg-white border-2 border-gray-300 text-gray-600 rounded-full flex items-center justify-center"
+            >
+              <Share2 size={20} />
+            </motion.button>
+          </div>
+
+          {/* Wallpaper Details */}
+          <div className="px-4 py-4 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.details}</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">{t.wallpaperDetail.resolution}</span>
+                <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">{t.wallpaperDetail.aspectRatio}</span>
+                <span className="text-gray-900 font-medium">{wallpaper.aspectRatio}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">{t.wallpaperDetail.uploadDate}</span>
+                <span className="text-gray-900 font-medium">
+                  {new Date(wallpaper.uploadDate).toLocaleDateString()}
+                </span>
+              </div>
+              {/* 上传者信息 - 只在有uploader时显示 */}
+              {wallpaper.uploader && (
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+                  <span className="text-gray-500">{t.wallpaperDetail.uploader || '上传者'}</span>
+                  <div className="flex items-center gap-2">
+                    {wallpaper.uploader.avatar && (
+                      <img
+                        src={wallpaper.uploader.avatar}
+                        alt={wallpaper.uploader.username}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                    )}
+                    <span className="text-gray-900 font-medium">{wallpaper.uploader.username}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="px-4 py-4 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.tagsHeading}</h3>
+            <div className="flex flex-wrap gap-2">
+              {wallpaper.tags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  to={`/tag/${encodeURIComponent(tag.name)}`}
+                  onClick={() => umengclick('filter_click_tag')}
+                  state={{
+                    tagMeta: {
+                      name: tag.name,
+                    },
+                  }}
+                  className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs rounded-full transition-colors"
+                >
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="px-4 py-4 border-b border-gray-200">
+            <CommentSection wallpaperId={id || ''} />
+          </div>
+
+          {(loadingRelated || relatedWallpapers.length > 0) && (
+            <div className="py-4">
+              <div className="px-4 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {t.wallpaperDetail.relatedWallpapers}
+                </h3>
+              </div>
+              {loadingRelated ? (
+                <p className="px-4 py-4 text-center text-sm text-gray-500">{t.common.loading}</p>
+              ) : (
+                <WallpaperGrid wallpapers={relatedWallpapers} />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Share Bottom Sheet */}
+        <AnimatePresence>
+          {showShareSheet && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowShareSheet(false)}
+                className="fixed inset-0 bg-black/50 z-50"
+              />
+              <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6"
+              >
+                <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  {t.wallpaperDetail.shareWallpaper}
+                </h3>
+                <div className="grid grid-cols-5 gap-2 sm:gap-4 mb-4">
+                  {(
+                    [
+                      ['copy', t.wallpaperDetail.copyLink],
+                      ['tw', t.wallpaperDetail.shareX],
+                      ['fb', t.wallpaperDetail.shareFacebook],
+                      ['wa', t.wallpaperDetail.shareWhatsApp],
+                      ['pin', t.wallpaperDetail.sharePinterest],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className="flex flex-col items-center gap-2"
+                      onClick={async () => {
+                        const shareUrl = window.location.href;
+                        await trackAndRunDetailShare(key, shareUrl, () =>
+                          message.success(t.wallpaperDetail.linkCopied),
+                        );
+                        setShowShareSheet(false);
+                      }}
+                    >
+                      <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Share2 size={24} className="text-gray-600" />
+                      </div>
+                      <span className="text-xs text-gray-600">{label}</span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setShowShareSheet(false)}
+                  className="w-full py-3 bg-gray-100 text-gray-700 rounded-full font-medium"
+                >
+                  {t.common.cancel}
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        <DownloadNoticeAlert
+          open={downloadNotice.open}
+          onOpenChange={(open) =>
+            setDownloadNotice((s) => ({
+              ...s,
+              open,
+              ...(open ? {} : { pendingTabUrl: undefined }),
+            }))
           }
-        }}
-      />
+          title={t.common.tip}
+          description={downloadNotice.message}
+          actionLabel={t.common.gotIt}
+          onConfirm={() => {
+            const url = downloadNotice.pendingTabUrl;
+            if (url) {
+              openImageUrlInNewTab(url);
+              umengclick('download_success');
+            }
+          }}
+        />
 
-      <BottomNav />
-    </div>
+        <BottomNav />
+      </div>
     </>
   );
 }
