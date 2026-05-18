@@ -13,10 +13,11 @@ import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
-import { recordWallpaperDownload, recordWallpaperCollect } from '../../api/wallpaper';
+import { recordWallpaperDownload, recordWallpaperCollect, getWallpaperSeoTdk } from '../../api/wallpaper';
 import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import CommentSection from '../components/CommentSection';
+import { Helmet } from 'react-helmet-async';
 import {
   Download,
   Heart,
@@ -51,6 +52,30 @@ export default function DesktopWallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+  
+  // 获取壁纸详情SEO数据 - 只在 id 存在且 seoData 为空时请求
+  useEffect(() => {
+    if (!id || seoData) return; // 如果已经有SEO数据，不再请求
+    
+    console.log(' [DesktopWallpaperDetailPage] 请求壁纸SEO数据, wallpaper_id:', id);
+    
+    getWallpaperSeoTdk(id)
+      .then((response) => {
+        console.log('✅ [DesktopWallpaperDetailPage] SEO数据返回:', response);
+        const seoItem = response.data;
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.seo_title,
+            description: seoItem.seo_description,
+            keywords: seoItem.seo_keywords,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(' [DesktopWallpaperDetailPage] 获取SEO数据失败:', err);
+      });
+  }, [id, seoData]); // 依赖 seoData 来防止重复请求
   
   // 判断是否是自己的壁纸
   const isOwnWallpaper = useMemo(() => {
@@ -175,39 +200,52 @@ export default function DesktopWallpaperDetailPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <DesktopSidebar />
+    <>
+      <Helmet>
+        {/* Use SEO data from API */}
+        <title>{seoData?.title || 'Wallpaper Detail'}</title>
+        <meta 
+          name="description" 
+          content={seoData?.description || 'Download high-quality HD wallpaper for free'} 
+        />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper, HD wallpaper, desktop wallpaper'} />
+        <meta property="og:title" content={seoData?.title || 'HD Wallpaper'} />
+        <meta property="og:description" content={seoData?.description || 'High-quality wallpaper waiting for you to download'} />
+        {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
+      </Helmet>
+      <div className="flex min-h-screen bg-gray-50">
+        <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-          <div className="px-8 py-4">
-            <div className="flex items-center gap-4 mb-2">
-              <button
-                type="button"
-                onClick={() => {
-                  umengclick('detail_back');
-                  navigate(-1);
-                }}
-                className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <ChevronLeft size={24} className="text-gray-900" />
-              </button>
-              <h1 className="text-xl font-bold text-gray-900 flex-1">{wallpaper.title}</h1>
-              <button
-                onClick={() => setIsFavorited(!isFavorited)}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${isFavorited
+        <main className="flex-1 ml-64">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div className="px-8 py-4">
+              <div className="flex items-center gap-4 mb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    umengclick('detail_back');
+                    navigate(-1);
+                  }}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <ChevronLeft size={24} className="text-gray-900" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900 flex-1">{wallpaper.title}</h1>
+                <button
+                  onClick={() => setIsFavorited(!isFavorited)}
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${isFavorited
                     ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
-              >
-                {/* <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} /> */}
-                {/* <span className="font-medium">
+                >
+                  {/* <Bookmark size={20} className={isFavorited ? 'fill-yellow-600' : ''} */}
+                  {/* <span className="font-medium">
                   {isFavorited ? t.wallpaperDetail.saved : t.wallpaperDetail.save}
                 </span> */}
-              </button>
-            </div>
-            {/* {wallpaper.description && (
+                </button>
+              </div>
+              {/* {wallpaper.description && (
               <p className="text-sm text-gray-600 ml-14">{wallpaper.description}</p>
             )} */}
           </div>
@@ -502,6 +540,7 @@ export default function DesktopWallpaperDetailPage() {
         }}
       />
     </div>
+    </>
   );
 }
 

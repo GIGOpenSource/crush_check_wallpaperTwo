@@ -822,6 +822,9 @@ export type SeoTdkItem = {
   title: string;
   description: string;
   keywords: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
   url: string;
   url_content: string;
   is_active: boolean;
@@ -829,6 +832,10 @@ export type SeoTdkItem = {
   applied_count: number;
   created_at: string;
   updated_at: string;
+  wallpaper?: {
+    id: number | string;
+    [key: string]: unknown;
+  };
   [key: string]: unknown;
 };
 
@@ -848,4 +855,33 @@ export type SeoTdkResponse = {
 
 export function getSeoTdk(url: string) {
   return http.get<SeoTdkResponse>('/api/seo/tdk/', { params: { url } });
+}
+
+/**
+ * 获取壁纸详情页面的SEO信息（TDK）
+ * GET /api/seo/tdk/
+ * @param wallpaperId - 壁纸ID
+ */
+export type WallpaperSeoTdkItem = {
+  id: number;
+  seo_title: string;
+  seo_description: string;
+  seo_keywords: string;
+  wallpaper?: {
+    id: number | string;
+    [key: string]: unknown;
+  };
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown;
+};
+
+export type WallpaperSeoTdkResponse = {
+  code: number;
+  message: string;
+  data: WallpaperSeoTdkItem;
+};
+
+export function getWallpaperSeoTdk(wallpaperId: string | number) {
+  return http.get<WallpaperSeoTdkResponse>('/api/seo/tdk/', { params: { wallpaper_id: wallpaperId } });
 }

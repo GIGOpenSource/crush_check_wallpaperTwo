@@ -100,7 +100,7 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-gaoqing        {/* Prioritize API-returned SEO data, fallback to default data */}
+            {/* Prioritize API-returned SEO data, fallback to default data */}
         <title>{seoData?.title || (isTrendingRoute ? 'Trending Wallpapers - HD Wallpaper Downloads' : 'Home - Discover Beautiful Wallpapers')}</title>
         <meta 
           name="description" 

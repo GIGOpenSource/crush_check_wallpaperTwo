@@ -1,6 +1,7 @@
 import { App } from 'antd';
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
+import { Helmet } from 'react-helmet-async';
 import { BottomNav } from '../components/BottomNav';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { currentUser } from '../mockData';
@@ -13,7 +14,7 @@ import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
-import { recordWallpaperDownload ,recordWallpaperCollect} from '../../api/wallpaper';
+import { recordWallpaperDownload ,recordWallpaperCollect, getWallpaperSeoTdk} from '../../api/wallpaper';
 import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
 import CommentSection from '../components/CommentSection';
@@ -48,6 +49,14 @@ export default function WallpaperDetailPage() {
     message: string;
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+
+  // 调试：组件挂载时打印信息
+  useEffect(() => {
+    console.log('🚀 [WallpaperDetailPage] 组件已挂载');
+    console.log('🚀 [WallpaperDetailPage] 当前 id:', id);
+    console.log('🚀 [WallpaperDetailPage] 当前 wallpaper:', wallpaper);
+  }, []);
 
   // 初始化喜欢状态使用壁纸的is_collected字段
   const [isLiked, setIsLiked] = useState(!!wallpaper?.is_collected);
@@ -57,7 +66,31 @@ export default function WallpaperDetailPage() {
     if (wallpaper && wallpaper.is_collected !== undefined) {
       setIsLiked(wallpaper.is_collected);
     }
+    
   }, [wallpaper?.is_collected]);
+
+  // 获取壁纸详情SEO数据 - 只在 id 存在且 seoData 为空时请求
+  useEffect(() => {
+    if (!id || seoData) return; // 如果已经有SEO数据，不再请求
+    
+    console.log('🔍 [WallpaperDetailPage] 请求壁纸SEO数据, wallpaper_id:', id);
+    
+    getWallpaperSeoTdk(id)
+      .then((response) => {
+        console.log('✅ [WallpaperDetailPage] SEO数据返回:', response);
+        const seoItem = response.data;
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.seo_title,
+            description: seoItem.seo_description,
+            keywords: seoItem.seo_keywords,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('❌ [WallpaperDetailPage] 获取SEO数据失败:', err);
+      });
+  }, [id, seoData]); // 依赖 seoData 来防止重复请求
 
   // 判断是否是自己的壁纸
   const isOwnWallpaper = useMemo(() => {
@@ -174,7 +207,20 @@ export default function WallpaperDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+    <>
+      <Helmet>
+        {/* Use SEO data from API */}
+        <title>{seoData?.title || 'Wallpaper Detail'}</title>
+        <meta 
+          name="description" 
+          content={seoData?.description || 'Discover and download beautiful HD wallpapers'} 
+        />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper, HD wallpaper, download'} />
+        <meta property="og:title" content={seoData?.title || 'Wallpaper Detail'} />
+        <meta property="og:description" content={seoData?.description || 'High quality wallpaper waiting for you to discover'} />
+        {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
+      </Helmet>
+      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
         <div className="flex items-center p-4">
@@ -453,6 +499,7 @@ export default function WallpaperDetailPage() {
 
       <BottomNav />
     </div>
+    </>
   );
 }
 
