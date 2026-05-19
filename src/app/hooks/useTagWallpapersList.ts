@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getWallpapersList } from '../../api/wallpaper';
+import { getWallpapersList, getAllTags, getHotTags } from '../../api/wallpaper';
 import { useView } from '../contexts/ViewContext';
 import type { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
@@ -9,6 +9,7 @@ import {
   wallpaperListCoverUrl,
 } from '../utils/wallpaperApiMap';
 import { tagCache } from '../utils/tagCache';
+import { mapNavigationTagResponseToTags } from '../utils/navigationTagApiMap';
 
 const PAGE_SIZE = 20;
 
@@ -82,36 +83,72 @@ export function useTagWallpapersList(tagId: string | undefined, order?: 'latest'
     fetchingRef.current = true;
 
     // 尝试从缓存中获取标签ID
-    const resolvedTagId = tagCache.getIdByName(tagId) || tagId;
+    let resolvedTagId = tagCache.getIdByName(tagId);
     
-    getWallpapersList({
-      currentPage: 1,
-      pageSize: PAGE_SIZE,
-      platform,
-      media_live: false,
-      tag_id: resolvedTagId,
-      order,
-    })
-      .then((raw) => {
+    // 如果缓存中没有，先获取标签列表填充缓存
+    const ensureTagCache = async () => {
+      if (resolvedTagId) return;
+      
+      try {
+        // 先尝试获取热门标签
+        const hotResponse = await getHotTags();
         if (cancelled) return;
-        const mapped = mapResponse(raw);
-        setWallpapers(mapped);
-        setTotal(pickTotal(raw));
-        setHasMore(mapped.length >= PAGE_SIZE);
+        const hotTags = mapNavigationTagResponseToTags(hotResponse);
+        tagCache.addTags(hotTags);
+        
+        // 再次尝试获取
+        resolvedTagId = tagCache.getIdByName(tagId);
+        if (resolvedTagId) return;
+        
+        // 如果还没找到，尝试获取所有标签
+        const allResponse = await getAllTags();
+        if (cancelled) return;
+        const allTags = mapNavigationTagResponseToTags(allResponse);
+        tagCache.addTags(allTags);
+        
+        // 最后一次尝试
+        resolvedTagId = tagCache.getIdByName(tagId);
+      } catch (err) {
+        console.warn('Failed to load tags for cache:', err);
+      }
+    };
+
+    // 执行缓存填充，然后请求壁纸列表
+    ensureTagCache().then(() => {
+      if (cancelled) return;
+      
+      // 使用解析后的 tag_id（可能是 ID 或标签名）
+      const finalTagId = resolvedTagId || tagId;
+      
+      getWallpapersList({
+        currentPage: 1,
+        pageSize: PAGE_SIZE,
+        platform,
+        media_live: false,
+        tag_id: finalTagId,
+        order,
       })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setWallpapers([]);
-          setHasMore(false);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-          fetchingRef.current = false;
-        }
-      });
+        .then((raw) => {
+          if (cancelled) return;
+          const mapped = mapResponse(raw);
+          setWallpapers(mapped);
+          setTotal(pickTotal(raw));
+          setHasMore(mapped.length >= PAGE_SIZE);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setError(true);
+            setWallpapers([]);
+            setHasMore(false);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) {
+            setLoading(false);
+            fetchingRef.current = false;
+          }
+        });
+    });
 
     return () => {
       cancelled = true;
