@@ -13,6 +13,8 @@ export function useWallpaperDetailFromRoute() {
   
   // 使用 ref 记录上一次加载的 ID，防止重复请求
   const lastLoadedIdRef = useRef<string | null>(null);
+  // 使用 ref 标记是否正在请求中，防止并发请求
+  const isFetchingRef = useRef(false);
 
   const [wallpaper, setWallpaper] = useState<Wallpaper | null>(null);
   /** 首帧 true，避免未跑 effect 时误判「未找到」 */
@@ -22,23 +24,30 @@ export function useWallpaperDetailFromRoute() {
   // 初始加载和路由变化时加载
   useEffect(() => {
     if (!id) {
-      console.log('⚠️ 壁纸 ID 为空，跳过加载');
+      console.log('️ 壁纸 ID 为空，跳过加载');
       setLoading(false);
       return;
     }
     
-    // 如果已经加载过相同的 ID，跳过
-    if (lastLoadedIdRef.current === id && wallpaper) {
+    // 如果已经加载过相同的 ID，且没有正在请求，跳过
+    if (lastLoadedIdRef.current === id && !isFetchingRef.current) {
       console.log('⏭️ 已加载过该壁纸详情，跳过重复请求');
       return;
     }
     
-    console.log('🔄 开始加载壁纸详情, ID:', id);
+    // 如果正在请求中，跳过
+    if (isFetchingRef.current) {
+      console.log(' 正在请求中，跳过重复请求');
+      return;
+    }
+    
+    console.log(' 开始加载壁纸详情, ID:', id);
     
     let cancelled = false;
     setLoading(true);
     setError(false);
     setWallpaper(null);
+    isFetchingRef.current = true; // 标记开始请求
 
     const loadWallpaperDetail = async () => {
       try {
@@ -55,7 +64,7 @@ export function useWallpaperDetailFromRoute() {
         // 响应格式: { code: 200, data: {...}, message: "success" }
         // 需要提取 data 字段
         const wallpaperData = (response as any)?.data ?? response;
-        console.log('📦 提取的壁纸数据:', wallpaperData);
+        console.log(' 提取的壁纸数据:', wallpaperData);
         
         // 如果是单个对象，直接使用；如果是数组，取第一个
         const extracted = Array.isArray(wallpaperData) 
@@ -88,6 +97,7 @@ export function useWallpaperDetailFromRoute() {
         if (!cancelled) {
           console.log('🏁 加载完成，设置 loading = false');
           setLoading(false);
+          isFetchingRef.current = false; // 标记请求结束
         }
       }
     };
@@ -97,8 +107,9 @@ export function useWallpaperDetailFromRoute() {
     return () => {
       console.log('🧹 组件卸载，取消请求');
       cancelled = true;
+      isFetchingRef.current = false; // 重置请求标记，允许下次请求
     };
-  }, [id, wallpaper]); // 依赖 id 和 wallpaper
+  }, [id]); // 只依赖 id
 
   /**
    * 刷新壁纸数据（用于下载、收藏等操作后更新统计数据）
