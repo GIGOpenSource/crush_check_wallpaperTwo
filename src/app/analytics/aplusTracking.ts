@@ -1,6 +1,17 @@
 import { pushAplusQueue } from './aplusQueue';
+import { getCurrentLanguage } from '../../api/request';
 
 const ANON_USER_KEY = 'aplus_anon_device_id';
+
+// 语言代码映射（前端语言代码 -> HTTP Accept-Language 标准代码）
+const languageCodeMap: Record<string, string> = {
+  'zh-CN': 'zh-CN',
+  'en': 'en',
+  'ja': 'ja',
+  'ko': 'ko',
+  'es': 'es',
+  'fr': 'fr',
+};
 
 export function formatDateTime(timestamp: number = Date.now()): string {
   const date = new Date(timestamp);
@@ -198,11 +209,16 @@ export async function reportPageEvent(
       ...(userId && { user_id: userId }), // 只有登录时才传递 user_id
     };
 
+    // 获取当前语言并映射为标准语言代码
+    const lang = getCurrentLanguage();
+    const acceptLanguage = languageCodeMap[lang] || lang;
+
     const response = await fetch('/api/track/report/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'unique-id':getOrCreateAnonUserId()
+        'unique-id':getOrCreateAnonUserId(),
+        'Accept-Language': acceptLanguage,
       },
       body: JSON.stringify(params),
     });
@@ -251,11 +267,16 @@ export async function umengClick(name: string): Promise<void> {
       payload.user_id = userId;
     }
 
+    // 获取当前语言并映射为标准语言代码
+    const lang = getCurrentLanguage();
+    const acceptLanguage = languageCodeMap[lang] || lang;
+
     await fetch('/api/track/report/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'unique-id': getOrCreateAnonUserId(),
+        'Accept-Language': acceptLanguage,
       },
       body: JSON.stringify(payload),
     });
@@ -298,10 +319,15 @@ export async function umengStay(name: string): Promise<void> {
       payload.user_id = userId;
     }
 
+    // 获取当前语言并映射为标准语言代码
+    const lang = getCurrentLanguage();
+    const acceptLanguage = languageCodeMap[lang] || lang;
+
     await fetch('/api/track/report', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': acceptLanguage,
       },
       body: JSON.stringify(payload),
     });

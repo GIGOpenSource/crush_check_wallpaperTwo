@@ -1,8 +1,21 @@
 // 存储 navigate 函数的引用，用于在 request.ts 中跳转
 let navigateFunction: ((path: string, options?: any) => void) | null = null;
 
+// 从 localStorage 读取初始语言（如果有的话），否则默认为 'en'
+const getInitialLanguage = (): string => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('app-language');
+      return saved || 'en';
+    } catch {
+      return 'en';
+    }
+  }
+  return 'en';
+};
+
 // 存储当前语言的引用，用于在请求头中添加 Accept-Language
-let currentLanguage: string = 'en';
+let currentLanguage: string = getInitialLanguage();
 
 export function setNavigateFunction(navigate: (path: string, options?: any) => void) {
   navigateFunction = navigate;
