@@ -303,16 +303,28 @@ export default function ProfilePage() {
             {/* 根据是否是其他用户显示关注/取消关注按钮 */}
             {isOtherUser && (
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.stopPropagation();
                   console.log(' [ProfilePage] 点击关注/取消关注按钮');
-                  console.log('👤 profile.id:', profile.id, '类型:', typeof profile.id);
                   console.log('👤 profile:', profile);
+                  console.log('👤 profile.id:', profile?.id, '类型:', typeof profile?.id);
+                  console.log(' profile.customer_id:', profile?.customer_id, '类型:', typeof profile?.customer_id);
+                  
+                  // 优先使用 id，如果不存在则使用 customer_id
+                  const userId = profile?.id || profile?.customer_id;
+                  console.log('👤 最终使用的 userId:', userId);
+                  
+                  if (!userId) {
+                    console.error('❌ 错误: 无法获取用户ID！');
+                    message.error('操作失败：用户ID不存在');
+                    return;
+                  }
                   
                   if (followingActionId) return;
-                  setFollowingActionId(profile.id);
+                  setFollowingActionId(userId);
                   try {
-                    console.log('📡 准备调用 toggleFollowUser，参数:', profile.id);
-                    await toggleFollowUser(profile.id);
+                    console.log(' 准备调用 toggleFollowUser，参数:', userId);
+                    await toggleFollowUser(userId);
                     // 乐观更新
                     message.success((profile as any).is_following ? t.profile.unfollowSuccess : t.profile.followSuccess);
                     // 刷新用户信息
@@ -324,14 +336,14 @@ export default function ProfilePage() {
                     setFollowingActionId(null);
                   }
                 }}
-                disabled={followingActionId === profile.id}
+                disabled={followingActionId === (profile?.id || profile?.customer_id)}
                 className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
                   (profile as any).is_following
                     ? 'bg-white/20 text-white hover:bg-white/30'
                     : 'bg-white text-blue-600 hover:bg-white/90'
                 }`}
               >
-                {followingActionId === profile.id 
+                {followingActionId === (profile?.id || profile?.customer_id) 
                   ? t.common.loading 
                   : (profile as any).is_following 
                   ? t.profile.unfollow 
