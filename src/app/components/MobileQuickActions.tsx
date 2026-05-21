@@ -116,15 +116,17 @@ export const MobileQuickActions: React.FC = () => {
           >
             {/* 语言切换部分 */}
             <div className="px-3 py-3">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
+              {/* <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
                 语言 / LANGUAGE
-              </p>
+              </p> */}
               <div className="space-y-1 max-h-[60vh] overflow-y-auto">
                 {languageOptions.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation(); // 防止事件冒泡
                       setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr');
+                      setIsOpen(false); // 立即关闭下拉菜单
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                       language === lang.code 
