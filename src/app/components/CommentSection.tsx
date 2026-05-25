@@ -306,6 +306,7 @@ interface CommentItemProps {
     id: number;
     content: string;
     customer_info?: {
+      id?: number | string;
       nickname: string;
       avatar_url: string;
     };
@@ -333,29 +334,37 @@ const CommentItem = React.memo(function CommentItem({
   isOwner,
   t
 }: CommentItemProps) {
+  const navigate = useNavigate();
   const isReply = comment.parent_id != null;
   const username = comment.customer_info?.nickname || t.comments.anonymousUser;
   const avatarUrl = comment.customer_info?.avatar_url;
+  const customerId = comment.customer_info?.id;
   const likes = comment.like_count || 0;
   const isLiked = comment.is_liked || false;
+
+  const handleAvatarClick = () => {
+    if (customerId) {
+      navigate(`/profile/${customerId}?other_id=${customerId}`);
+    }
+  };
 
   return (
     <div
       className={`flex gap-3 ${isReply ? 'ml-8' : ''}`}
     >
       {/* 用户头像 */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 cursor-pointer" onClick={handleAvatarClick}>
         {avatarUrl ? (
           <img
             src={avatarUrl}
             alt={username}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-10 h-10 rounded-full object-cover hover:opacity-80 transition-opacity"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/default-avatar.png';
             }}
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold hover:opacity-80 transition-opacity">
             {username[0].toUpperCase()}
           </div>
         )}
