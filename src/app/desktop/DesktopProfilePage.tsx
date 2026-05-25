@@ -63,7 +63,11 @@ export default function DesktopProfilePage() {
   // 判断是否是查看其他用户的页面
   // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
   const isOtherUser = !!otherId && String(otherId) !== String(currentUserId);
-  
+
+  // 控制返回按钮的显示：只要URL中存在other_id查询参数，就显示返回按钮
+  // 这与isOtherUser逻辑分离，避免逻辑混淆
+  const shouldShowReturnButton = !!otherId;
+
   const { profile, loading: profileLoading, error: profileError, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
   const myCollectionsResult = useMyCollections();
@@ -276,8 +280,8 @@ export default function DesktopProfilePage() {
         <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
           <div className="px-8 py-12">
             <div className="max-w-7xl mx-auto">
-              {/* 返回按钮 - 查看他人主页时显示 */}
-              {isOtherUser && (
+              {/* 返回按钮 - 只要有other_id参数就显示 */}
+              {shouldShowReturnButton && (
                 <button
                   onClick={() => navigate(-1)}
                   className="mb-6 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"

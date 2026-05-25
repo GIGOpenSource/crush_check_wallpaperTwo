@@ -77,7 +77,11 @@ export default function ProfilePage() {
   // 判断是否是查看其他用户的页面
   // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
   const isOtherUser = !!otherId && String(otherId) !== String(currentUserId);
-  
+
+  // 控制返回按钮的显示：只要URL中存在other_id查询参数，就显示返回按钮
+  // 这与isOtherUser逻辑分离，避免逻辑混淆
+  const shouldShowReturnButton = !!otherId;
+
   // 获取用户信息（如果是其他用户，传递 otherId）
   const { profile, loading: profileLoading, refresh: refreshProfile } = useUserProfile(otherId || undefined);
   
@@ -261,8 +265,8 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       {/* Header */}
       <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white relative">
-        {/* 返回按钮 - 查看他人主页时显示 */}
-        {isOtherUser && (
+        {/* 返回按钮 - 只要有other_id参数就显示 */}
+        {shouldShowReturnButton && (
           <button
             onClick={() => navigate(-1)}
             className="absolute top-6 left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"
@@ -274,7 +278,7 @@ export default function ProfilePage() {
         )}
         
         {/* 设置按钮 - 右上角 */}
-        {!isOtherUser && (
+        {!shouldShowReturnButton && (
           <button
             onClick={() => navigate('/settings')}
             className="absolute top-6 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10"
@@ -283,7 +287,7 @@ export default function ProfilePage() {
           </button>
         )}
         
-        <div className={`px-4 ${isOtherUser ? 'pt-20' : 'pt-8'} pb-10`}>
+        <div className={`px-4 ${shouldShowReturnButton ? 'pt-20' : 'pt-8'} pb-10`}>
           <div className="flex items-start gap-4 mb-8">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden border-4 border-white/30">
               <img
