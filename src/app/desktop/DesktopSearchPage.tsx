@@ -138,6 +138,7 @@ export default function DesktopSearchPage() {
         <meta name="keywords" content={seoData?.keywords || 'wallpaper, search, HD wallpaper, desktop wallpaper'} />
         <meta property="og:title" content={seoData?.title || (query ? `${query} - Wallpaper Search` : 'Search Wallpapers')} />
         <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
+        <link rel="canonical" href={`${window.location.origin}/search`} />
       </Helmet>
       <div className="flex h-screen overflow-hidden bg-gray-50">
         <DesktopSidebar />
