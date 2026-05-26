@@ -212,7 +212,7 @@ export default function DesktopWallpaperDetailPage() {
         <meta property="og:title" content={seoData?.title || wallpaper?.title || 'HD Wallpaper'} />
         <meta property="og:description" content={seoData?.description || wallpaper?.description || 'High-quality wallpaper waiting for you to download'} />
         {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
-        <link rel="canonical" href={`${window.location.origin}/wallpaper/${wallpaper?.id}`} />
+        <link rel="canonical" href={`${window.location.origin}/markwallpapers/wallpaper/${wallpaper?.id}`} />
       </Helmet>
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />

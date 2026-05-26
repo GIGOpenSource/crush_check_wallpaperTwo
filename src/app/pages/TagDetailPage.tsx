@@ -97,7 +97,7 @@ export default function TagDetailPage() {
         <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - 壁纸标签`} />
         <meta property="og:description" content={seoData?.description || displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
         <meta property="og:image" content="/default-og-image.jpg" />
-        <link rel="canonical" href={`${window.location.origin}/tag/${encodeURIComponent(displayTag?.name || '')}`} />
+        <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
       </Helmet>
       <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">

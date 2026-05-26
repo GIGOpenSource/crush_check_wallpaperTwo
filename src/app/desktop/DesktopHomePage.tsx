@@ -101,7 +101,7 @@ export default function DesktopHomePage() {
         <meta name="keywords" content={seoData?.keywords || (isTrendingRoute ? 'trending wallpapers, popular wallpapers, HD wallpapers' : 'wallpaper, HD wallpaper, desktop wallpaper, curated wallpapers')} />
         <meta property="og:title" content={seoData?.title || (isTrendingRoute ? 'Trending Wallpapers' : 'Discover Beautiful Wallpapers')} />
         <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
-        <link rel="canonical" href={`${window.location.origin}/`} />
+        <link rel="canonical" href={`${window.location.origin}/markwallpapers/`} />
       </Helmet>
       <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />

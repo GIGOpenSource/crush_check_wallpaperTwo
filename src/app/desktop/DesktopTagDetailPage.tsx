@@ -97,7 +97,7 @@ export default function DesktopTagDetailPage() {
       <meta name="keywords" content={seoData?.keywords || `${displayTag?.name || ''}, 标签, 壁纸, 高清壁纸`} />
       <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - 壁纸标签`} />
       <meta property="og:description" content={seoData?.description || displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
-      <link rel="canonical" href={`${window.location.origin}/tag/${encodeURIComponent(displayTag?.name || '')}`} />
+      <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
     </Helmet>
     <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
