@@ -20,28 +20,52 @@ export default function DesktopHomePage() {
   const showEditorsBanner = !isTrendingRoute;
   const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
 
-  // 获取SEO数据
+  // 获取SEO数据 - 使用当前页面URL
   useEffect(() => {
-    // 构建当前页面的完整URL
-    const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const currentUrl = `${window.location.origin}${window.location.pathname}`;
+    const pageType = isTrendingRoute ? 'trending' : 'home';
     
-    console.log('🔍 [DesktopHomePage] 请求SEO数据:', currentUrl);
-
+    console.log(` [DesktopHomePage] 请求${pageType}页面SEO数据, URL:`, currentUrl);
+    
     getSeoTdk(currentUrl)
       .then((response) => {
         console.log('✅ [DesktopHomePage] SEO数据返回:', response);
-        // 从 results 数组中获取第一条数据
-        const seoItem = response.data?.results?.[0];
+        const seoItem = response.data?.results?.[0]; // 根据API响应结构调整
         if (seoItem) {
           setSeoData({
             title: seoItem.title,
             description: seoItem.description,
             keywords: seoItem.keywords,
           });
+        } else {
+          // 如果API没有返回数据，使用默认值
+          setSeoData({
+            title: isTrendingRoute 
+              ? 'Trending Wallpapers - HD Wallpaper Downloads' 
+              : 'Home - Discover Beautiful Wallpapers',
+            description: isTrendingRoute 
+              ? 'Browse the most popular trending HD wallpapers, free downloads' 
+              : 'Discover curated beautiful HD wallpapers, personalize your desktop',
+            keywords: isTrendingRoute 
+              ? 'trending wallpapers, popular wallpapers, HD wallpapers' 
+              : 'wallpaper, HD wallpaper, desktop wallpaper, curated wallpapers'
+          });
         }
       })
       .catch((err) => {
-        console.error('❌ [DesktopHomePage] 获取SEO数据失败:', err);
+        console.error(`❌ [DesktopHomePage] 获取${isTrendingRoute ? 'trending' : 'home'}页面SEO数据失败:`, err);
+        // 出错时使用默认值
+        setSeoData({
+          title: isTrendingRoute 
+            ? 'Trending Wallpapers - HD Wallpaper Downloads' 
+            : 'Home - Discover Beautiful Wallpapers',
+          description: isTrendingRoute 
+            ? 'Browse the most popular trending HD wallpapers, free downloads' 
+            : 'Discover curated beautiful HD wallpapers, personalize your desktop',
+          keywords: isTrendingRoute 
+            ? 'trending wallpapers, popular wallpapers, HD wallpapers' 
+            : 'wallpaper, HD wallpaper, desktop wallpaper, curated wallpapers'
+        });
       });
   }, [isTrendingRoute]);
   const {
@@ -101,7 +125,7 @@ export default function DesktopHomePage() {
         <meta name="keywords" content={seoData?.keywords || (isTrendingRoute ? 'trending wallpapers, popular wallpapers, HD wallpapers' : 'wallpaper, HD wallpaper, desktop wallpaper, curated wallpapers')} />
         <meta property="og:title" content={seoData?.title || (isTrendingRoute ? 'Trending Wallpapers' : 'Discover Beautiful Wallpapers')} />
         <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
-        <link rel="canonical" href={`${window.location.origin}/markwallpapers/`} />
+        <link rel="canonical" href={`${window.location.origin}/markwallpapers/${isTrendingRoute ? 'trending' : ''}`} />
       </Helmet>
       <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />

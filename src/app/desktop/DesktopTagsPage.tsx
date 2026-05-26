@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { Search, TrendingUp, Hash, Grid3x3 } from 'lucide-react';
@@ -7,12 +7,50 @@ import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigationTags } from '../hooks/useNavigationTags';
 import { getTagDisplayName } from '../utils/tagDisplay';
+import { Helmet } from 'react-helmet-async';
+import { getSeoTdk } from '../../api/wallpaper';
 
 const TRENDING_DISPLAY = 8;
 
 export default function DesktopTagsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+
+  // 获取标签页面SEO数据，使用当前页面URL
+  useEffect(() => {
+    const currentUrl = `${window.location.origin}${window.location.pathname}`;
+    console.log(' [DesktopTagsPage] 请求标签页面SEO数据, URL:', currentUrl);
+    
+    getSeoTdk(currentUrl)
+      .then((response) => {
+        console.log('✅ [DesktopTagsPage] 标签页面SEO数据返回:', response);
+        const seoItem = response.data?.results?.[0]; // 根据API响应结构调整
+        if (seoItem) {
+          setSeoData({
+            title: seoItem.title,
+            description: seoItem.description,
+            keywords: seoItem.keywords,
+          });
+        } else {
+          // 如果API没有返回数据，使用默认值
+          setSeoData({
+            title: 'Tags - HD Wallpaper Downloads',
+            description: 'Browse all wallpaper tags, discover amazing collections of HD wallpapers',
+            keywords: 'wallpaper tags, hd wallpaper, desktop wallpaper, photo tags'
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(' [DesktopTagsPage] 获取标签页面SEO数据失败:', err);
+        // 出错时使用默认值
+        setSeoData({
+          title: 'Tags - HD Wallpaper Downloads',
+          description: 'Browse all wallpaper tags, discover amazing collections of HD wallpapers',
+          keywords: 'wallpaper tags, hd wallpaper, desktop wallpaper, photo tags'
+        });
+      });
+  }, []);
 
   const {
     tags: hotTags,
@@ -44,7 +82,20 @@ export default function DesktopTagsPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <>
+      <Helmet>
+        {/* Use SEO data from API */}
+        <title>{seoData?.title || 'Tags - HD Wallpaper Downloads'}</title>
+        <meta
+          name="description"
+          content={seoData?.description || 'Browse all wallpaper tags, discover amazing collections of HD wallpapers'}
+        />
+        <meta name="keywords" content={seoData?.keywords || 'wallpaper tags, hd wallpaper, desktop wallpaper, photo tags'} />
+        <meta property="og:title" content={seoData?.title || 'Tags - HD Wallpaper Collection'} />
+        <meta property="og:description" content={seoData?.description || 'Discover amazing collections of HD wallpapers organized by tags'} />
+        <link rel="canonical" href={`${window.location.origin}/markwallpapers/tags`} />
+      </Helmet>
+      <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
@@ -173,6 +224,7 @@ export default function DesktopTagsPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }
 
