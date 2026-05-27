@@ -105,14 +105,20 @@ function DesktopWallpaperCard({
         onClick={onClickTrack}
       >
         <div className="relative rounded-xl overflow-hidden bg-white group image-placeholder shadow-md hover:shadow-xl transition-shadow">
-          {/* <div className="bg-white w-[200px] h-[280px] overflow-hidden"> */}
+          {/* 图片加载失败时显示占位图 */}
+          <div className="image-placeholder">
             <img
               src={wallpaperListCoverUrl(wallpaper)}
               alt={wallpaper.title}
               className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105 relative z-10"
               loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                const title = encodeURIComponent(wallpaper.title || 'Image');
+                 target.src = `https://placehold.co/400x300/F3F4F6/333333?text=${title}&font.size=10`;
+              }}
             />
-          {/* </div> */}
+          </div>
 
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">

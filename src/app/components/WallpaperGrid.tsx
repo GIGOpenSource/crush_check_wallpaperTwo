@@ -82,6 +82,12 @@ function WallpaperCard({
             alt={wallpaper.title}
             className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              const title = encodeURIComponent(wallpaper.title || 'Image');
+              // target.src = `https://placehold.co/400x600/F3F4F6/333333?text=${title}&font.size=10`;
+               target.src = `https://placehold.co/300x400/F3F4F6/333333?text=${title}&font.size=10`;
+            }}
           />
           
           {/* Overlay on hover */}
