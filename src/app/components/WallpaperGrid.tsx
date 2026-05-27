@@ -22,21 +22,20 @@ export function WallpaperGrid({
   listNavBase,
   trackListEvents = true,
 }: WallpaperGridProps) {
+  // 根据列数动态生成CSS类
+  const columnClass = `columns-${columns} sm:columns-${columns} md:columns-${Math.min(columns + 1, 3)} lg:columns-${Math.min(columns + 2, 4)}`;
+  
   return (
-    <div
-      className="grid gap-3 px-4"
-      style={{
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
-      }}
-    >
+    <div className={`${columnClass} gap-3 px-4`}>
       {wallpapers.map((wallpaper, index) => (
-        <WallpaperCard
-          key={wallpaper.id}
-          wallpaper={wallpaper}
-          index={index}
-          listNavBase={listNavBase}
-          trackListEvents={trackListEvents}
-        />
+        <div key={wallpaper.id} className="break-inside-avoid mb-3">
+          <WallpaperCard
+            wallpaper={wallpaper}
+            index={index}
+            listNavBase={listNavBase}
+            trackListEvents={trackListEvents}
+          />
+        </div>
       ))}
     </div>
   );
@@ -69,6 +68,7 @@ function WallpaperCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       onMouseEnter={onHoverTrack}
+      className="break-inside-avoid"
     >
       <Link
         to={`/wallpaper/${wallpaper.id}`}
@@ -76,11 +76,11 @@ function WallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 group">
+        <div className="relative rounded-lg overflow-hidden bg-white group image-placeholder">
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
           
