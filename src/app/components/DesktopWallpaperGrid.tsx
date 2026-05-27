@@ -28,18 +28,22 @@ export function DesktopWallpaperGrid({
   deletingId,
 }: DesktopWallpaperGridProps) {
   return (
-    <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-6 px-4">
+    <div
+      className="grid gap-6"
+      style={{
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
+      }}
+    >
       {wallpapers.map((wallpaper, index) => (
-        <div key={wallpaper.id} className="break-inside-avoid mb-6">
-          <DesktopWallpaperCard
-            wallpaper={wallpaper}
-            index={index}
-            listNavBase={listNavBase}
-            trackListEvents={trackListEvents}
-            onDelete={onDelete}
-            isDeleting={deletingId === wallpaper.id}
-          />
-        </div>
+        <DesktopWallpaperCard
+          key={wallpaper.id}
+          wallpaper={wallpaper}
+          index={index}
+          listNavBase={listNavBase}
+          trackListEvents={trackListEvents}
+          onDelete={onDelete}
+          isDeleting={deletingId === wallpaper.id}
+        />
       ))}
     </div>
   );
@@ -77,7 +81,7 @@ function DesktopWallpaperCard({
       transition={{ delay: index * 0.03 }}
       whileHover={{ y: -4 }}
       onMouseEnter={onHoverTrack}
-      className="relative break-inside-avoid"
+      className="relative"
     >
       {/* 删除按钮 - 仅当传入 onDelete 时显示 */}
       {onDelete && (
@@ -88,7 +92,7 @@ function DesktopWallpaperCard({
             onDelete(wallpaper.id);
           }}
           disabled={isDeleting}
-          className="absolute top-3 right-3 z-30 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute top-3 right-3 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isDeleting ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -104,25 +108,17 @@ function DesktopWallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className="relative rounded-xl overflow-hidden bg-white group image-placeholder shadow-md hover:shadow-xl transition-shadow">
-          {/* 图片加载失败时显示占位图 */}
-          <div className="image-placeholder">
-            <img
-              src={wallpaperListCoverUrl(wallpaper)}
-              alt={wallpaper.title}
-              className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105 relative z-10"
-              loading="lazy"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                const title = encodeURIComponent(wallpaper.title || 'Image');
-                 target.src = `https://placehold.co/400x300/F3F4F6/333333?text=${title}&font.size=10`;
-              }}
-            />
-          </div>
+        <div className="relative  w-[300px] h-[200px] aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
+          <img
+            src={wallpaperListCoverUrl(wallpaper)}
+            alt={wallpaper.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
 
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-            <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-0 left-0 right-0 p-4">
               <h3 className="text-white font-semibold mb-2 line-clamp-2">
                 {wallpaper.title}
               </h3>
@@ -143,8 +139,8 @@ function DesktopWallpaperCard({
             </div>
           </div>
 
-          {/* Resolution badge */}
-          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded z-20">
+          {/* Resolution badge - 当有删除按钮时移到左边 */}
+          <div className={`absolute top-3 ${onDelete ? 'left-3' : 'right-3'} bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-lg font-medium`}>
             {wallpaper.resolution}
           </div>
         </div>
