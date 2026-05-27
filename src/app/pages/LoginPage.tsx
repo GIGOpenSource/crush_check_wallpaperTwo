@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { App } from 'antd';
-import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router';
+import { Mail, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { ApiError, setAuthToken } from '../../api/request';
 import { extractApiErrorMessage, extractApiToken, extractApiUserId, isApiSuccess, loginUser } from '../../api/auth';
 import { BottomNav } from '../components/BottomNav';
@@ -11,11 +11,24 @@ import { useLanguage } from '../contexts/LanguageContext';
 export default function LoginPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // 控制返回按钮显示：如果浏览器历史记录深度大于1或者来自特定页面，则显示返回按钮
+  const shouldShowReturnButton = window.history.length > 1 || location.state?.from;
+
+  const handleGoBack = () => {
+    // 如果有来源页面，则返回来源页面；否则返回上一页
+    if (location.state?.from) {
+      navigate(location.state.from);
+    } else {
+      navigate(-1);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +81,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20 max-w-md mx-auto">
+    <div className="min-h-screen bg-white/1 backdrop-blur-sm pb-20 max-w-md mx-auto relative"> {/* 添加透明度和模糊效果 */}
+      {/* 返回按钮 */}
+      {shouldShowReturnButton && (
+        <button
+          onClick={handleGoBack}
+          className="fixed top-6 left-4 z-50 bg-white/10 backdrop-blur-sm border  rounded-full p-2 hover:bg-white/30 transition-colors shadow-md"
+          aria-label={t.common.back}
+        >
+          <ArrowLeft size={20} className="text-white" />
+        </button>
+      )}
+      
       {/* 顶部装饰区域 */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
         {/* 装饰圆圈 */}
