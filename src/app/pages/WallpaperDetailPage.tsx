@@ -237,7 +237,7 @@ export default function WallpaperDetailPage() {
             >
               <ChevronLeft size={24} className="text-gray-900" />
             </button>
-            <div className="font-bold ml-4 text-lg w-80 mt-2">{wallpaper.title}</div> 
+            <div className="font-bold ml-4 text-lg w-80 mt-2">{wallpaper.title}</div>
           </div>
         </header>
 
@@ -455,6 +455,8 @@ export default function WallpaperDetailPage() {
                         const shareUrl = window.location.href;
                         await trackAndRunDetailShare(key, shareUrl, () =>
                           message.success(t.wallpaperDetail.linkCopied),
+                          wallpaper.imageUrl,
+                          wallpaper.title,
                         );
                         setShowShareSheet(false);
                       }}
