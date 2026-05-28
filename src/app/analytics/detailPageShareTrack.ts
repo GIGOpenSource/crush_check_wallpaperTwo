@@ -23,6 +23,8 @@ export async function trackAndRunDetailShare(
   key: DetailShareActionKey,
   shareUrl: string | undefined,
   onCopySuccess: () => void,
+  image?: string,
+  title?: string,
 ): Promise<void> {
   if (!shareUrl?.trim()) {
     umengclick('share_fail');
@@ -40,7 +42,7 @@ export async function trackAndRunDetailShare(
     return;
   }
   umengclick(CLICK_EVENT_BY_KEY[key]);
-  const opened = openWallpaperShareChannel(CHANNEL_BY_KEY[key], shareUrl);
+  const opened = openWallpaperShareChannel(CHANNEL_BY_KEY[key], shareUrl, image, title);
   if (opened) umengclick('share_success');
   else umengclick('share_fail');
 }

@@ -25,17 +25,16 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
 }
 
 /** @returns 是否成功打开新窗口（被拦截则为 false） */
-export function openWallpaperShareChannel(channel: WallpaperShareChannel, wallpaperId: string): boolean {
+export function openWallpaperShareChannel(channel: WallpaperShareChannel, wallpaperId: string,image: string,title:string): boolean {
   const wallpaperUrl = `${wallpaperId}`;
   const enc = encodeURIComponent(wallpaperUrl);
-  
   const href =
     channel === 'twitter'
       ? `https://twitter.com/intent/tweet?url=${enc}`
       : channel === 'facebook'
         ? `https://www.facebook.com/sharer/sharer.php?u=${enc}`
         : channel === 'pinterest'
-          ? `https://www.pinterest.com/pin/create/button/?url=${enc}`
+          ? `https://www.pinterest.com/pin/create/button/?url=${enc}&media=${encodeURIComponent(image)}&description=${encodeURIComponent(title)}`
           : `https://wa.me/?text=${enc}`;
   const w = window.open(href, '_blank', 'noopener,noreferrer');
   return w != null;
