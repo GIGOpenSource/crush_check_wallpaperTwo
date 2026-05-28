@@ -225,8 +225,8 @@ export default function WallpaperDetailPage() {
       </Helmet>
       <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
-          <div className="flex items-center p-4">
+        <header className="bg-gradient-to-b from-black/50 to-transparent">
+          <div className="flex p-4">
             <button
               type="button"
               onClick={() => {
@@ -237,41 +237,27 @@ export default function WallpaperDetailPage() {
             >
               <ChevronLeft size={24} className="text-gray-900" />
             </button>
+            <div className="font-bold ml-4 text-lg w-80 mt-2">{wallpaper.title}</div> 
           </div>
         </header>
 
         {/* Wallpaper Image Container */}
-        <div className="px-4 pt-4">
-          {/* <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
-            <div 
-              className="relative w-full bg-gray-900 aspect-[3/4] max-h-[400px] flex items-center justify-center cursor-pointer"
-              onClick={() => setShowPreview(true)}
-            >
+        <div className="px-4">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
+            <div className="relative aspect-[3/4] bg-gray-900">
               <img
                 src={wallpaper.imageUrl}
                 alt={wallpaper.title}
-                className="max-w-full max-h-full object-contain"
+                className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"
               />
             </div>
-          </div> */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
-                  <div className="relative aspect-[3/4] bg-gray-900">
-                    <img
-                      src={wallpaper.imageUrl}
-                      alt={wallpaper.title}
-                      className="w-full h-full object-contain"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                </div>
+          </div>
         </div>
 
         {/* Content */}
         <div className="bg-white mt-4 rounded-t-3xl">
-          {/* Title and Uploader */}
           <div className="px-4 py-4 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-900 mb-2">{wallpaper.title}</h1>
             {wallpaper.description && (
               <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
             )}
@@ -320,7 +306,7 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="px-4 py-4 flex gap-3 border-b border-gray-200">
+          <div className="px-4 py-4 flex gap-3 border-t border-gray-200 fixed bottom-0 left-0 right-0 bg-white z-50">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleDownload}
@@ -514,7 +500,7 @@ export default function WallpaperDetailPage() {
 
         {/* Fullscreen Preview Modal */}
         {showPreview && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
             onClick={() => setShowPreview(false)}
           >
