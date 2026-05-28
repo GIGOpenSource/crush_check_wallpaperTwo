@@ -27,23 +27,22 @@ export function DesktopWallpaperGrid({
   onDelete,
   deletingId,
 }: DesktopWallpaperGridProps) {
+  // 使用 grid 布局，固定为最多4列
+  const gridClass = `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4`;
+
   return (
-    <div
-      className="grid gap-6"
-      style={{
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
-      }}
-    >
+    <div className={gridClass}>
       {wallpapers.map((wallpaper, index) => (
-        <DesktopWallpaperCard
-          key={wallpaper.id}
-          wallpaper={wallpaper}
-          index={index}
-          listNavBase={listNavBase}
-          trackListEvents={trackListEvents}
-          onDelete={onDelete}
-          isDeleting={deletingId === wallpaper.id}
-        />
+        <div key={wallpaper.id} className="break-inside-avoid">
+          <DesktopWallpaperCard
+            wallpaper={wallpaper}
+            index={index}
+            listNavBase={listNavBase}
+            trackListEvents={trackListEvents}
+            onDelete={onDelete}
+            isDeleting={deletingId === wallpaper.id}
+          />
+        </div>
       ))}
     </div>
   );
@@ -108,7 +107,7 @@ function DesktopWallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className="relative  w-[300px] h-[200px] aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
+        <div className="relative aspect-[3/2] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}
