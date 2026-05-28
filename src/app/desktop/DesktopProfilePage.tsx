@@ -34,7 +34,7 @@ export default function DesktopProfilePage() {
   const { userId } = useParams();
   const [searchParams] = useSearchParams();
   const otherId = searchParams.get('other_id');
-  
+
   const [activeTab, setActiveTab] = useState<TabType>('uploaded');
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
@@ -56,10 +56,10 @@ export default function DesktopProfilePage() {
         console.error('获取当前用户ID失败:', err);
       }
     };
-    
+
     fetchCurrentUserId();
   }, []);
-  
+
   // 判断是否是查看其他用户的页面
   // 严格判断：只有明确传入了otherId且与当前用户ID不同时，才是查看他人主页
   const isOtherUser = !!otherId && String(otherId) !== String(currentUserId);
@@ -72,40 +72,40 @@ export default function DesktopProfilePage() {
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
   const myCollectionsResult = useMyCollections();
   const myUploadsResult = useMyUploads();
-  
+
   // 查看他人主页时，不显示自己的上传和收藏数据
-  const { 
-    wallpapers: favoriteWallpapers, 
-    loading: favoritesLoading, 
+  const {
+    wallpapers: favoriteWallpapers,
+    loading: favoritesLoading,
     loadingMore: favoritesLoadingMore,
-    hasMore: favoritesHasMore, 
+    hasMore: favoritesHasMore,
     loadMore: favoritesLoadMore,
-    error: favoritesError 
-  } = isOtherUser ? { 
-    wallpapers: [], 
-    loading: false, 
+    error: favoritesError
+  } = isOtherUser ? {
+    wallpapers: [],
+    loading: false,
     loadingMore: false,
-    hasMore: false, 
-    loadMore: () => {},
-    error: null 
+    hasMore: false,
+    loadMore: () => { },
+    error: null
   } : myCollectionsResult;
 
-  const { 
-    wallpapers: uploadedWallpapers, 
-    loading: uploadsLoading, 
+  const {
+    wallpapers: uploadedWallpapers,
+    loading: uploadsLoading,
     loadingMore: uploadsLoadingMore,
-    hasMore: uploadsHasMore, 
+    hasMore: uploadsHasMore,
     loadMore: uploadsLoadMore,
     error: uploadsError,
     refresh: refreshUploads
-  } = isOtherUser ? { 
-    wallpapers: [], 
-    loading: false, 
+  } = isOtherUser ? {
+    wallpapers: [],
+    loading: false,
     loadingMore: false,
-    hasMore: false, 
-    loadMore: () => {},
+    hasMore: false,
+    loadMore: () => { },
     error: null,
-    refresh: () => {}
+    refresh: () => { }
   } : myUploadsResult;
 
   // 获取关注列表
@@ -143,7 +143,7 @@ export default function DesktopProfilePage() {
   useEffect(() => {
     const token = getAuthToken();
     const isViewingOwnProfile = !otherId; // 没有 otherId 表示查看自己的主页
-    
+
     // 如果是查看自己的主页且未登录，直接跳转登录页
     if (isViewingOwnProfile && !token && !profileLoading) {
       // message.warning('请先登录后再访问');
@@ -251,21 +251,9 @@ export default function DesktopProfilePage() {
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          {!otherId ? (
-            <div className="text-gray-500">
-              <p>{t.common.loading}</p>
-            </div>
-          ) : (
-            <div className="text-gray-500 text-center">
-              <p>{t.profile.pleaseLogin}</p>
-              <button
-                onClick={() => navigate('/login')}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
-              >
-                {t.profile.goToLogin}
-              </button>
-            </div>
-          )}
+          <div className="text-gray-500">
+            <p>{t.common.loading}</p>
+          </div>
         </div>
       </div>
     );
@@ -291,7 +279,7 @@ export default function DesktopProfilePage() {
                   </svg>
                 </button>
               )}
-              
+
               {/* 用户信息区 */}
               <div className="flex items-start mb-8">
                 <div className="flex items-center gap-6 flex-1">
@@ -316,13 +304,13 @@ export default function DesktopProfilePage() {
                           console.log(' [DesktopProfilePage] 点击关注/取消关注按钮');
                           console.log('👤 otherId:', otherId, '类型:', typeof otherId);
                           console.log('👤 profile.id:', profile?.id, '类型:', typeof profile?.id);
-                          
+
                           if (followingActionId) return;
-                          
+
                           // 使用路由参数中的 otherId 作为 following_id
                           const targetUserId = otherId || profile?.id;
                           console.log('🎯 目标用户ID (following_id):', targetUserId);
-                          
+
                           setFollowingActionId(targetUserId!);
                           try {
                             console.log('📡 准备调用 toggleFollowUser，参数:', targetUserId);
@@ -339,17 +327,16 @@ export default function DesktopProfilePage() {
                           }
                         }}
                         disabled={followingActionId === profile.id}
-                        className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${
-                          (profile as any).is_following
+                        className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${(profile as any).is_following
                             ? 'bg-white/20 text-white hover:bg-white/30'
                             : 'bg-white text-blue-600 hover:bg-white/90'
-                        }`}
+                          }`}
                       >
-                        {followingActionId === profile.id 
-                          ? t.common.loading 
-                          : (profile as any).is_following 
-                          ? t.profile.unfollow 
-                          : t.profile.follow}
+                        {followingActionId === profile.id
+                          ? t.common.loading
+                          : (profile as any).is_following
+                            ? t.profile.unfollow
+                            : t.profile.follow}
                       </button>
                     ) : (
                       <button
@@ -526,14 +513,14 @@ export default function DesktopProfilePage() {
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          
+
                           {/* 用户信息 */}
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
                               {user.nickname || user.username}
                             </h3>
                           </div>
-                          
+
                           {/* 操作按钮 - 阻止事件冒泡 */}
                           <button
                             onClick={(e) => {
@@ -605,14 +592,14 @@ export default function DesktopProfilePage() {
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          
+
                           {/* 用户信息 */}
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
                               {user.nickname || user.username}
                             </h3>
                           </div>
-                          
+
                           {/* 操作按钮 - 阻止事件冒泡 */}
                           <button
                             onClick={(e) => {
@@ -620,17 +607,16 @@ export default function DesktopProfilePage() {
                               handleToggleFollow(user.id, user.is_followed || false);
                             }}
                             disabled={followingActionId === user.id}
-                            className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${
-                              user.is_followed
+                            className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${user.is_followed
                                 ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 : 'bg-blue-600 text-white hover:bg-blue-700'
-                            }`}
+                              }`}
                           >
                             {followingActionId === user.id
                               ? t.common.loading
                               : user.is_followed
-                              ? t.profile.mutualFollow
-                              : t.profile.followBack}
+                                ? t.profile.mutualFollow
+                                : t.profile.followBack}
                           </button>
                         </div>
                       ))}
@@ -715,8 +701,8 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : uploadedWallpapers.length > 0 ? (
                     <>
-                      <DesktopWallpaperGrid 
-                        wallpapers={uploadedWallpapers} 
+                      <DesktopWallpaperGrid
+                        wallpapers={uploadedWallpapers}
                         onDelete={(id) => handleDeleteWallpaper(id)}
                         deletingId={deletingId}
                       />

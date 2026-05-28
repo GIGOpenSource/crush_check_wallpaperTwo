@@ -242,21 +242,9 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        {!otherId ? (
-          <div className="text-gray-500">
+         <div className="text-gray-500">
             <p>{t.common.loading}</p>
           </div>
-        ) : (
-          <div className="text-gray-500 text-center">
-            <p>{t.profile.pleaseLogin}</p>
-            <button
-              onClick={() => navigate('/login')}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
-            >
-              {t.profile.goToLogin}
-            </button>
-          </div>
-        )}
       </div>
     );
   }
