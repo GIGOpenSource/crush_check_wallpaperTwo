@@ -22,7 +22,7 @@ export function DesktopSidebar() {
   };
 
   const navItems = [
-    { icon: Home, label: t.nav.home, path: '/' },
+    { icon: Home, label: t.nav.home, path: '/11111' },
     { icon: Search, label: t.nav.search, path: '/search' },
     { icon: Bell, label: t.nav.notifications, path: '/notifications', showBadge: true },
     { icon: Tag, label: t.nav.tags, path: '/tags' },
