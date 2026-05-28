@@ -53,8 +53,14 @@ export function useSearchWallpapers(
   // 获取壁纸数据
   useEffect(() => {
     let cancelled = false;
+    
+    // 当查询参数变化时，如果是第一页，则清空之前的数据并设置loading状态
+    if (currentPage === 1) {
+      setWallpapers([]);
+      setError(false);
+    }
+    
     setLoading(true);
-    setError(false);
 
     getWallpapersList(apiParams)
       .then((raw) => {
@@ -88,7 +94,7 @@ export function useSearchWallpapers(
     return () => {
       cancelled = true;
     };
-  }, [apiParams, currentPage, pageSize]);
+  }, [apiParams]); // 只依赖apiParams，这样当参数变化时才会重新执行
 
   // 加载更多
   const loadMore = () => {
@@ -98,7 +104,6 @@ export function useSearchWallpapers(
 
   // 刷新（重新加载第一页）
   const refresh = () => {
-    setWallpapers([]);
     setCurrentPage(1);
   };
 
