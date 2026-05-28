@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { App } from 'antd';
 import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, UserPlus, Info } from 'lucide-react';
+import { Mail, Lock, UserPlus, Info, Eye, EyeOff } from 'lucide-react';
 import { ApiError } from '../../api/request';
 import { registerUser } from '../../api/auth';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -14,6 +14,8 @@ export default function DesktopRegisterPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,12 +119,19 @@ export default function DesktopRegisterPage() {
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Lock size={18} className="text-gray-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.register.passwordPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  {showPassword ? <Eye size={18} className="text-gray-500" /> :  <EyeOff size={18} className="text-gray-500" />}
+                </button>
               </div>
               <p className="mt-2 flex items-start gap-1.5 text-sm text-gray-500">
                 <Info size={16} className="mt-0.5 shrink-0" />
@@ -135,12 +144,19 @@ export default function DesktopRegisterPage() {
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Lock size={18} className="text-gray-400" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder={t.register.confirmPasswordPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  {showConfirmPassword ? <Eye size={18} className="text-gray-500" />  : <EyeOff size={18} className="text-gray-500" />}
+                </button>
               </div>
             </label>
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { App } from 'antd';
 import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, LogIn } from 'lucide-react';
+import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import { ApiError, setAuthToken } from '../../api/request';
 import { extractApiErrorMessage, extractApiToken, extractApiUserId, isApiSuccess, loginUser } from '../../api/auth';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -13,6 +13,7 @@ export default function DesktopLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,12 +96,19 @@ export default function DesktopLoginPage() {
               <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
                 <Lock size={18} className="text-gray-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.login.passwordPlaceholder}
                   className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  {showPassword ?  <Eye size={18} className="text-gray-500" />: <EyeOff size={18} className="text-gray-500" />}
+                </button>
               </div>
             </label>
 
