@@ -11,7 +11,6 @@ export function DesktopSidebar() {
   const { unreadCount } = useUnreadCount();
 
   const handleNavClick = (path: string, isHome?: boolean) => {
-    console.log('handleNavClick111');
     // Home 菜单特殊处理：直接修改 window.location 确保 URL 带有尾部斜杠
     if (isHome) {
       // 使用 window.location.replace 确保 URL 为 /markwallpapers/
@@ -22,7 +21,7 @@ export function DesktopSidebar() {
   };
 
   const navItems = [
-    { icon: Home, label: t.nav.home, path: '/111111223334' },
+    { icon: Home, label: t.nav.home, path: '/' },
     { icon: Search, label: t.nav.search, path: '/search' },
     { icon: Bell, label: t.nav.notifications, path: '/notifications', showBadge: true },
     { icon: Tag, label: t.nav.tags, path: '/tags' },
