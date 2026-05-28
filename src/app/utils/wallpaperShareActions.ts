@@ -26,10 +26,7 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
 
 /** @returns 是否成功打开新窗口（被拦截则为 false） */
 export function openWallpaperShareChannel(channel: WallpaperShareChannel, wallpaperId: string): boolean {
-  // 构建壁纸详情页的完整URL（使用固定的线上域名，包含 base path）
-  // BrowserRouter 模式使用标准路径格式
-  const origin = PUBLIC_SITE_ORIGIN.replace(/\/$/, '');
-  const wallpaperUrl = `${origin}/wallpaper/${encodeURIComponent(wallpaperId)}`;
+  const wallpaperUrl = `${wallpaperId}`;
   const enc = encodeURIComponent(wallpaperUrl);
   
   const href =
