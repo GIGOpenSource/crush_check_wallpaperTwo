@@ -40,7 +40,9 @@ export default function RegisterPage() {
     }
     
     // 密码正则校验：最少8位，必须包含字母和数字
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8+}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    console.log(password,'papap')
+    console.log(passwordRegex.test(password),'passwordRegex.test(password)')
     if (!passwordRegex.test(password)) {
       message.error(t.register.passwordRequirement);
       return;
