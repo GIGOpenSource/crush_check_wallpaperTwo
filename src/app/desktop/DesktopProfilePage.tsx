@@ -566,9 +566,6 @@ export default function DesktopProfilePage() {
                       <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                         {t.profile.noUploadsYet}
                       </h3>
-                      <p className="text-gray-500">
-                        {t.profile.uploadFirstWallpaper}
-                      </p>
                     </div>
                   )}
                 </>
