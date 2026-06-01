@@ -518,26 +518,31 @@ export default function DesktopProfilePage() {
 
               {/* 查看他人主页时的壁纸筛选按钮 */}
               {isOtherUser && (
-                <div className="flex gap-3 mb-6">
-                  <button
-                    onClick={() => setWallpaperFilter('phone')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                  >
-                    {t.profile.phoneWallpaper}
-                  </button>
-                  <button
-                    onClick={() => setWallpaperFilter('pc')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                  >
-                    {t.profile.pcWallpaper}
-                  </button>
-                </div>
+                <>
+                  <div className="mb-4">
+                    <h2 className="text-xl font-bold text-gray-900">{t.profile.uploaded}</h2>
+                  </div>
+                  <div className="flex gap-3 mb-6">
+                    <button
+                      onClick={() => setWallpaperFilter('phone')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      {t.profile.phoneWallpaper}
+                    </button>
+                    <button
+                      onClick={() => setWallpaperFilter('pc')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      {t.profile.pcWallpaper}
+                    </button>
+                  </div>
+                </>
               )}
 
               {/* Content */}

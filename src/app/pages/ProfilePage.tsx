@@ -501,26 +501,31 @@ export default function ProfilePage() {
 
       {/* 查看他人主页时的壁纸筛选按钮 */}
       {isOtherUser && (
-        <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-white border-b border-gray-100 sticky top-0 z-40">
-          <button
-            onClick={() => setWallpaperFilter('phone')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'phone'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-          >
-            {t.profile.phoneWallpaper}
-          </button>
-          <button
-            onClick={() => setWallpaperFilter('pc')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'pc'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-          >
-            {t.profile.pcWallpaper}
-          </button>
-        </div>
+        <>
+          <div className="px-4 py-3 bg-white border-b border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900">{t.profile.uploaded}</h2>
+          </div>
+          <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-white border-b border-gray-100 sticky top-0 z-40">
+            <button
+              onClick={() => setWallpaperFilter('phone')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'phone'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+            >
+              {t.profile.phoneWallpaper}
+            </button>
+            <button
+              onClick={() => setWallpaperFilter('pc')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'pc'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+            >
+              {t.profile.pcWallpaper}
+            </button>
+          </div>
+        </>
       )}
 
       {/* Content */}
