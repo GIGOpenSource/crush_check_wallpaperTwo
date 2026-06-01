@@ -486,7 +486,7 @@ export default function ProfilePage() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
-                手机壁纸
+                {t.profile.phoneWallpaper}
               </button>
               <button
                 onClick={() => setWallpaperFilter('pc')}
@@ -495,7 +495,7 @@ export default function ProfilePage() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
-                电脑壁纸
+                 {t.profile.phoneWallpaper}
               </button>
             </div>
           )}
