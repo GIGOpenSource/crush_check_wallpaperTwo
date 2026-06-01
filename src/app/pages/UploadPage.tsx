@@ -387,7 +387,7 @@ export default function UploadPage() {
                         : 'border-gray-300 hover:border-blue-300 text-gray-700'
                     }`}
                   >
-                    📱 {t.profile.phoneWallpaper}
+                     📱{t.profile.phoneWallpaper}
                   </button>
                   <button
                     type="button"
@@ -535,6 +535,19 @@ export default function UploadPage() {
               <img src={selectedImage!} alt="Preview" className="w-full h-64 object-cover" />
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
+                
+                {/* Platform Display */}
+                <div className="mb-3">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                    platform === 'PHONE' 
+                      ? 'bg-purple-100 text-purple-700' 
+                      : 'bg-indigo-100 text-indigo-700'
+                  }`}>
+                    {platform === 'PHONE' ? '' : ''}
+                    {platform === 'PHONE' ? t.profile.phoneWallpaper : t.profile.pcWallpaper}
+                  </span>
+                </div>
+                
                 {description && <p className="text-sm text-gray-600 mb-3">{description}</p>}
                 <div className="flex flex-wrap gap-2">
                   {tags.map((tag) => (

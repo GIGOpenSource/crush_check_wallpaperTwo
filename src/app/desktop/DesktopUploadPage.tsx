@@ -543,6 +543,19 @@ export default function DesktopUploadPage() {
                   <img src={selectedImage!} alt="Preview" className="w-full h-96 object-cover" />
                   <div className="p-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
+                    
+                    {/* Platform Display */}
+                    <div className="mb-4">
+                      <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium ${
+                        platform === 'PHONE' 
+                          ? 'bg-purple-100 text-purple-700' 
+                          : 'bg-indigo-100 text-indigo-700'
+                      }`}>
+                        {platform === 'PHONE' ? '📱' : '💻'}
+                        {platform === 'PHONE' ? t.profile.phoneWallpaper : t.profile.pcWallpaper}
+                      </span>
+                    </div>
+                    
                     {description && <p className="text-gray-600 mb-4">{description}</p>}
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag) => (
