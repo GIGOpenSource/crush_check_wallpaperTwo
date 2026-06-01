@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { router } from './routes';
 import { ViewProvider } from './contexts/ViewContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { SidebarProvider } from './components/DesktopSidebar';
 
 export default function App() {
   return (
@@ -11,7 +12,9 @@ export default function App() {
       <LanguageProvider>
         <AntdApp>
           <ViewProvider>
-            <RouterProvider router={router} />
+            <SidebarProvider>
+              <RouterProvider router={router} />
+            </SidebarProvider>
           </ViewProvider>
         </AntdApp>
       </LanguageProvider>

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { formatNumber } from '../utils/format';
@@ -19,6 +19,7 @@ export default function DesktopHomePage() {
   const isTrendingRoute = location.pathname === '/trending';
   const showEditorsBanner = !isTrendingRoute;
   const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+  const { isCollapsed } = useSidebar();
 
   // 获取SEO数据 - 使用当前页面URL
   useEffect(() => {
@@ -130,7 +131,7 @@ export default function DesktopHomePage() {
       <div className="flex min-h-screen bg-gray-50">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="px-8 py-6">
