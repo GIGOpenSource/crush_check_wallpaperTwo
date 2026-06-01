@@ -4,6 +4,7 @@ import { Home, Search, Tag, TrendingUp, Upload, User, Settings, Bell, PanelLeftC
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { useState, createContext, useContext } from 'react';
+import { motion } from 'framer-motion';
 
 // 创建侧边栏上下文
 interface SidebarContextType {
@@ -170,20 +171,20 @@ export function DesktopSidebar() {
         </div>
       </aside>
 
-      {/* 折叠/展开按钮 - 放在侧边栏外部，主内容区左上角 */}
-      <button
+      {/* 折叠/展开按钮 - 放在页面右上角，与语言切换按钮样式一致 */}
+      <motion.button
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className={`fixed top-4 z-50 w-8 h-8 bg-white hover:bg-gray-100 rounded-full flex items-center justify-center transition-all duration-300 ${
-          isCollapsed ? 'left-24' : 'left-[272px]'
-        }`}
+        className="fixed top-4 right-54 z-50 flex items-center gap-2 px-5 py-2 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-shadow"
         aria-label={isCollapsed ? '展开侧边栏' : '折叠侧边栏'}
+        // title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (
-          <PanelLeftOpen size={16} className="text-gray-600" />
+          <PanelLeftOpen size={18} className="text-gray-700" />
         ) : (
-          <PanelLeftClose size={16} className="text-gray-600" />
+          <PanelLeftClose size={18} className="text-gray-700" />
         )}
-      </button>
+      </motion.button>
     </>
   );
 }
