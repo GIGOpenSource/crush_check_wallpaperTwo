@@ -1,6 +1,6 @@
 import { Bell, Lock, Trash2, Check, CheckCheck } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useNotifications } from '../hooks/useNotifications';
 import { useUnreadCount } from '../hooks/useUnreadCount';
@@ -52,6 +52,31 @@ export default function DesktopNotificationsPage() {
   const { refresh: refreshUnreadCount, unreadCount } = useUnreadCount();
   const { message } = App.useApp();
   const [processingId, setProcessingId] = useState<number | string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // 处理滚动到底部自动加载
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!listRef.current || !hasMore || loadingMore) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+      // 距离底部小于100px时触发加载
+      if (scrollHeight - scrollTop - clientHeight < 100) {
+        loadMore();
+      }
+    };
+
+    const currentElement = listRef.current;
+    if (currentElement) {
+      currentElement.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (currentElement) {
+        currentElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [hasMore, loadingMore, loadMore]);
 
   // 格式化时间
   const formatTime = (timeStr?: string) => {
@@ -191,7 +216,20 @@ export default function DesktopNotificationsPage() {
 
         {/* 消息列表 */}
         <div className="px-8 py-8">
-          <div className="max-w-7xl mx-auto">
+          <div 
+            ref={listRef} 
+            className="max-w-7xl mx-auto overflow-y-auto hide-scrollbar" 
+            style={{ 
+              maxHeight: 'calc(100vh - 250px)',
+              scrollbarWidth: 'none', // Firefox
+              msOverflowStyle: 'none' // IE/Edge
+            }}
+          >
+            <style jsx>{`
+              .max-w-7xl::-webkit-scrollbar {
+                display: none; /* Chrome/Safari/Webkit */
+              }
+            `}</style>
             {loading ? (
               // 加载状态
               <div className="space-y-3">
@@ -342,16 +380,20 @@ export default function DesktopNotificationsPage() {
                   );
                 })}
 
-                {/* 加载更多 */}
-                {hasMore && (
+                {/* 加载更多指示器 - 自动加载时显示 */}
+                {loadingMore && (
                   <div className="text-center py-4">
-                    <button
-                      onClick={handleLoadMore}
-                      disabled={loadingMore}
-                      className="px-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loadingMore ? t.common.loading :  t.common.loadMore}
-                    </button>
+                    <div className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span>{t.common.loading}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 没有更多数据提示 */}
+                {!hasMore && notifications.length > 0 && (
+                  <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
+                    {t.notifications.noMoreMessages}
                   </div>
                 )}
               </div>

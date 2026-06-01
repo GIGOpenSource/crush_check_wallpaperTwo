@@ -122,6 +122,7 @@ export const translations = {
     // Notifications
     // Notifications
     notifications: {
+      noMoreMessages:"没有更多消息了", 
       title: '消息通知',
       loginRequired: '请登录',
       loginPrompt: '登录后查看你的通知',
@@ -551,6 +552,7 @@ export const translations = {
       deleteTooltip: "Delete comment",
     },
     notifications: {
+      noMoreMessages: "No more messages",
       title: "Notifications",
       loginRequired: "Please log in",
       loginPrompt: "Log in to view your notifications",
@@ -918,6 +920,7 @@ export const translations = {
       deleteTooltip: "コメントを削除",
     },
     notifications: {
+      noMoreMessages: "これ以上メッセージはありません",
       title: "通知",
       loginRequired: "ログインしてください",
       loginPrompt: "通知を表示するにはログインしてください",
@@ -1286,6 +1289,7 @@ export const translations = {
       deleteTooltip: "댓글 삭제",
     },
     notifications: {
+      noMoreMessages: "더 이상 메시지가 없습니다",
       title: "알림",
       loginRequired: "로그인해 주세요",
       loginPrompt: "알림을 보려면 로그인하세요",
@@ -1659,6 +1663,7 @@ export const translations = {
     },
 
     notifications: {
+       noMoreMessages: "No hay más mensajes",
       title: 'Notificaciones',
       loginRequired: 'Inicia Sesión',
       loginPrompt: 'Inicia sesión para ver tus notificaciones',
@@ -2038,6 +2043,7 @@ export const translations = {
     },
 
     notifications: {
+      noMoreMessages: "Plus de messages",
       title: 'Notifications',
       loginRequired: 'Veuillez vous connecter',
       loginPrompt: 'Connectez-vous pour voir vos notifications',
