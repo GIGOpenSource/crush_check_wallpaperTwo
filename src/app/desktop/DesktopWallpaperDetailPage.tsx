@@ -28,7 +28,8 @@ import {
   ChevronLeft,
   MessageCircle,
   Bookmark,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -53,6 +54,7 @@ export default function DesktopWallpaperDetailPage() {
     pendingTabUrl?: string;
   }>({ open: false, message: '' });
   const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
+  const [showPreview, setShowPreview] = useState(false); // 添加预览状态
   
   // 获取壁纸详情SEO数据 - 只在 id 存在且 seoData 为空时请求
   useEffect(() => {
@@ -275,7 +277,10 @@ export default function DesktopWallpaperDetailPage() {
 
                 {/* Wallpaper Image */}
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
-                  <div className="relative aspect-video bg-gray-900">
+                  <div 
+                    className="relative aspect-video bg-gray-900 cursor-pointer"
+                    onClick={() => setShowPreview(true)}
+                  >
                     <img
                       src={wallpaper.imageUrl}
                       alt={wallpaper.title}
@@ -552,6 +557,30 @@ export default function DesktopWallpaperDetailPage() {
           }
         }}
       />
+
+      {/* Fullscreen Preview Modal */}
+      {showPreview && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPreview(false)}
+        >
+          <div className="relative max-w-6xl max-h-full w-full flex items-center justify-center">
+            <img
+              src={wallpaper.imageUrl}
+              alt={wallpaper.title}
+              className="max-w-full max-h-full object-contain"
+              onClick={(e) => e.stopPropagation()} // 防止点击图片时关闭预览
+              referrerPolicy="no-referrer"
+            />
+            <button
+              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 transition-all"
+              onClick={() => setShowPreview(false)}
+            >
+              <X size={24} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
     </>
   );
