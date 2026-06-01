@@ -18,6 +18,8 @@ interface UploadWallpaperGridProps {
   onDelete: (id: number | string) => void;
   /** 正在删除的壁纸ID */
   deletingId?: number | string | null;
+  /** 平台类型：用于决定图片宽高比 */
+  platform?: 'PHONE' | 'PC';
 }
 
 export function UploadWallpaperGrid({
@@ -27,6 +29,7 @@ export function UploadWallpaperGrid({
   trackListEvents = true,
   onDelete,
   deletingId,
+  platform = 'PHONE', // 默认手机端
 }: UploadWallpaperGridProps) {
   return (
     <div
@@ -44,6 +47,7 @@ export function UploadWallpaperGrid({
           trackListEvents={trackListEvents}
           onDelete={onDelete}
           isDeleting={deletingId === wallpaper.id}
+          platform={platform}
         />
       ))}
     </div>
@@ -57,6 +61,7 @@ function UploadWallpaperCard({
   trackListEvents,
   onDelete,
   isDeleting,
+  platform = 'PHONE', // 默认手机端
 }: {
   wallpaper: Wallpaper;
   index: number;
@@ -64,6 +69,7 @@ function UploadWallpaperCard({
   trackListEvents: boolean;
   onDelete: (id: number | string) => void;
   isDeleting: boolean;
+  platform?: 'PHONE' | 'PC';
 }) {
   const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
     wallpaper.id,
@@ -73,6 +79,9 @@ function UploadWallpaperCard({
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
       : undefined;
+
+  // 根据平台决定宽高比：手机9:16，电脑16:9
+  const aspectRatio = platform === 'PHONE' ? 'aspect-[3/4]' : 'aspect-[16/9]';
 
   return (
     <motion.div
@@ -106,14 +115,14 @@ function UploadWallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 group">
+        <div className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-gray-100 group`}>
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
-          
+
           {/* Overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-0 left-0 right-0 p-3">

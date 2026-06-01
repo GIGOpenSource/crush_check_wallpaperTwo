@@ -510,7 +510,10 @@ export default function ProfilePage() {
           <>
             {uploadedWallpapers.length > 0 && (
               <div className="px-4">
-                <WallpaperGrid wallpapers={uploadedWallpapers} />
+                <WallpaperGrid 
+                  wallpapers={uploadedWallpapers} 
+                  platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
+                />
               </div>
             )}
           </>
@@ -693,6 +696,7 @@ export default function ProfilePage() {
               <>
                 <UploadWallpaperGrid 
                   wallpapers={uploadedWallpapers} 
+                  platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                   onDelete={(id) => handleDeleteWallpaper(id)}
                   deletingId={deletingId}
                 />
@@ -736,7 +740,10 @@ export default function ProfilePage() {
               </div>
             ) : favoriteWallpapers.length > 0 ? (
               <>
-                <WallpaperGrid wallpapers={favoriteWallpapers} />
+                <WallpaperGrid 
+                  wallpapers={favoriteWallpapers} 
+                  platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
+                />
                 {/* 加载更多 */}
                 {favoritesHasMore && (
                   <div className="px-4 py-6 text-center">

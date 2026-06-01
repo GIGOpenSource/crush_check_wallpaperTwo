@@ -17,6 +17,8 @@ interface DesktopWallpaperGridProps {
   onDelete?: (id: number | string) => void;
   /** 正在删除的壁纸ID */
   deletingId?: number | string | null;
+  /** 平台类型：用于决定图片宽高比 */
+  platform?: 'PHONE' | 'PC';
 }
 
 export function DesktopWallpaperGrid({
@@ -26,6 +28,7 @@ export function DesktopWallpaperGrid({
   trackListEvents = true,
   onDelete,
   deletingId,
+  platform = 'PC', // 默认电脑端
 }: DesktopWallpaperGridProps) {
   // 使用 grid 布局，固定为最多4列
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4`;
@@ -41,6 +44,7 @@ export function DesktopWallpaperGrid({
             trackListEvents={trackListEvents}
             onDelete={onDelete}
             isDeleting={deletingId === wallpaper.id}
+            platform={platform}
           />
         </div>
       ))}
@@ -55,6 +59,7 @@ function DesktopWallpaperCard({
   trackListEvents,
   onDelete,
   isDeleting,
+  platform = 'PC', // 默认电脑端
 }: {
   wallpaper: Wallpaper;
   index: number;
@@ -62,6 +67,7 @@ function DesktopWallpaperCard({
   trackListEvents: boolean;
   onDelete?: (id: number | string) => void;
   isDeleting: boolean;
+  platform?: 'PHONE' | 'PC';
 }) {
   const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
     wallpaper.id,
@@ -71,6 +77,9 @@ function DesktopWallpaperCard({
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
       : undefined;
+
+  // 根据平台决定宽高比：手机9:16，电脑16:9
+  const aspectRatio = platform === 'PHONE' ? 'aspect-[3/4]' : 'aspect-[16/9]';
 
   return (
     <motion.div
@@ -107,7 +116,7 @@ function DesktopWallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className="relative aspect-[3/2] rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow">
+        <div className={`relative ${aspectRatio} rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow`}>
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}

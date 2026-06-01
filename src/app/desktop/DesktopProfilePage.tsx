@@ -524,7 +524,10 @@ export default function DesktopProfilePage() {
                 // 查看其他用户时，只显示上传列表
                 <>
                   {uploadedWallpapers.length > 0 && (
-                    <DesktopWallpaperGrid wallpapers={uploadedWallpapers} />
+                    <DesktopWallpaperGrid 
+                      wallpapers={uploadedWallpapers} 
+                      platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
+                    />
                   )}
                 </>
               ) : activeTab === 'following' ? (
@@ -703,7 +706,11 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : favoriteWallpapers.length > 0 ? (
                     <>
-                      <DesktopWallpaperGrid wallpapers={favoriteWallpapers} />
+                      <DesktopWallpaperGrid 
+                        wallpapers={favoriteWallpapers} 
+                        platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
+                      />
+
                       {/* 加载更多 */}
                       {favoritesHasMore && (
                         <div className="py-8 text-center">
@@ -746,6 +753,7 @@ export default function DesktopProfilePage() {
                     <>
                       <DesktopWallpaperGrid
                         wallpapers={uploadedWallpapers}
+                        platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                         onDelete={(id) => handleDeleteWallpaper(id)}
                         deletingId={deletingId}
                       />
