@@ -16,6 +16,9 @@ const TRENDING_DISPLAY = 5;
 export default function TagsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeSearchQuery, setActiveSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [allTagsLoading, setAllTagsLoading] = useState(false);
   const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
 
   // 获取标签页面SEO数据，使用当前页面URL
@@ -74,13 +77,27 @@ export default function TagsPage() {
   const filteredTags = useMemo(
     () =>
       allTags.filter((tag) => {
-        const q = searchQuery.toLowerCase();
+        const q = activeSearchQuery.toLowerCase();
         const label = getTagDisplayName(tag).toLowerCase();
         const slug = tag.name.toLowerCase();
         return label.includes(q) || slug.includes(q);
       }),
-    [allTags, searchQuery]
+    [allTags, activeSearchQuery]
   );
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      setActiveSearchQuery(searchQuery);
+      setIsSearching(true);
+      // All Tags 区域显示loading，2秒后关闭
+      setAllTagsLoading(true);
+      setTimeout(() => {
+        setAllTagsLoading(false);
+        setIsSearching(false);
+      },1000);
+    }
+  };
 
   return (
     <>
@@ -107,9 +124,15 @@ export default function TagsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder={t.tags.searchTags}
               className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-blue-600"
             />
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -178,16 +201,16 @@ export default function TagsPage() {
           <h2 className="text-lg font-semibold text-gray-900">{t.tags.allTags}</h2>
         </div>
         <div className="px-4 flex flex-wrap gap-2">
-          {allLoading && (
+          {(allLoading || allTagsLoading) && (
             <p className="text-sm text-gray-500 w-full py-4 text-center">{t.common.loading}</p>
           )}
-          {allError && !allLoading && (
+          {allError && !allLoading && !allTagsLoading && (
             <p className="text-sm text-red-500 w-full py-4 text-center">{t.common.loadFailed}</p>
           )}
-          {!allLoading && !allError && filteredTags.length === 0 && (
+          {!allLoading && !allTagsLoading && !allError && filteredTags.length === 0 && (
             <p className="text-sm text-gray-500 w-full py-4 text-center">{t.common.noResults}</p>
           )}
-          {filteredTags.map((tag) => (
+          {!allTagsLoading && filteredTags.map((tag) => (
             <Link
               key={tag.tag}
               to={`/tag/${encodeURIComponent(tag.tag || tag.name)}`}
