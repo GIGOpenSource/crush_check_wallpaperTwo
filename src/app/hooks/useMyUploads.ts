@@ -61,12 +61,14 @@ function pickTotal(raw: unknown): number | undefined {
 /**
  * 获取用户上传列表
  */
-export function useMyUploads(platform?: 'PHONE' | 'PC') {
+export function useMyUploads(platform?: 'PHONE' | 'PC', customerId?: number | string) {
   const { viewMode } = useView();
   // 如果传入了platform参数则使用传入的值，否则根据viewMode自动判断
   const currentPlatform: 'PHONE' | 'PC' = platform ?? (viewMode === 'mobile' ? 'PHONE' : 'PC');
   // 直接使用 platform 初始化 ref，不再通过 useEffect 更新
   const platformRef = useRef(currentPlatform);
+  // 保存 customerId 的引用
+  const customerIdRef = useRef(customerId);
 
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [total, setTotal] = useState<number | undefined>(undefined);
@@ -93,6 +95,7 @@ export function useMyUploads(platform?: 'PHONE' | 'PC') {
       currentPage: 1,
       pageSize: PAGE_SIZE,
       platform: platformRef.current,
+      customer_id: customerIdRef.current,
     })
       .then((raw) => {
         if (cancelled) return;
@@ -138,6 +141,7 @@ export function useMyUploads(platform?: 'PHONE' | 'PC') {
       currentPage: nextPage,
       pageSize: PAGE_SIZE,
       platform: platformRef.current,
+      customer_id: customerIdRef.current,
     })
       .then((raw) => {
         const mapped = mapResponse(raw);
@@ -181,6 +185,14 @@ export function useMyUploads(platform?: 'PHONE' | 'PC') {
       loadFirstPageRef.current();
     }
   }, [platform]);
+
+  // 当传入的 customerId 参数变化时，重新加载数据
+  useEffect(() => {
+    if (customerId !== undefined) {
+      customerIdRef.current = customerId;
+      loadFirstPageRef.current();
+    }
+  }, [customerId]);
 
   return {
     wallpapers,

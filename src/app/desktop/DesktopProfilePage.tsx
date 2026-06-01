@@ -80,9 +80,10 @@ export default function DesktopProfilePage() {
   
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
   const myCollectionsResult = useMyCollections(platformParam);
-  const myUploadsResult = useMyUploads(platformParam);
+  // 查看他人主页时，传入 customerId 参数获取该用户的上传列表
+  const myUploadsResult = useMyUploads(platformParam, isOtherUser ? otherId : undefined);
 
-  // 查看他人主页时，不显示自己的上传和收藏数据
+  // 查看他人主页时，不显示自己的收藏数据，但显示他人的上传数据
   const {
     wallpapers: favoriteWallpapers,
     loading: favoritesLoading,
@@ -99,6 +100,7 @@ export default function DesktopProfilePage() {
     error: null
   } : myCollectionsResult;
 
+  // 无论是否查看他人主页，都使用 myUploadsResult 的数据
   const {
     wallpapers: uploadedWallpapers,
     loading: uploadsLoading,
@@ -107,15 +109,7 @@ export default function DesktopProfilePage() {
     loadMore: uploadsLoadMore,
     error: uploadsError,
     refresh: refreshUploads
-  } = isOtherUser ? {
-    wallpapers: [],
-    loading: false,
-    loadingMore: false,
-    hasMore: false,
-    loadMore: () => { },
-    error: null,
-    refresh: () => { }
-  } : myUploadsResult;
+  } = myUploadsResult;
 
   // 获取关注列表
   const {
@@ -153,6 +147,9 @@ export default function DesktopProfilePage() {
     if (!isOtherUser) {
       myUploadsResult.refresh?.();
       myCollectionsResult.refresh?.();
+    } else {
+      // 查看他人主页时，只刷新上传列表
+      myUploadsResult.refresh?.();
     }
   }, [wallpaperFilter, isOtherUser]);
 
@@ -519,15 +516,60 @@ export default function DesktopProfilePage() {
                 </>
               )}
 
+              {/* 查看他人主页时的壁纸筛选按钮 */}
+              {isOtherUser && (
+                <div className="flex gap-3 mb-6">
+                  <button
+                    onClick={() => setWallpaperFilter('phone')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                  >
+                    {t.profile.phoneWallpaper}
+                  </button>
+                  <button
+                    onClick={() => setWallpaperFilter('pc')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                  >
+                    {t.profile.pcWallpaper}
+                  </button>
+                </div>
+              )}
+
               {/* Content */}
               {isOtherUser ? (
                 // 查看其他用户时，只显示上传列表
                 <>
-                  {uploadedWallpapers.length > 0 && (
+                  {uploadsLoading ? (
+                    <div className="py-16 text-center">
+                      <p className="text-gray-500">{t.common.loading}</p>
+                    </div>
+                  ) : uploadsError ? (
+                    <div className="py-16 text-center">
+                      <p className="text-red-500">{t.profile.loadFailedRetry}</p>
+                    </div>
+                  ) : uploadedWallpapers.length > 0 ? (
                     <DesktopWallpaperGrid 
                       wallpapers={uploadedWallpapers} 
                       platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                     />
+                  ) : (
+                    // 空状态 - 没有上传的壁纸
+                    <div className="py-16 text-center">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                        <ImageIcon size={40} className="text-gray-400" />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                        {t.profile.noUploadsYet}
+                      </h3>
+                      <p className="text-gray-500">
+                        {t.profile.uploadFirstWallpaper}
+                      </p>
+                    </div>
                   )}
                 </>
               ) : activeTab === 'following' ? (

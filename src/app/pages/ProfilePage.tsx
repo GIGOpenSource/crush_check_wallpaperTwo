@@ -92,9 +92,10 @@ export default function ProfilePage() {
   
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
   const myCollectionsResult = useMyCollections(platformParam);
-  const myUploadsResult = useMyUploads(platformParam);
+  // 查看他人主页时，传入 customerId 参数获取该用户的上传列表
+  const myUploadsResult = useMyUploads(platformParam, isOtherUser ? otherId : undefined);
 
-  // 查看他人主页时，不显示自己的上传和收藏数据
+  // 查看他人主页时，不显示自己的收藏数据，但显示他人的上传数据
   const { 
     wallpapers: favoriteWallpapers, 
     loading: favoritesLoading, 
@@ -111,6 +112,7 @@ export default function ProfilePage() {
     loadMore: () => {}
   } : myCollectionsResult;
 
+  // 无论是否查看他人主页，都使用 myUploadsResult 的数据
   const { 
     wallpapers: uploadedWallpapers, 
     loading: uploadsLoading, 
@@ -119,15 +121,7 @@ export default function ProfilePage() {
     hasMore: uploadsHasMore,
     loadMore: uploadsLoadMore,
     refresh: refreshUploads
-  } = isOtherUser ? { 
-    wallpapers: [], 
-    loading: false, 
-    loadingMore: false,
-    error: null,
-    hasMore: false,
-    loadMore: () => {},
-    refresh: () => {}
-  } : myUploadsResult;
+  } = myUploadsResult;
 
   // 获取关注列表
   const {
@@ -183,6 +177,9 @@ export default function ProfilePage() {
     if (!isOtherUser) {
       myUploadsResult.refresh?.();
       myCollectionsResult.refresh?.();
+    } else {
+      // 查看他人主页时，只刷新上传列表
+      myUploadsResult.refresh?.();
     }
   }, [wallpaperFilter, isOtherUser]);
 
@@ -495,11 +492,35 @@ export default function ProfilePage() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
-                 {t.profile.phoneWallpaper}
+                 {t.profile.pcWallpaper}
               </button>
             </div>
           )}
         </>
+      )}
+
+      {/* 查看他人主页时的壁纸筛选按钮 */}
+      {isOtherUser && (
+        <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-white border-b border-gray-100 sticky top-0 z-40">
+          <button
+            onClick={() => setWallpaperFilter('phone')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'phone'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+          >
+            {t.profile.phoneWallpaper}
+          </button>
+          <button
+            onClick={() => setWallpaperFilter('pc')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'pc'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+          >
+            {t.profile.pcWallpaper}
+          </button>
+        </div>
       )}
 
       {/* Content */}
@@ -508,12 +529,33 @@ export default function ProfilePage() {
         {isOtherUser ? (
           // 其他用户的上传列表
           <>
-            {uploadedWallpapers.length > 0 && (
+            {uploadsLoading ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-gray-500">{t.common.loading}</div>
+              </div>
+            ) : uploadsError ? (
+              <div className="px-4 py-16 text-center">
+                <div className="text-red-500">{t.profile.loadFailedRetry}</div>
+              </div>
+            ) : uploadedWallpapers.length > 0 ? (
               <div className="px-4">
                 <WallpaperGrid 
                   wallpapers={uploadedWallpapers} 
                   platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                 />
+              </div>
+            ) : (
+              // 空状态 - 没有上传的壁纸
+              <div className="px-4 py-16 text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <ImageIcon size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t.profile.noUploadsYet}
+                </h3>
+                <p className="text-gray-500">
+                  {t.profile.uploadFirstWallpaper}
+                </p>
               </div>
             )}
           </>

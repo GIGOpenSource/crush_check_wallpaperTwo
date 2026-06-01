@@ -110,6 +110,8 @@ export type MyUploadsParams = {
   currentPage: number;
   pageSize: number;
   platform: 'PC' | 'PHONE';
+  /** 可选：指定用户ID，用于查看他人的上传列表 */
+  customer_id?: number | string;
 };
 
 export function getMyUploads(params: MyUploadsParams) {
