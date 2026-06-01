@@ -115,7 +115,16 @@ export default function WallpaperDetailPage() {
     return (
       <div className="min-h-screen flex flex-col max-w-md mx-auto bg-gray-50">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-gray-500">{t.wallpaperDetail.wallpaperNotFound}</p>
+          <div className="text-center px-4">
+            <p className="text-gray-500 mb-4">{t.wallpaperDetail.wallpaperNotFound}</p>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              {t.common.back}
+            </button>
+          </div>
         </div>
         <BottomNav />
       </div>
