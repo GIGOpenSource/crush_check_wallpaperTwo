@@ -236,10 +236,10 @@ export default function UploadPage() {
           <h1 className="text-xl font-bold text-gray-900">{t.upload.uploadWallpaper}</h1>
         </div>
 
-        {/* Progress Steps */}
+        {/* Progress Steps - 垂直布局 */}
         {currentStep !== 'select' && (
           <div className="px-4 pb-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between gap-2 relative">
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 const isActive = index <= currentStepIndex;
@@ -247,43 +247,62 @@ export default function UploadPage() {
                 const canClick = index < currentStepIndex; // 只有已完成的步骤可以点击
 
                 return (
-                  <div key={step.id} className="flex items-center flex-1">
-                    <button
-                      onClick={() => canClick && setCurrentStep(step.id)}
-                      disabled={!canClick}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                        canClick
-                          ? 'cursor-pointer hover:scale-110 active:scale-95'
-                          : 'cursor-default'
-                      } ${
+                  <button
+                    key={step.id}
+                    onClick={() => canClick && setCurrentStep(step.id)}
+                    disabled={!canClick}
+                    className={`flex flex-col items-center flex-1 relative z-10 transition-all ${
+                      canClick
+                        ? 'cursor-pointer hover:scale-105 active:scale-95'
+                        : 'cursor-default'
+                    }`}
+                    title={canClick ? `返回到${step.label}` : ''}
+                  >
+                    {/* 圆形图标 */}
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center mb-1.5 transition-all ${
                         isActive
                           ? isCurrent
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-blue-600 text-white ring-2 ring-blue-200'
                             : 'bg-green-500 text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
-                      title={canClick ? `返回到${step.label}` : ''}
                     >
                       {isActive && !isCurrent ? (
                         <CheckCircle size={18} />
                       ) : (
                         <Icon size={18} />
                       )}
-                    </button>
-                    {index < steps.length - 1 && (
-                      <div
-                        className={`flex-1 h-1 mx-2 ${
-                          index < currentStepIndex ? 'bg-green-500' : 'bg-gray-200'
-                        }`}
-                      />
-                    )}
-                  </div>
+                    </div>
+                    
+                    {/* 文字标签 */}
+                    <span
+                      className={`text-[10px] font-medium text-center leading-tight ${
+                        isCurrent
+                          ? 'text-blue-600'
+                          : isActive
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      }`}
+                    >
+                      {step.label}
+                    </span>
+                  </button>
                 );
               })}
+              
+              {/* 连接线背景 */}
+              <div className="absolute top-4 left-0 w-full h-0.5 bg-gray-200 -z-0" style={{ width: 'calc(100% - 2rem)', left: '1rem' }}></div>
+              
+              {/* 激活的连接线 */}
+              <div 
+                className="absolute top-4 left-0 h-0.5 bg-green-500 -z-0 transition-all duration-300" 
+                style={{ 
+                  width: currentStepIndex > 0 ? `calc(${(currentStepIndex / (steps.length - 1)) * 100}% - 2rem)` : '0%',
+                  left: '1rem'
+                }}
+              ></div>
             </div>
-            <p className="text-xs text-gray-600 text-center">
-              {steps.find((s) => s.id === currentStep)?.label}
-            </p>
           </div>
         )}
       </header>
@@ -543,7 +562,7 @@ export default function UploadPage() {
                       ? 'bg-purple-100 text-purple-700' 
                       : 'bg-indigo-100 text-indigo-700'
                   }`}>
-                    {platform === 'PHONE' ? '' : ''}
+                    {platform === 'PHONE' ? '📱' : '💻'}
                     {platform === 'PHONE' ? t.profile.phoneWallpaper : t.profile.pcWallpaper}
                   </span>
                 </div>
