@@ -184,6 +184,7 @@ export const translations = {
 
     // Profile Page
     profile: {
+      wallpaperType: "壁纸类型",
       phoneWallpaper: "手机壁纸",
       pcWallpaper: "电脑壁纸",
       title: '个人中心',
@@ -607,6 +608,7 @@ export const translations = {
       tryAdjusting: "Try adjusting your filters",
     },
     profile: {
+       wallpaperType: "Wallpaper Type",
       phoneWallpaper: "Phone wallpaper",
       pcWallpaper: "Computer wallpaper",
       title: "Profile",
@@ -973,6 +975,7 @@ export const translations = {
       tryAdjusting: "フィルターを調整してみてください",
     },
     profile: {
+      wallpaperType: "壁紙の種類",
       phoneWallpaper: "スマホ壁紙",
       pcWallpaper: "PC壁紙",
       title: "プロフィール",
@@ -1340,6 +1343,7 @@ export const translations = {
       tryAdjusting: "필터를 조절해 보세요",
     },
     profile: {
+      wallpaperType: "배경화면 종류",
       phoneWallpaper: "휴대폰 배경화면",
       pcWallpaper: "컴퓨터 배경화면",
       title: "프로필",
@@ -1715,6 +1719,7 @@ export const translations = {
     },
 
     profile: {
+      wallpaperType: "Tipo de fondo de pantalla",
       phoneWallpaper: "Fondo de pantalla del móvil",
       pcWallpaper: "Fondo de pantalla del ordenador",
       title: 'Perfil',
@@ -2093,6 +2098,7 @@ export const translations = {
     },
 
     profile: {
+      wallpaperType: "Type de fond d'écran",
       phoneWallpaper: "Fond d'écran du téléphone",
       pcWallpaper: "Fond d'écran de l'ordinateur",
       title: 'Profil',

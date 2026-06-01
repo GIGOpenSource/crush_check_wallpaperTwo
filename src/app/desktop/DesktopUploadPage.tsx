@@ -72,6 +72,7 @@ export default function DesktopUploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [platform, setPlatform] = useState<'PHONE' | 'PC'>('PHONE');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -164,7 +165,7 @@ export default function DesktopUploadPage() {
       );
 
       await uploadWallpaper({
-        platform: 'PC',
+        platform: platform,
         file: selectedFile,
         title: title.trim(),
         description: description.trim() || undefined,
@@ -378,6 +379,38 @@ export default function DesktopUploadPage() {
                 )}
 
                 <div className="bg-white rounded-2xl p-8 space-y-6">
+                  {/* Platform Selection */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                      {t.profile.wallpaperType}
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setPlatform('PHONE')}
+                        className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
+                          platform === 'PHONE'
+                            ? 'border-blue-600 bg-blue-50 text-blue-600'
+                            : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                        }`}
+                      >
+                        📱 {t.profile.phoneWallpaper}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPlatform('PC')}
+                        className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
+                          platform === 'PC'
+                            ? 'border-blue-600 bg-blue-50 text-blue-600'
+                            : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                        }`}
+                      >
+                        💻 {t.profile.pcWallpaper}
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                       {t.upload.title}
