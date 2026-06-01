@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useNotifications } from '../hooks/useNotifications';
 import { useUnreadCount } from '../hooks/useUnreadCount';
-import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api/wallpaper';
+import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, type NotificationItem } from '../../api/wallpaper';
 import { App, Modal } from 'antd';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { getAuthToken } from '../../api/request';
@@ -135,6 +135,15 @@ export default function DesktopNotificationsPage() {
     }
   };
 
+  // 点击消息跳转壁纸详情
+  const handleMessageClick = (notification: NotificationItem) => {
+    const type = notification.notification_type;
+    // 如果是 comment 或 like 类型，且有 target_id（壁纸ID），则跳转到壁纸详情页
+    if ((type === 'comment' || type === 'like') && notification.target_id) {
+      navigate(`/wallpaper/${notification.target_id}`);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <DesktopSidebar />
@@ -228,7 +237,8 @@ export default function DesktopNotificationsPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`bg-white dark:bg-gray-800 rounded-lg p-4 border transition-all ${
+                      onClick={() => handleMessageClick(notification)}
+                      className={`bg-white dark:bg-gray-800 rounded-lg p-4 border transition-all cursor-pointer ${
                         isUnread
                           ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-gray-200 dark:border-gray-700'

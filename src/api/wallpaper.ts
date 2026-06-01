@@ -517,10 +517,19 @@ export type NotificationItem = {
   is_read?: boolean;
   /** 关联的壁纸ID */
   wallpaper_id?: number | string;
+  /** 目标ID（用于跳转壁纸详情） */
+  target_id?: number | string;
   /** 关联的评论ID */
   comment_id?: number | string;
   /** 发送者信息 */
   sender?: {
+    id: number;
+    username: string;
+    nickname: string;
+    avatar_url?: string;
+  };
+  /** 发送者信息（别名） */
+  sender_info?: {
     id: number;
     username: string;
     nickname: string;
