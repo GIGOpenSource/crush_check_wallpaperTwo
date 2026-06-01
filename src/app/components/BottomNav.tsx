@@ -6,7 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 
 // tabBar 页面路由列表（精确匹配）
-const TABBAR_ROUTES = ['/', '/search', '/notifications', '/tags', '/profile'];
+const TABBAR_ROUTES = ['/', '/search', '/notifications', '/tags', '/profile', '/trending'];
 
 export function BottomNav() {
   const location = useLocation();

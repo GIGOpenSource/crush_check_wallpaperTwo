@@ -24,8 +24,13 @@ export const MobileQuickActions: React.FC = () => {
   const currentPath = location.hash.replace('#', '') || location.pathname;
   const isHomePage = 
     currentPath === '/' || 
-    currentPath === '' || 
-    currentPath === '/trending';
+    currentPath === '';
+  
+  // 判断是否是 trending 路由
+  const isTrendingRoute = currentPath === '/trending';
+
+  // 排除 /trending 路由，不显示语言切换按钮
+  const shouldShowLanguageToggle = isHomePage && !isTrendingRoute;
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: 'CN' },
@@ -40,13 +45,13 @@ export const MobileQuickActions: React.FC = () => {
 
   // 首页固定位置在右上角
   useEffect(() => {
-    if (isHomePage) {
+    if (shouldShowLanguageToggle) {
       setPosition({ x: 12, y: 8 }); // 同步更新 useEffect 中的位置
     }
-  }, [isHomePage]);
+  }, [shouldShowLanguageToggle]);
 
-  // 如果不是首页，不渲染任何内容（必须在所有Hooks之后）
-  if (!isHomePage) {
+  // 如果不是首页或者是 /trending 路由，不渲染任何内容（必须在所有Hooks之后）
+  if (!shouldShowLanguageToggle) {
     return null;
   }
 
