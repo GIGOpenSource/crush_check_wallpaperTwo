@@ -65,11 +65,12 @@ function pickTotal(raw: unknown): number | undefined {
 /**
  * 获取用户收藏列表
  */
-export function useMyCollections() {
+export function useMyCollections(platform?: 'PHONE' | 'PC') {
   const { viewMode } = useView();
-  const platform: 'PHONE' | 'PC' = viewMode === 'mobile' ? 'PHONE' : 'PC';
+  // 如果传入了platform参数则使用传入的值，否则根据viewMode自动判断
+  const currentPlatform: 'PHONE' | 'PC' = platform ?? (viewMode === 'mobile' ? 'PHONE' : 'PC');
   // 直接使用 platform 初始化 ref，不再通过 useEffect 更新
-  const platformRef = useRef(platform);
+  const platformRef = useRef(currentPlatform);
 
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [total, setTotal] = useState<number | undefined>(undefined);
@@ -166,10 +167,24 @@ export function useMyCollections() {
     loadFirstPageRef.current();
   }, []);
 
+  /** 切换平台后重新加载 */
+  const switchPlatform = useCallback((newPlatform: 'PHONE' | 'PC') => {
+    platformRef.current = newPlatform;
+    loadFirstPageRef.current();
+  }, []);
+
   // 首次加载 - 每次组件挂载时执行
   useEffect(() => {
     loadFirstPageRef.current();
   }, []);
+
+  // 当传入的 platform 参数变化时，重新加载数据
+  useEffect(() => {
+    if (platform !== undefined) {
+      platformRef.current = platform;
+      loadFirstPageRef.current();
+    }
+  }, [platform]);
 
   return {
     wallpapers,
@@ -180,5 +195,6 @@ export function useMyCollections() {
     hasMore,
     loadMore,
     refresh,
+    switchPlatform,
   };
 }

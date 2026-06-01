@@ -5,6 +5,7 @@ import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { Settings, Upload, Image as ImageIcon, Heart, Award, Users, UserCheck, UserPlus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useView } from '../contexts/ViewContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useMyCollections } from '../hooks/useMyCollections';
 import { useMyUploads } from '../hooks/useMyUploads';
@@ -39,6 +40,10 @@ export default function DesktopProfilePage() {
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | string | null>(null);
+  // 壁纸筛选：'phone' | 'pc'，默认为当前设备类型
+  const { viewMode } = useView();
+  const defaultFilter = viewMode === 'mobile' ? 'phone' : 'pc';
+  const [wallpaperFilter, setWallpaperFilter] = useState<'phone' | 'pc'>(defaultFilter);
 
   // 获取当前登录用户的ID
   useEffect(() => {
@@ -69,9 +74,13 @@ export default function DesktopProfilePage() {
   const shouldShowReturnButton = !!otherId;
 
   const { profile, loading: profileLoading, error: profileError, refresh: refreshProfile } = useUserProfile(otherId || undefined);
+  
+  // 根据筛选条件传入对应的platform参数（默认为当前设备类型）
+  const platformParam = wallpaperFilter === 'phone' ? 'PHONE' : 'PC';
+  
   // 始终调用 Hook，避免条件调用违反 React Hooks 规则
-  const myCollectionsResult = useMyCollections();
-  const myUploadsResult = useMyUploads();
+  const myCollectionsResult = useMyCollections(platformParam);
+  const myUploadsResult = useMyUploads(platformParam);
 
   // 查看他人主页时，不显示自己的上传和收藏数据
   const {
@@ -138,6 +147,14 @@ export default function DesktopProfilePage() {
       refreshFollowers();
     }
   }, [activeTab, refreshFollowing, refreshFollowers]);
+
+  // 当壁纸筛选条件改变时，刷新上传和收藏列表
+  useEffect(() => {
+    if (!isOtherUser) {
+      myUploadsResult.refresh?.();
+      myCollectionsResult.refresh?.();
+    }
+  }, [wallpaperFilter, isOtherUser]);
 
   // 未登录状态 - 查看自己主页时直接跳转登录页
   useEffect(() => {
@@ -416,64 +433,90 @@ export default function DesktopProfilePage() {
             <section>
               {/* Tabs - 只有自己的页面才显示Tab栏 */}
               {!isOtherUser && (
-                <div className="flex gap-6 border-b border-gray-200 mb-6">
-                  <button
-                    onClick={() => setActiveTab('uploaded')}
-                    className="relative pb-4 font-semibold transition-colors"
-                  >
-                    <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-gray-500'}>
-                      {t.profile.uploaded}
-                    </span>
-                    {activeTab === 'uploaded' && (
-                      <motion.div
-                        layoutId="desktopActiveTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                      />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('favorites')}
-                    className="relative pb-4 font-semibold transition-colors"
-                  >
-                    <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-gray-500'}>
-                      {t.profile.favorites}
-                    </span>
-                    {activeTab === 'favorites' && (
-                      <motion.div
-                        layoutId="desktopActiveTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                      />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('following')}
-                    className="relative pb-4 font-semibold transition-colors"
-                  >
-                    <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
-                      {t.profile.following}
-                    </span>
-                    {activeTab === 'following' && (
-                      <motion.div
-                        layoutId="desktopActiveTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                      />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('followers')}
-                    className="relative pb-4 font-semibold transition-colors"
-                  >
-                    <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
-                      {t.profile.followers}
-                    </span>
-                    {activeTab === 'followers' && (
-                      <motion.div
-                        layoutId="desktopActiveTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
-                      />
-                    )}
-                  </button>
-                </div>
+                <>
+                  <div className="flex gap-6 border-b border-gray-200 mb-6">
+                    <button
+                      onClick={() => setActiveTab('uploaded')}
+                      className="relative pb-4 font-semibold transition-colors"
+                    >
+                      <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-gray-500'}>
+                        {t.profile.uploaded}
+                      </span>
+                      {activeTab === 'uploaded' && (
+                        <motion.div
+                          layoutId="desktopActiveTab"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                        />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('favorites')}
+                      className="relative pb-4 font-semibold transition-colors"
+                    >
+                      <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-gray-500'}>
+                        {t.profile.favorites}
+                      </span>
+                      {activeTab === 'favorites' && (
+                        <motion.div
+                          layoutId="desktopActiveTab"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                        />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('following')}
+                      className="relative pb-4 font-semibold transition-colors"
+                    >
+                      <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
+                        {t.profile.following}
+                      </span>
+                      {activeTab === 'following' && (
+                        <motion.div
+                          layoutId="desktopActiveTab"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                        />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('followers')}
+                      className="relative pb-4 font-semibold transition-colors"
+                    >
+                      <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
+                        {t.profile.followers}
+                      </span>
+                      {activeTab === 'followers' && (
+                        <motion.div
+                          layoutId="desktopActiveTab"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                        />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* 壁纸筛选按钮 - 只在上传和收藏Tab显示 */}
+                  {(activeTab === 'uploaded' || activeTab === 'favorites') && (
+                    <div className="flex gap-3 mb-6">
+                      <button
+                        onClick={() => setWallpaperFilter('phone')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                      >
+                        手机壁纸
+                      </button>
+                      <button
+                        onClick={() => setWallpaperFilter('pc')}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                      >
+                        电脑壁纸
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Content */}
