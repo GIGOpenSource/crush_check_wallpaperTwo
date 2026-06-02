@@ -643,13 +643,13 @@ export default function DesktopProfilePage() {
                   {/* 加载更多 */}
                   {followingHasMore && followingUsers.length > 0 && (
                     <div className="py-8 text-center">
-                      <button
+                      {/* <button
                         onClick={followingLoadMore}
                         disabled={followingLoadingMore}
                         className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                       >
                         {followingLoadingMore ? t.common.loading : t.profile.loadMoreText}
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </>
@@ -727,13 +727,13 @@ export default function DesktopProfilePage() {
                   {/* 加载更多 */}
                   {followersHasMore && followersUsers.length > 0 && (
                     <div className="py-8 text-center">
-                      <button
+                      {/* <button
                         onClick={followersLoadMore}
                         disabled={followersLoadingMore}
                         className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 hover:bg-blue-700 transition-colors"
                       >
                         {followersLoadingMore ? t.common.loading : t.profile.loadMoreText}
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </>
