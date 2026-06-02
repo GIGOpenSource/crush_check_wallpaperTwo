@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { DesktopSidebar } from '../components/DesktopSidebar';
-import { Search, TrendingUp, Hash, Grid3x3 } from 'lucide-react';
+import { Search, TrendingUp, Hash, Grid3x3, SlidersHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -71,7 +71,21 @@ export default function DesktopTagsPage() {
     isHot: false,
   });
 
-  const popularTags = useMemo(() => hotTags.slice(0, TRENDING_DISPLAY), [hotTags]);
+  const popularTags = useMemo(() => {
+    // 如果有搜索关键词，则对热门标签也进行过滤
+    if (activeSearchQuery) {
+      const q = activeSearchQuery.toLowerCase();
+      return hotTags
+        .filter((tag) => {
+          const label = getTagDisplayName(tag).toLowerCase();
+          const slug = tag.name.toLowerCase();
+          return label.includes(q) || slug.includes(q);
+        })
+        .slice(0, TRENDING_DISPLAY);
+    }
+    // 否则显示原始的前N个热门标签
+    return hotTags.slice(0, TRENDING_DISPLAY);
+  }, [hotTags, activeSearchQuery]);
 
   const filteredTags = useMemo(
     () =>
@@ -160,7 +174,12 @@ export default function DesktopTagsPage() {
                   <p className="text-sm text-red-500 col-span-2 py-8 text-center">{t.common.loadFailed}</p>
                 )}
                 {!hotLoading && !hotError && popularTags.length === 0 && (
-                  <p className="text-sm text-gray-500 col-span-2 py-8 text-center">{t.common.noResults}</p>
+                  <div className="flex flex-col items-center justify-center py-12 text-gray-400 col-span-2">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <SlidersHorizontal size={40} className="text-gray-400" />
+                    </div>
+                    <p className="text-base">{t.common.noResults}</p>
+                  </div>
                 )}
                 {popularTags.map((tag, index) => (
                   <motion.div
@@ -218,7 +237,12 @@ export default function DesktopTagsPage() {
                     <p className="text-sm text-red-500 w-full py-8 text-center">{t.common.loadFailed}</p>
                   )}
                   {!allLoading && !allTagsLoading && !allError && filteredTags.length === 0 && (
-                    <p className="text-sm text-gray-500 w-full py-8 text-center">{t.common.noResults}</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-400 w-full">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <SlidersHorizontal size={40} className="text-gray-400" />
+                      </div>
+                      <p className="text-base">{t.common.noResults}</p>
+                    </div>
                   )}
                   {!allTagsLoading && filteredTags.map((tag) => (
                     <Link

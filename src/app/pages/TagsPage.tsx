@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
-import { Search, TrendingUp, Hash } from 'lucide-react';
+import { Search, TrendingUp, Hash, SlidersHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -72,7 +72,21 @@ export default function TagsPage() {
     isHot: false,
   });
 
-  const popularTags = useMemo(() => hotTags.slice(0, TRENDING_DISPLAY), [hotTags]);
+  const popularTags = useMemo(() => {
+    // 如果有搜索关键词，则对热门标签也进行过滤
+    if (activeSearchQuery) {
+      const q = activeSearchQuery.toLowerCase();
+      return hotTags
+        .filter((tag) => {
+          const label = getTagDisplayName(tag).toLowerCase();
+          const slug = tag.name.toLowerCase();
+          return label.includes(q) || slug.includes(q);
+        })
+        .slice(0, TRENDING_DISPLAY);
+    }
+    // 否则显示原始的前N个热门标签
+    return hotTags.slice(0, TRENDING_DISPLAY);
+  }, [hotTags, activeSearchQuery]);
 
   const filteredTags = useMemo(
     () =>
@@ -151,7 +165,12 @@ export default function TagsPage() {
             <p className="text-sm text-red-500 py-4 text-center">{t.common.loadFailed}</p>
           )}
           {!hotLoading && !hotError && popularTags.length === 0 && (
-            <p className="text-sm text-gray-500 py-4 text-center">{t.common.noResults}</p>
+            <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                <SlidersHorizontal size={32} className="text-gray-400" />
+              </div>
+              <p className="text-sm">{t.common.noResults}</p>
+            </div>
           )}
           {popularTags.map((tag, index) => (
             <motion.div
@@ -208,7 +227,12 @@ export default function TagsPage() {
             <p className="text-sm text-red-500 w-full py-4 text-center">{t.common.loadFailed}</p>
           )}
           {!allLoading && !allTagsLoading && !allError && filteredTags.length === 0 && (
-            <p className="text-sm text-gray-500 w-full py-4 text-center">{t.common.noResults}</p>
+            <div className="flex flex-col items-center justify-center py-8 text-gray-400 w-full">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                <SlidersHorizontal size={32} className="text-gray-400" />
+              </div>
+              <p className="text-sm">{t.common.noResults}</p>
+            </div>
           )}
           {!allTagsLoading && filteredTags.map((tag) => (
             <Link
