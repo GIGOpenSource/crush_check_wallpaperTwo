@@ -561,14 +561,14 @@ export default function DesktopWallpaperDetailPage() {
       {/* Fullscreen Preview Modal */}
       {showPreview && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 overflow-hidden"
           onClick={() => setShowPreview(false)}
         >
-          <div className="relative max-w-6xl max-h-full w-full flex items-center justify-center">
+          <div className="relative">
             <img
               src={wallpaper.imageUrl}
               alt={wallpaper.title}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-[calc(100vh-2rem)] object-contain"
               onClick={(e) => e.stopPropagation()} // 防止点击图片时关闭预览
               referrerPolicy="no-referrer"
             />
