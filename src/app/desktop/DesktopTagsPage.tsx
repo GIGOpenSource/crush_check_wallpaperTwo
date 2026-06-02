@@ -98,18 +98,16 @@ export default function DesktopTagsPage() {
     [allTags, activeSearchQuery]
   );
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      setActiveSearchQuery(searchQuery);
-      setIsSearching(true);
-      // All Tags 区域显示loading，2秒后关闭
-      setAllTagsLoading(true);
-      setTimeout(() => {
-        setAllTagsLoading(false);
-        setIsSearching(false);
-      }, 1000);
-    }
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setActiveSearchQuery(searchQuery);
+    setIsSearching(true);
+    // All Tags 区域显示loading，2秒后关闭
+    setAllTagsLoading(true);
+    setTimeout(() => {
+      setAllTagsLoading(false);
+      setIsSearching(false);
+    }, 1000);
   };
 
   return (
@@ -135,25 +133,33 @@ export default function DesktopTagsPage() {
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               <h1 className="text-2xl font-bold text-gray-900 mb-4">{t.tags.browseTags}</h1>
-              <div className="max-w-2xl relative">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleSearchKeyDown}
-                  placeholder={t.tags.searchTags}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
-                />
-                {isSearching && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                  </div>
-                )}
-              </div>
+              <form onSubmit={handleSearchSubmit} className="max-w-2xl">
+                <div className="relative">
+                  <Search
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t.tags.searchTags}
+                    className="w-full pl-12 pr-[4.5rem] py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
+                  />
+                  {isSearching ? (
+                    <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    >
+                      {t.nav.search}
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
         </header>
