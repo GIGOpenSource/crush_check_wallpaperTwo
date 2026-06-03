@@ -134,14 +134,14 @@ export default function SettingsPage() {
           onChange: (val: boolean) => updateSetting('enable_comment_notification', val),
           updating: settingsLoading || false,
         },
-        {
-          icon: Reply,
-          label: t.settings.notificationReplies,
-          toggle: true,
-          value: notificationSettings?.enable_reply_notification ?? false,
-          onChange: (val: boolean) => updateSetting('enable_reply_notification', val),
-          updating: settingsLoading || false,
-        },
+        // {
+        //   icon: Reply,
+        //   label: t.settings.notificationReplies,
+        //   toggle: true,
+        //   value: notificationSettings?.enable_reply_notification ?? false,
+        //   onChange: (val: boolean) => updateSetting('enable_reply_notification', val),
+        //   updating: settingsLoading || false,
+        // },
         {
           icon: UserPlus,
           label: t.settings.notificationFollows,

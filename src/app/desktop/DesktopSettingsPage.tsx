@@ -248,14 +248,14 @@ export default function DesktopSettingsPage() {
                     iconColor: 'text-blue-600',
                     iconBg: 'bg-blue-100',
                   },
-                  { 
-                    key: 'enable_reply_notification' as const, 
-                    label: t.settings.notificationReplies, 
-                    description: t.settings.notificationRepliesDesc,
-                    icon: Reply,
-                    iconColor: 'text-green-600',
-                    iconBg: 'bg-green-100',
-                  },
+                  // { 
+                  //   key: 'enable_reply_notification' as const, 
+                  //   label: t.settings.notificationReplies, 
+                  //   description: t.settings.notificationRepliesDesc,
+                  //   icon: Reply,
+                  //   iconColor: 'text-green-600',
+                  //   iconBg: 'bg-green-100',
+                  // },
                   { 
                     key: 'enable_follow_notification' as const, 
                     label: t.settings.notificationFollows, 
