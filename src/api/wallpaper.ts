@@ -896,3 +896,19 @@ export type WallpaperSeoTdkResponse = {
 export function getWallpaperSeoTdk(wallpaperId: string | number) {
   return http.get<WallpaperSeoTdkResponse>('/api/seo/tdk/', { params: { wallpaper_id: wallpaperId } });
 }
+
+/**
+ * 站点基本设置类型
+ */
+export type SiteBasicSettings = {
+  site_name: string;
+  [key: string]: unknown;
+};
+
+/**
+ * 获取站点基本设置
+ * GET /api/site/basic-settings/
+ */
+export function getSiteBasicSettings() {
+  return http.get<{ data: SiteBasicSettings }>('/api/site/basic-settings/');
+}

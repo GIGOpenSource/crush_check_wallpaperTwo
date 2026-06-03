@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Home, Search, Tag, TrendingUp, Upload, User, Settings, Bell, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUnreadCount } from '../hooks/useUnreadCount';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 import { useState, createContext, useContext } from 'react';
 import { motion } from 'framer-motion';
 
@@ -39,6 +40,7 @@ export function DesktopSidebar() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { unreadCount, refresh } = useUnreadCount();
+  const { settings } = useSiteSettings();
   const { isCollapsed, setIsCollapsed } = useSidebar();
 
   const handleNavClick = (path: string, isHome?: boolean) => {
@@ -172,7 +174,7 @@ export function DesktopSidebar() {
 
           {/* Footer */}
           <div className="p-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">© 2026 MarkWallpaperss</p>
+            <p className="text-xs text-gray-500">{settings?.site_name}</p>
           </div>
         </div>
       </aside>
