@@ -164,7 +164,7 @@ export default function DesktopNotificationsPage() {
   const handleMessageClick = (notification: NotificationItem) => {
     const type = notification.notification_type;
     // 如果是 comment 或 like 类型，且有 target_id（壁纸ID），则跳转到壁纸详情页
-    if ((type === 'comment' || type === 'like') && notification.target_id) {
+    if ((type === 'comment' || type === 'like' || type === 'wallpaper_like') && notification.target_id) {
       navigate(`/wallpaper/${notification.target_id}`);
     }
   };
