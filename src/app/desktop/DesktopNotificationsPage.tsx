@@ -17,13 +17,13 @@ export default function DesktopNotificationsPage() {
   const navigate = useNavigate();
   const token = getAuthToken();
   const { t } = useLanguage();
-  
+
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         <DesktopSidebar />
-        
+
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -58,7 +58,7 @@ export default function DesktopNotificationsPage() {
   useEffect(() => {
     const handleScroll = () => {
       if (!listRef.current || !hasMore || loadingMore) return;
-      
+
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       // 距离底部小于100px时触发加载
       if (scrollHeight - scrollTop - clientHeight < 100) {
@@ -98,7 +98,7 @@ export default function DesktopNotificationsPage() {
   // 标记为已读
   const handleMarkAsRead = async (notificationId: number | string) => {
     if (processingId === notificationId) return;
-    
+
     setProcessingId(notificationId);
     try {
       await markNotificationAsRead(notificationId);
@@ -136,7 +136,7 @@ export default function DesktopNotificationsPage() {
       okButtonProps: { danger: true },
       onOk: async () => {
         if (processingId === notificationId) return;
-        
+
         setProcessingId(notificationId);
         try {
           await deleteNotification(notificationId);
@@ -192,11 +192,11 @@ export default function DesktopNotificationsPage() {
                   )}
                 </div>
               </div>
-              
+
               {/* 未读数量和全部已读按钮 */}
               <div className="flex items-center justify-between py-3 border-t border-gray-200 dark:border-gray-700">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {unreadCount > 0 
+                  {unreadCount > 0
                     ? t.notifications.unreadMessages.replace('{{count}}', String(unreadCount))
                     : t.notifications.allRead
                   }
@@ -216,10 +216,10 @@ export default function DesktopNotificationsPage() {
 
         {/* 消息列表 */}
         <div className="px-8 py-8">
-          <div 
-            ref={listRef} 
-            className="max-w-7xl mx-auto overflow-y-auto hide-scrollbar" 
-            style={{ 
+          <div
+            ref={listRef}
+            className="max-w-7xl mx-auto overflow-y-auto hide-scrollbar"
+            style={{
               maxHeight: 'calc(100vh - 250px)',
               scrollbarWidth: 'none', // Firefox
               msOverflowStyle: 'none' // IE/Edge
@@ -276,11 +276,10 @@ export default function DesktopNotificationsPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => handleMessageClick(notification)}
-                      className={`bg-white dark:bg-gray-800 rounded-lg p-4 border transition-all cursor-pointer ${
-                        isUnread
-                          ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-200 dark:border-gray-700'
-                      }`}
+                      className={`bg-white dark:bg-gray-800 rounded-lg p-4 border transition-all cursor-pointer ${isUnread
+                        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-200 dark:border-gray-700'
+                        }`}
                     >
                       <div className="flex gap-3">
                         {/* 头像 */}
@@ -312,7 +311,7 @@ export default function DesktopNotificationsPage() {
                                   <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
                                 )}
                               </div>
-                              
+
                               {/* 第二行：内容（小字）*/}
                               {(() => {
                                 const type = notification.notification_type;
@@ -345,7 +344,7 @@ export default function DesktopNotificationsPage() {
                                 }
                                 return null;
                               })()}
-                              
+
                               {/* 时间 */}
                               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                                 {formatTime(notification.created_at)}
@@ -356,7 +355,10 @@ export default function DesktopNotificationsPage() {
                             <div className="flex items-center gap-2 flex-shrink-0">
                               {isUnread && (
                                 <button
-                                  onClick={() => handleMarkAsRead(notification.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkAsRead(notification.id);
+                                  }}
                                   disabled={processingId === notification.id}
                                   className="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors disabled:opacity-50"
                                   title="标记为已读"
@@ -365,7 +367,10 @@ export default function DesktopNotificationsPage() {
                                 </button>
                               )}
                               <button
-                                onClick={() => handleDelete(notification.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // 阻止冒泡
+                                  handleDelete(notification.id);
+                                }}
                                 disabled={processingId === notification.id}
                                 className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors disabled:opacity-50"
                                 title="删除消息"

@@ -117,7 +117,7 @@ export default function EditProfilePage() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">{t.editProfile.pleaseLogin}</p>
+        <p className="text-gray-500">{t.common.loading}</p>
       </div>
     );
   }

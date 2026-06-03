@@ -21,7 +21,7 @@ function translateWithParams(
 ): string {
   const keys = key.split('.');
   let value: any = t;
-  
+
   for (const k of keys) {
     if (value && typeof value === 'object') {
       value = value[k];
@@ -29,18 +29,18 @@ function translateWithParams(
       return key; // 找不到翻译时返回 key
     }
   }
-  
+
   if (typeof value !== 'string') {
     return key;
   }
-  
+
   // 如果有参数，进行替换
   if (params) {
     return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
       return params[paramKey] !== undefined ? String(params[paramKey]) : match;
     });
   }
-  
+
   return value;
 }
 
@@ -51,11 +51,11 @@ export default function MobileNotificationsPage() {
   const navigate = useNavigate();
   const token = getAuthToken();
   const { t } = useLanguage();
-  
+
   // 封装带参数的翻译函数
-  const tr = (key: string, params?: Record<string, any>) => 
+  const tr = (key: string, params?: Record<string, any>) =>
     translateWithParams(t, key, params);
-  
+
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
@@ -105,7 +105,7 @@ export default function MobileNotificationsPage() {
   useEffect(() => {
     const handleScroll = () => {
       if (!listRef.current || !hasMore || loadingMore) return;
-      
+
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       // 距离底部小于100px时触发加载
       if (scrollHeight - scrollTop - clientHeight < 100) {
@@ -145,7 +145,7 @@ export default function MobileNotificationsPage() {
   // 标记为已读
   const handleMarkAsRead = async (notificationId: number | string) => {
     if (processingId === notificationId) return;
-    
+
     setProcessingId(notificationId);
     try {
       await markNotificationAsRead(notificationId);
@@ -183,7 +183,7 @@ export default function MobileNotificationsPage() {
       okButtonProps: { danger: true },
       onOk: async () => {
         if (processingId === notificationId) return;
-        
+
         setProcessingId(notificationId);
         try {
           await deleteNotification(notificationId);
@@ -233,7 +233,7 @@ export default function MobileNotificationsPage() {
             )}
           </div>
         </div>
-        
+
         {/* 未读数量和全部已读按钮 */}
         <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -298,11 +298,10 @@ export default function MobileNotificationsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
                   onClick={() => handleMessageClick(notification)}
-                  className={`bg-white dark:bg-gray-800 rounded-lg p-3 border transition-all active:scale-[0.98] cursor-pointer ${
-                    isUnread
-                      ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700'
-                  }`}
+                  className={`bg-white dark:bg-gray-800 rounded-lg p-3 border transition-all active:scale-[0.98] cursor-pointer ${isUnread
+                    ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-gray-200 dark:border-gray-700'
+                    }`}
                 >
                   <div className="flex gap-3">
                     {/* 头像 */}
@@ -334,7 +333,7 @@ export default function MobileNotificationsPage() {
                               <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
                             )}
                           </div>
-                          
+
                           {/* 第二行：内容（小字）*/}
                           {(() => {
                             const type = notification.notification_type;
@@ -367,7 +366,7 @@ export default function MobileNotificationsPage() {
                             }
                             return null;
                           })()}
-                          
+
                           {/* 时间 */}
                           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                             {formatTime(notification.created_at)}
@@ -379,7 +378,10 @@ export default function MobileNotificationsPage() {
                           <div className="flex gap-1">
                             {isUnread && (
                               <button
-                                onClick={() => handleMarkAsRead(notification.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMarkAsRead(notification.id);
+                                }}
                                 disabled={processingId === notification.id}
                                 className="p-2 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-full transition-colors disabled:opacity-50"
                                 aria-label={t.notifications.markAsRead}
@@ -388,7 +390,10 @@ export default function MobileNotificationsPage() {
                               </button>
                             )}
                             <button
-                              onClick={() => handleDelete(notification.id)}
+                              onClick={(e) => {
+                                e.stopPropagation(); // 阻止冒泡
+                                handleDelete(notification.id);
+                              }}
                               disabled={processingId === notification.id}
                               className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full transition-colors disabled:opacity-50"
                               aria-label={t.notifications.deleteMessage}

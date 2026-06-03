@@ -119,7 +119,7 @@ export default function DesktopEditProfilePage() {
       <div className="flex min-h-screen bg-gray-50">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">{t.editProfile.pleaseLogin}</p>
+          <p className="text-gray-500">{t.common.loading}</p>
         </div>
       </div>
     );
