@@ -316,8 +316,10 @@ export default function DesktopUploadPage() {
                 {/* 如果已有图片，显示预览 */}
                 {selectedImage ? (
                   <div className="space-y-6">
-                    <div className="relative rounded-2xl overflow-hidden">
-                      <img src={selectedImage} alt="Selected" className="w-full h-96 object-cover" />
+                    <div className="relative rounded-2xl overflow-hidden bg-gray-900">
+                      <div className="aspect-video">
+                        <img src={selectedImage} alt="Selected" className="w-full h-full object-contain" />
+                      </div>
                       <button
                         onClick={() => {
                           setSelectedImage(null);
@@ -374,7 +376,9 @@ export default function DesktopUploadPage() {
               >
                 {selectedImage && (
                   <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                    <img src={selectedImage} alt="Preview" className="w-full h-80 object-cover" />
+                    <div className="aspect-video bg-gray-900">
+                      <img src={selectedImage} alt="Preview" className="w-full h-full object-contain" />
+                    </div>
                   </div>
                 )}
 
@@ -540,7 +544,9 @@ export default function DesktopUploadPage() {
                 )}
 
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                  <img src={selectedImage!} alt="Preview" className="w-full h-96 object-cover" />
+                  <div className="aspect-video bg-gray-900">
+                    <img src={selectedImage!} alt="Preview" className="w-full h-full object-contain" />
+                  </div>
                   <div className="p-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
                     

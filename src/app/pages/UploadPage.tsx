@@ -327,8 +327,10 @@ export default function UploadPage() {
             {/* 如果已有图片，显示预览 */}
             {selectedImage ? (
               <div className="space-y-4">
-                <div className="relative rounded-xl overflow-hidden">
-                  <img src={selectedImage} alt="Selected" className="w-full h-64 object-cover" />
+                <div className="relative rounded-xl overflow-hidden bg-gray-900">
+                  <div className="aspect-[3/4]">
+                    <img src={selectedImage} alt="Selected" className="w-full h-full object-contain" />
+                  </div>
                   <button
                     onClick={() => {
                       setSelectedImage(null);
@@ -385,7 +387,9 @@ export default function UploadPage() {
           >
             {selectedImage && (
               <div className="bg-white rounded-xl overflow-hidden">
-                <img src={selectedImage} alt="Preview" className="w-full h-48 object-cover" />
+                <div className="aspect-[3/4] bg-gray-900">
+                  <img src={selectedImage} alt="Preview" className="w-full h-full object-contain" />
+                </div>
               </div>
             )}
 
@@ -551,7 +555,9 @@ export default function UploadPage() {
             )}
 
             <div className="bg-white rounded-xl overflow-hidden">
-              <img src={selectedImage!} alt="Preview" className="w-full h-64 object-cover" />
+              <div className="aspect-[3/4] bg-gray-900">
+                <img src={selectedImage!} alt="Preview" className="w-full h-full object-contain" />
+              </div>
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
                 
