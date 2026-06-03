@@ -38,7 +38,7 @@ export function DesktopSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { unreadCount } = useUnreadCount();
+  const { unreadCount, refresh } = useUnreadCount();
   const { isCollapsed, setIsCollapsed } = useSidebar();
 
   const handleNavClick = (path: string, isHome?: boolean) => {
@@ -148,6 +148,12 @@ export function DesktopSidebar() {
                       className={`desktop-sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                         isActive ? 'font-semibold' : 'hover:bg-gray-50'
                       }`}
+                      onClick={() => {
+                        // 点击通知项时刷新未读数量
+                        if (item.showBadge) {
+                          refresh();
+                        }
+                      }}
                     >
                       <Icon size={20} strokeWidth={isActive ? 2.25 : 2} />
                       <span className="font-medium">{item.label}</span>

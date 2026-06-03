@@ -330,7 +330,14 @@ export default function MobileNotificationsPage() {
                               {notification.sender_info?.nickname || notification.title || t.notifications.systemNotification}
                             </h3>
                             {isUnread && (
-                              <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  refreshUnreadCount();
+                                }}
+                                className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 cursor-pointer hover:bg-blue-600 transition-colors"
+                                title={t.notifications.refreshCount}
+                              />
                             )}
                           </div>
 

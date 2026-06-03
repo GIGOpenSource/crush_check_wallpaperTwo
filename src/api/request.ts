@@ -65,6 +65,27 @@ type RequestOptions = {
 const TOKEN_STORAGE_KEY = 'token';
 let memoryToken = '';
 
+// token 变化时的监听器
+type TokenChangeListener = (hasToken: boolean) => void;
+let tokenChangeListeners: TokenChangeListener[] = [];
+
+export function addTokenChangeListener(listener: TokenChangeListener) {
+  tokenChangeListeners.push(listener);
+  return () => {
+    tokenChangeListeners = tokenChangeListeners.filter(l => l !== listener);
+  };
+}
+
+function notifyTokenChange(hasToken: boolean) {
+  tokenChangeListeners.forEach(listener => {
+    try {
+      listener(hasToken);
+    } catch (e) {
+      console.error('Token change listener error:', e);
+    }
+  });
+}
+
 const ANON_USER_KEY = 'aplus_anon_device_id';
 function getOrCreateAnonUserId(): string {
   try {
@@ -100,18 +121,27 @@ export function getAuthToken(): string {
 
 export function setAuthToken(token: string) {
   const normalized = token.trim();
+  const hadToken = !!memoryToken;
   memoryToken = normalized;
-  if (typeof window === 'undefined') return;
-  try {
-    if (normalized) {
-      window.localStorage.setItem(TOKEN_STORAGE_KEY, normalized);
-      window.sessionStorage.setItem(TOKEN_STORAGE_KEY, normalized);
-    } else {
-      window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-      window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+  const hasToken = !!normalized;
+  
+  if (typeof window !== 'undefined') {
+    try {
+      if (normalized) {
+        window.localStorage.setItem(TOKEN_STORAGE_KEY, normalized);
+        window.sessionStorage.setItem(TOKEN_STORAGE_KEY, normalized);
+      } else {
+        window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+        window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+      }
+    } catch {
+      // ignore storage errors
     }
-  } catch {
-    // ignore storage errors
+  }
+  
+  // 通知监听器 token 状态变化
+  if (hadToken !== hasToken) {
+    notifyTokenChange(hasToken);
   }
 }
 

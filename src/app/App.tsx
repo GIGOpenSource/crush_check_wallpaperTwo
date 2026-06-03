@@ -5,6 +5,7 @@ import { router } from './routes';
 import { ViewProvider } from './contexts/ViewContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { SidebarProvider } from './components/DesktopSidebar';
+import { UnreadCountProvider } from './contexts/UnreadCountContext';
 
 export default function App() {
   return (
@@ -13,7 +14,9 @@ export default function App() {
         <AntdApp>
           <ViewProvider>
             <SidebarProvider>
-              <RouterProvider router={router} />
+              <UnreadCountProvider>
+                <RouterProvider router={router} />
+              </UnreadCountProvider>
             </SidebarProvider>
           </ViewProvider>
         </AntdApp>

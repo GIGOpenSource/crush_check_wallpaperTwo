@@ -12,7 +12,7 @@ export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { unreadCount } = useUnreadCount();
+  const { unreadCount, refresh } = useUnreadCount();
 
   // 判断当前路由是否为 tabBar 页面
   // 注意：/profile 显示 tabBar，但 /profile/:userId（他人主页）不显示
@@ -64,6 +64,12 @@ export function BottomNav() {
               key={item.path}
               to={item.path}
               className="flex flex-col items-center justify-center flex-1 h-full relative"
+              onClick={() => {
+                // 点击通知项时刷新未读数量
+                if (item.showBadge) {
+                  refresh();
+                }
+              }}
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}

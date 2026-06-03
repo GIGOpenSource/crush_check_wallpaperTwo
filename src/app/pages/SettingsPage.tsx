@@ -25,6 +25,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken, getAuthToken } from '../../api/request';
 import { logoutUser } from '../../api/auth';
+import { useUnreadCount } from '../hooks/useUnreadCount';
 import { motion } from 'motion/react';
 
 export default function SettingsPage() {
@@ -33,6 +34,7 @@ export default function SettingsPage() {
   const { t, language, setLanguage } = useLanguage();
   const { profile } = useUserProfile();
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
+  const { clear: clearUnreadCount } = useUnreadCount();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   
@@ -77,6 +79,8 @@ export default function SettingsPage() {
           const res: any = await logoutUser();
            if(res.code == 200){
            setAuthToken('');
+           // 清除未读计数
+           clearUnreadCount();
            // 清除 user_id
            try {
              localStorage.removeItem('user_id');
@@ -91,6 +95,8 @@ export default function SettingsPage() {
         } finally {
           // 清除本地 token 和 user_id
           setAuthToken('');
+          // 清除未读计数
+          clearUnreadCount();
           try {
             localStorage.removeItem('user_id');
           } catch (e) {
