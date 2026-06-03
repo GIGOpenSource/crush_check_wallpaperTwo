@@ -593,7 +593,7 @@ export function getNotificationsList(params: NotificationsListParams) {
  * GET /api/notifications/unread-count/
  */
 export function getUnreadNotificationCount() {
-  return http.get<{ data: { count: number } }>('/api/notifications/unread-count/');
+  return http.get<{ data: { count: number; actual_count: number } }>('/api/notifications/unread-count/');
 }
 
 /**

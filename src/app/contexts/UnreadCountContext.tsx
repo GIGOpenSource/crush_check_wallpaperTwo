@@ -4,6 +4,7 @@ import { getAuthToken, addTokenChangeListener } from '../../api/request';
 
 interface UnreadCountContextType {
   unreadCount: number;
+  actualUnreadCount: number;
   loading: boolean;
   refresh: () => void;
   clear: () => void;
@@ -13,23 +14,30 @@ const UnreadCountContext = createContext<UnreadCountContextType | undefined>(und
 
 export function UnreadCountProvider({ children }: { children: ReactNode }) {
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [actualUnreadCount, setActualUnreadCount] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   const fetchUnreadCount = useCallback(async () => {
     const token = getAuthToken();
     if (!token) {
       setUnreadCount(0);
+      setActualUnreadCount(0);
       return;
     }
 
     setLoading(true);
     try {
       const response = await getUnreadNotificationCount();
+      // 小红点使用 count 字段
       const count = response?.data?.count ?? 0;
       setUnreadCount(count);
+      // 消息页面显示使用 actual_count 字段
+      const actualCount = response?.data?.actual_count ?? response?.data?.count ?? 0;
+      setActualUnreadCount(actualCount);
     } catch (err) {
       console.error('获取未读消息数量失败:', err);
       setUnreadCount(0);
+      setActualUnreadCount(0);
     } finally {
       setLoading(false);
     }
@@ -41,6 +49,7 @@ export function UnreadCountProvider({ children }: { children: ReactNode }) {
 
   const clear = useCallback(() => {
     setUnreadCount(0);
+    setActualUnreadCount(0);
   }, []);
 
   // 初始化
@@ -48,6 +57,7 @@ export function UnreadCountProvider({ children }: { children: ReactNode }) {
     const token = getAuthToken();
     if (!token) {
       setUnreadCount(0);
+      setActualUnreadCount(0);
     } else {
       fetchUnreadCount();
     }
@@ -58,6 +68,7 @@ export function UnreadCountProvider({ children }: { children: ReactNode }) {
     const unsubscribe = addTokenChangeListener((hasToken) => {
       if (!hasToken) {
         setUnreadCount(0);
+        setActualUnreadCount(0);
       } else {
         fetchUnreadCount();
       }
@@ -66,7 +77,7 @@ export function UnreadCountProvider({ children }: { children: ReactNode }) {
   }, [fetchUnreadCount]);
 
   return (
-    <UnreadCountContext.Provider value={{ unreadCount, loading, refresh, clear }}>
+    <UnreadCountContext.Provider value={{ unreadCount, actualUnreadCount, loading, refresh, clear }}>
       {children}
     </UnreadCountContext.Provider>
   );

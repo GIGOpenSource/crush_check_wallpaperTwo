@@ -96,7 +96,7 @@ export default function MobileNotificationsPage() {
 
   // 已登录，正常显示消息列表
   const { notifications, loading, loadingMore, hasMore, loadMore, refresh, total, error } = useNotifications();
-  const { refresh: refreshUnreadCount, unreadCount } = useUnreadCount();
+  const { refresh: refreshUnreadCount, actualUnreadCount } = useUnreadCount();
   const { message } = App.useApp();
   const [processingId, setProcessingId] = useState<number | string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -237,9 +237,9 @@ export default function MobileNotificationsPage() {
         {/* 未读数量和全部已读按钮 */}
         <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            {unreadCount > 0 ? tr('notifications.unreadMessages', { count: unreadCount }) : t.notifications.allRead}
+            {actualUnreadCount > 0 ? tr('notifications.unreadMessages', { count: actualUnreadCount }) : t.notifications.allRead}
           </span>
-          {unreadCount > 0 && (
+          {actualUnreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
               className="text-sm text-blue-500 hover:text-blue-600 transition-colors"
