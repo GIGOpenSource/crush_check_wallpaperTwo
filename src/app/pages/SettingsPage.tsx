@@ -23,7 +23,7 @@ import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
-import { setAuthToken } from '../../api/request';
+import { setAuthToken, getAuthToken } from '../../api/request';
 import { logoutUser } from '../../api/auth';
 import { motion } from 'motion/react';
 
@@ -35,6 +35,20 @@ export default function SettingsPage() {
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  
+  // 检查是否登录
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
+  
+  // 如果没有token，不渲染页面
+  const token = getAuthToken();
+  if (!token) {
+    return null;
+  }
 
   const languageOptions = [
     { code: 'zh-CN', name: '简体中文', flag: 'CN' },
