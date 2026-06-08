@@ -586,7 +586,7 @@ export default function DesktopProfilePage() {
                       <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followingUsers.length > 0 ? (
-                    <div className="divide-y divide-gray-100 bg-card rounded-xl shadow-sm">
+                    <div className="divide-y  bg-card rounded-xl shadow-sm">
                       {followingUsers.map((user) => (
                         <div
                           key={user.id}
@@ -665,7 +665,7 @@ export default function DesktopProfilePage() {
                       <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followersUsers.length > 0 ? (
-                    <div className="divide-y divide-gray-100 bg-card rounded-xl shadow-sm">
+                    <div className="divide-y  bg-card rounded-xl shadow-sm">
                       {followersUsers.map((user) => (
                         <div
                           key={user.id}

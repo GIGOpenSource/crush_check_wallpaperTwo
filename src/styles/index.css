@@ -62,16 +62,16 @@
   color: #e8eef5 !important;
 }
 
-/* 我的页上传按钮：白底蓝字，盖过 antd 全局 a */
+/* 我的页上传按钮：浅色模式蓝色背景黑色字体，深色模式蓝色背景白色字体 */
 a.profile-upload-btn,
 a.profile-upload-btn:hover,
 a.profile-upload-btn:focus,
 a.profile-upload-btn:focus-visible,
 a.profile-upload-btn:active,
 a.profile-upload-btn:visited {
-  background-color: #ffffff !important;
-  color: #2563eb !important;
-  -webkit-text-fill-color: #2563eb;
+  background-color: #2563eb  !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .dark a.profile-upload-btn,
@@ -80,7 +80,7 @@ a.profile-upload-btn:visited {
 .dark a.profile-upload-btn:focus-visible,
 .dark a.profile-upload-btn:active,
 .dark a.profile-upload-btn:visited {
-  background-color: #334155 !important;
+    background-color: #334155 !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff;
 }

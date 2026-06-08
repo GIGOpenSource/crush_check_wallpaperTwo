@@ -403,7 +403,7 @@ export default function ProfilePage() {
         <div className="px-4 mt-4 mb-6">
           <Link
             to="/upload"
-            className={`profile-upload-btn flex items-center justify-center gap-2 w-full py-3.5 rounded-3xl no-underline font-semibold [&_svg]:shrink-0 transition-colors ${isDarkMode ? 'bg-slate-700 text-white hover:bg-slate-600' : 'bg-card text-blue-600 hover:bg-card/90'}`}
+            className={`profile-upload-btn flex items-center justify-center gap-2 w-full py-3.5 rounded-3xl no-underline font-semibold [&_svg]:shrink-0 transition-colors ${isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-500' : 'bg-blue-500 text-black hover:bg-blue-400'}`}
           >
             <Upload size={20} />
             <span>{t.profile.uploadWallpaper}</span>
@@ -575,7 +575,7 @@ export default function ProfilePage() {
                 <div className="text-red-500">{t.profile.loadFailedRetry}</div>
               </div>
             ) : followingUsers.length > 0 ? (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y">
                 {followingUsers.map((user) => (
                   <div
                     key={user.id}
@@ -654,7 +654,7 @@ export default function ProfilePage() {
                 <div className="text-red-500">{t.profile.loadFailedRetry}</div>
               </div>
             ) : followersUsers.length > 0 ? (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y">
                 {followersUsers.map((user) => (
                   <div
                     key={user.id}

@@ -232,7 +232,7 @@ export default function WallpaperDetailPage() {
         {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/wallpaper/${wallpaper?.id}`} />
       </Helmet>
-      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pb-20 max-w-md mx-auto">
         {/* Header */}
         <header className="bg-gradient-to-b from-black/50 to-transparent">
           <div className="flex p-4">
@@ -246,14 +246,14 @@ export default function WallpaperDetailPage() {
             >
               <ChevronLeft size={24} className="text-foreground" />
             </button>
-            <div className="font-bold ml-4 text-lg w-80 mt-2 text-white">{wallpaper.title}</div>
+            <div className="font-bold ml-4 text-lg w-80 mt-2 text-gray-900 dark:text-white">{wallpaper.title}</div>
           </div>
         </header>
 
         {/* Wallpaper Image Container */}
         <div className="px-4">
-          <div className="bg-card rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
-            <div className="relative aspect-[3/4] bg-gray-900">
+          <div className="bg-card dark:bg-[#101727] dark:border dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
+            <div className="relative aspect-[3/4] bg-gray-900 dark:bg-[#101727]">
               <img
                 src={wallpaper.imageUrl}
                 alt={wallpaper.title}
@@ -397,7 +397,7 @@ export default function WallpaperDetailPage() {
                   }}
                   className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs rounded-full transition-colors"
                 >
-                  {tag.name}
+                  #{tag.name}
                 </Link>
               ))}
             </div>
