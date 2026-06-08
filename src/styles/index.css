@@ -32,6 +32,36 @@
   background-color: #eff6ff !important;
 }
 
+/* 深色模式下的桌面侧栏样式 */
+.dark .desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link:not([data-active='true']) {
+  color: #e5e7eb !important; /* gray-200，浅灰 */
+  background-color: transparent !important;
+}
+.dark .desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link:not([data-active='true']):hover {
+  color: #ffffff !important;
+  background-color: #334155 !important;
+}
+.dark .desktop-sidebar .desktop-sidebar-nav a.desktop-sidebar-link[data-active='true'] {
+  color: #60a5fa !important; /* blue-400 */
+  background-color: #334155 !important; /* slate-700 */
+}
+
+/* 深色模式下的 antd Modal 样式 */
+.dark-modal-wrap .ant-modal-content {
+  background-color: #0f1f36 !important;
+  border-color: #1e3a5f !important;
+}
+.dark-modal-wrap .ant-modal-header {
+  background-color: #0f1f36 !important;
+  border-color: #1e3a5f !important;
+}
+.dark-modal-wrap .ant-modal-title {
+  color: #e8eef5 !important;
+}
+.dark-modal-wrap .ant-modal-body {
+  color: #e8eef5 !important;
+}
+
 /* 我的页上传按钮：白底蓝字，盖过 antd 全局 a */
 a.profile-upload-btn,
 a.profile-upload-btn:hover,
@@ -42,6 +72,17 @@ a.profile-upload-btn:visited {
   background-color: #ffffff !important;
   color: #2563eb !important;
   -webkit-text-fill-color: #2563eb;
+}
+
+.dark a.profile-upload-btn,
+.dark a.profile-upload-btn:hover,
+.dark a.profile-upload-btn:focus,
+.dark a.profile-upload-btn:focus-visible,
+.dark a.profile-upload-btn:active,
+.dark a.profile-upload-btn:visited {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff;
 }
 
 a.profile-upload-btn svg {

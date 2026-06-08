@@ -4,6 +4,7 @@ import { App } from 'antd';
 import { ArrowLeft, Camera, User, Save } from 'lucide-react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { updateUserProfile, uploadAvatar } from '../../api/wallpaper';
 import { motion } from 'motion/react';
@@ -12,6 +13,7 @@ export default function DesktopEditProfilePage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isDarkMode } = useTheme();
   const { profile, refresh } = useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -116,30 +118,30 @@ export default function DesktopEditProfilePage() {
 
   if (!profile) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">{t.common.loading}</p>
+          <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
       
       <main className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <header className="bg-card border-b border-border sticky top-0 z-40">
           <div className="px-8 py-6 flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-muted rounded-full transition-colors"
             >
-              <ArrowLeft size={24} className="text-gray-700" />
+              <ArrowLeft size={24} className="text-foreground" />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">{t.editProfile.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t.editProfile.title}</h1>
           </div>
         </header>
 
@@ -147,11 +149,11 @@ export default function DesktopEditProfilePage() {
         <div className="px-8 py-8">
           <div className="max-w-3xl mx-auto space-y-6">
             {/* Avatar Section */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">{t.editProfile.avatar}</h3>
+            <div className="bg-card rounded-2xl p-8 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground mb-6">{t.editProfile.avatar}</h3>
               <div className="flex items-start gap-8">
                 <div className="relative">
-                  <div className="w-32 h-32 bg-gray-100 rounded-full overflow-hidden ring-4 ring-gray-100">
+                  <div className="w-32 h-32 bg-muted rounded-full overflow-hidden ring-4 ring-gray-100">
                     <img
                       src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'UN')}`}
                       alt="Avatar"
@@ -179,8 +181,8 @@ export default function DesktopEditProfilePage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-lg font-medium text-gray-900 mb-2">{t.editProfile.avatarUploadHint}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-lg font-medium text-foreground mb-2">{t.editProfile.avatarUploadHint}</p>
+                  <p className="text-sm text-muted-foreground">
                     💡 {t.editProfile.avatarFormatHint}
                   </p>
                 </div>
@@ -188,8 +190,8 @@ export default function DesktopEditProfilePage() {
             </div>
 
             {/* Nickname Section */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <div className="bg-card rounded-2xl p-8 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                 <User size={20} />
                 {t.editProfile.nickname}
               </h3>
@@ -203,40 +205,40 @@ export default function DesktopEditProfilePage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                 />
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-sm text-gray-500">{t.editProfile.nicknameHint}</p>
-                  <p className="text-sm text-gray-400">{nickname.length}/20</p>
+                  <p className="text-sm text-muted-foreground">{t.editProfile.nicknameHint}</p>
+                  <p className="text-sm text-muted-foreground">{nickname.length}/20</p>
                 </div>
               </div>
             </div>
 
             {/* Gender Section */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">{t.editProfile.gender}</h3>
+            <div className="bg-card rounded-2xl p-8 shadow-sm">
+              <h3 className="text-lg font-semibold text-foreground mb-6">{t.editProfile.gender}</h3>
               <div className="grid grid-cols-3 gap-4">
                 {genderOptions.map((option) => (
-                  <motion.button
-                    key={option.value}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setGender(option.value as 0 | 1 | 2)}
-                    className={`py-4 px-6 rounded-xl border-2 font-medium transition-all ${
-                      gender === option.value
-                        ? 'border-blue-600 bg-blue-50 text-blue-600'
-                        : 'border-gray-200 text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    {option.label}
-                  </motion.button>
-                ))}
+                    <motion.button
+                      key={option.value}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setGender(option.value as 0 | 1 | 2)}
+                      className={`py-4 px-6 rounded-xl border-2 font-medium transition-all ${
+                        gender === option.value
+                          ? isDarkMode ? 'border-blue-500 bg-slate-700 text-white' : 'border-blue-600 bg-blue-50 text-blue-600'
+                          : 'border-border text-foreground hover:border-gray-300'
+                      }`}
+                    >
+                      {option.label}
+                    </motion.button>
+                  ))}
               </div>
             </div>
 
             {/* Info Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+            <div className={`rounded-2xl p-6 border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'}`}>
               <div className="flex items-start gap-3">
                 <span className="text-2xl">💡</span>
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-1">{t.editProfile.tipTitle}</h4>
-                  <p className="text-sm text-blue-800">
+                  <h4 className={`font-semibold mb-1 ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>{t.editProfile.tipTitle}</h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
                     {t.editProfile.tipContent}
                   </p>
                 </div>

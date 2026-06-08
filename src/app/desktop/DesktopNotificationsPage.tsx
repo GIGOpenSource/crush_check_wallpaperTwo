@@ -21,18 +21,18 @@ export default function DesktopNotificationsPage() {
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
-      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex min-h-screen bg-background dark:bg-gray-900">
         <DesktopSidebar />
 
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-center max-w-md">
-            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 bg-muted dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-2xl font-bold text-foreground dark:text-white mb-3">
               {t.notifications.loginRequired}
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-8">
+            <p className="text-muted-foreground dark:text-muted-foreground mb-8">
               {t.notifications.loginPrompt}
             </p>
             <button
@@ -170,23 +170,23 @@ export default function DesktopNotificationsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-background dark:bg-gray-900">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* 顶部导航 */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+        <header className="bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700 sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               {/* 标题区域 */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Bell className="w-6 h-6 text-blue-500" />
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-2xl font-bold text-foreground dark:text-white">
                     {t.notifications.title}
                   </h1>
                   {total !== undefined && (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ({t.notifications.messagesCount.replace('{{count}}', String(total))})
                     </span>
                   )}
@@ -194,8 +194,8 @@ export default function DesktopNotificationsPage() {
               </div>
 
               {/* 未读数量和全部已读按钮 */}
-              <div className="flex items-center justify-between py-3 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center justify-between py-3 border-t border-border dark:border-gray-700">
+                <span className="text-sm text-gray-600 dark:text-muted-foreground">
                   {actualUnreadCount > 0
                     ? t.notifications.unreadMessages.replace('{{count}}', String(actualUnreadCount))
                     : t.notifications.allRead
@@ -234,13 +234,13 @@ export default function DesktopNotificationsPage() {
               // 加载状态
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-4 animate-pulse">
+                  <div key={i} className="bg-card dark:bg-gray-800 rounded-lg p-4 animate-pulse">
                     <div className="flex gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                      <div className="w-10 h-10 rounded-full bg-muted dark:bg-gray-700"></div>
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                        <div className="h-4 bg-muted dark:bg-gray-700 rounded w-1/4"></div>
+                        <div className="h-3 bg-muted dark:bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-3 bg-muted dark:bg-gray-700 rounded w-1/2"></div>
                       </div>
                     </div>
                   </div>
@@ -249,8 +249,8 @@ export default function DesktopNotificationsPage() {
             ) : error ? (
               // 错误状态
               <div className="text-center py-12">
-                <div className="text-gray-400 dark:text-gray-600 text-6xl mb-4">⚠️</div>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">{t.notifications.loadFailed}</p>
+                <div className="text-muted-foreground dark:text-gray-600 text-6xl mb-4">⚠️</div>
+                <p className="text-muted-foreground dark:text-muted-foreground mb-4">{t.notifications.loadFailed}</p>
                 <button
                   onClick={refresh}
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -261,8 +261,8 @@ export default function DesktopNotificationsPage() {
             ) : notifications.length === 0 ? (
               // 空状态
               <div className="text-center py-12">
-                <div className="text-gray-300 dark:text-gray-700 text-6xl mb-4">🔔</div>
-                <p className="text-gray-500 dark:text-gray-400">{t.notifications.noNotifications}</p>
+                <div className="text-gray-300 dark:text-foreground text-6xl mb-4">🔔</div>
+                <p className="text-muted-foreground dark:text-muted-foreground">{t.notifications.noNotifications}</p>
               </div>
             ) : (
               // 消息列表
@@ -276,9 +276,9 @@ export default function DesktopNotificationsPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => handleMessageClick(notification)}
-                      className={`bg-white dark:bg-gray-800 rounded-lg p-4 border transition-all cursor-pointer ${isUnread
+                      className={`bg-card dark:bg-gray-800 rounded-lg p-4 border transition-all cursor-pointer ${isUnread
                         ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700'
+                        : 'border-border dark:border-gray-700'
                         }`}
                     >
                       <div className="flex gap-3">
@@ -304,7 +304,7 @@ export default function DesktopNotificationsPage() {
                             <div className="flex-1 min-w-0">
                               {/* 第一行：昵称 + 未读蓝点 */}
                               <div className="flex items-center gap-2 mb-1">
-                                <h3 className="text-base font-medium text-gray-900 dark:text-white truncate">
+                                <h3 className="text-base font-medium text-foreground dark:text-white truncate">
                                   {notification.sender_info?.nickname || notification.title || t.notifications.systemNotification}
                                 </h3>
                                 {isUnread && (
@@ -353,7 +353,7 @@ export default function DesktopNotificationsPage() {
                               })()}
 
                               {/* 时间 */}
-                              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                                 {formatTime(notification.created_at)}
                               </p>
                             </div>
@@ -379,7 +379,7 @@ export default function DesktopNotificationsPage() {
                                   handleDelete(notification.id);
                                 }}
                                 disabled={processingId === notification.id}
-                                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors disabled:opacity-50"
+                                className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors disabled:opacity-50"
                                 title="删除消息"
                               >
                                 <Trash2 size={16} />
@@ -395,7 +395,7 @@ export default function DesktopNotificationsPage() {
                 {/* 加载更多指示器 - 自动加载时显示 */}
                 {loadingMore && (
                   <div className="text-center py-4">
-                    <div className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                    <div className="inline-flex items-center gap-2 text-muted-foreground dark:text-muted-foreground text-sm">
                       <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                       <span>{t.common.loading}</span>
                     </div>
@@ -404,7 +404,7 @@ export default function DesktopNotificationsPage() {
 
                 {/* 没有更多数据提示 */}
                 {!hasMore && notifications.length > 0 && (
-                  <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
+                  <div className="text-center py-4 text-muted-foreground dark:text-muted-foreground text-sm">
                     {t.notifications.noMoreMessages}
                   </div>
                 )}

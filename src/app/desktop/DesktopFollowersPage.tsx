@@ -28,15 +28,15 @@ export default function DesktopFollowersPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200">
+        <header className="bg-card border-b border-border">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-900">{t.profile.followers}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{t.profile.followers}</h1>
             </div>
           </div>
         </header>
@@ -46,7 +46,7 @@ export default function DesktopFollowersPage() {
           <div className="max-w-7xl mx-auto">
             {loading ? (
               <div className="py-16 text-center">
-                <p className="text-gray-500">{t.common.loading}</p>
+                <p className="text-muted-foreground">{t.common.loading}</p>
               </div>
             ) : error ? (
               <div className="py-16 text-center">
@@ -63,12 +63,12 @@ export default function DesktopFollowersPage() {
                 {users.map((user) => (
                   <div
                     key={user.id}
-                    className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                   >
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
-                      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all">
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-muted flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all">
                         <img
                           src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname || user.username || 'UN')}`}
                           alt={user.nickname || user.username || 'User'}
@@ -78,10 +78,10 @@ export default function DesktopFollowersPage() {
 
                       {/* User Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-900 truncate mb-1 hover:text-blue-600 transition-colors w-full text-left">
+                        <div className="font-semibold text-foreground truncate mb-1 hover:text-blue-600 transition-colors w-full text-left">
                           {user.nickname || user.username || 'Unknown'}
                         </div>
-                        <div className="text-sm text-gray-500 flex items-center gap-2 mb-3">
+                        <div className="text-sm text-muted-foreground flex items-center gap-2 mb-3">
                           <span>{user.upload_count || 0} {t.profile.uploaded}</span>
                           <span>•</span>
                           <span>{user.follower_count || 0} {t.profile.followers}</span>
@@ -95,7 +95,7 @@ export default function DesktopFollowersPage() {
                           }}
                           className={`w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                             user.is_following
-                              ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              ? 'bg-muted text-foreground hover:bg-gray-300'
                               : 'bg-blue-600 text-white hover:bg-blue-700'
                           }`}
                         >
@@ -108,13 +108,13 @@ export default function DesktopFollowersPage() {
               </div>
             ) : (
               <div className="py-16 text-center">
-                <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Users size={40} className="text-gray-400" />
+                <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                  <Users size={40} className="text-muted-foreground" />
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                <h3 className="text-2xl font-semibold text-foreground mb-3">
                   {t.profile.noFollowersYet}
                 </h3>
-                <p className="text-gray-500 mb-8">
+                <p className="text-muted-foreground mb-8">
                   {t.profile.startFollowing}
                 </p>
                 <button

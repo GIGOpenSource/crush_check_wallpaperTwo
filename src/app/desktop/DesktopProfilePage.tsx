@@ -216,10 +216,10 @@ export default function DesktopProfilePage() {
   // 加载中状态
   if (profileLoading) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">{t.common.loading}</p>
+          <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -228,7 +228,7 @@ export default function DesktopProfilePage() {
   // 错误状态
   if (profileError) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-red-500 text-center">
@@ -248,10 +248,10 @@ export default function DesktopProfilePage() {
   // 未登录状态 - 查看自己主页时显示加载状态
   if (!profile && !otherId) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <div className="text-gray-500">
+          <div className="text-muted-foreground">
             <p>{t.common.loading}</p>
           </div>
         </div>
@@ -262,10 +262,10 @@ export default function DesktopProfilePage() {
   // 未登录状态
   if (!profile) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <div className="text-gray-500">
+          <div className="text-muted-foreground">
             <p>{t.common.loading}</p>
           </div>
         </div>
@@ -274,19 +274,19 @@ export default function DesktopProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+        <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 dark:text-gray-100">
           <div className="px-8 py-12">
             <div className="max-w-7xl mx-auto">
               {/* 返回按钮 - 只要有other_id参数就显示 */}
               {shouldShowReturnButton && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="mb-6 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                  className="mb-6 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors dark:bg-white/10 dark:hover:bg-white/20"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -297,7 +297,7 @@ export default function DesktopProfilePage() {
               {/* 用户信息区 */}
               <div className="flex items-start mb-8">
                 <div className="flex items-center gap-6 flex-1">
-                  <div className="w-20 h-20 bg-white rounded-full overflow-hidden shadow-lg">
+                  <div className="w-20 h-20 bg-card rounded-full overflow-hidden shadow-lg">
                     <img
                       src={profile.avatar_url || profile.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.nickname || profile.username || 'UN')}
                       alt={profile.nickname || profile.username}
@@ -342,8 +342,8 @@ export default function DesktopProfilePage() {
                         }}
                         disabled={followingActionId === profile.id}
                         className={`px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50 transition-colors ${(profile as any).is_following
-                            ? 'bg-white/20 text-white hover:bg-white/30'
-                            : 'bg-white text-blue-600 hover:bg-white/90'
+                            ? 'bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20'
+                            : 'bg-white text-blue-600 hover:bg-white/90 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700'
                           }`}
                       >
                         {followingActionId === profile.id
@@ -355,7 +355,7 @@ export default function DesktopProfilePage() {
                     ) : (
                       <button
                         onClick={() => navigate('/upload')}
-                        className="bg-white text-blue-600 py-2 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-white/90 transition-colors shadow-lg"
+                        className="bg-card text-blue-600 py-2 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-card/90 transition-colors shadow-lg dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
                       >
                         <Upload size={16} />
                         <span>{t.profile.uploadWallpaper}</span>
@@ -367,33 +367,33 @@ export default function DesktopProfilePage() {
 
               {/* 统计卡片 - 查看其他用户时也显示所有4个 */}
               <div className="grid grid-cols-4 gap-6 max-w-4xl">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center dark:bg-white/5">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <ImageIcon size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.upload_count ?? profile.uploadedCount ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">{t.profile.uploaded}</div>
+                  <div className="text-white/80 text-sm dark:text-gray-300">{t.profile.uploaded}</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center dark:bg-white/5">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Heart size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.collection_count ?? profile.favoritesCount ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">{t.profile.favorites}</div>
+                  <div className="text-white/80 text-sm dark:text-gray-300">{t.profile.favorites}</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center dark:bg-white/5">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Users size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.following_count ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">{t.profile.following}</div>
+                  <div className="text-white/80 text-sm dark:text-gray-300">{t.profile.following}</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center dark:bg-white/5">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Users size={24} className="opacity-80" />
                     <div className="text-3xl font-bold">{profile.follower_count ?? 0}</div>
                   </div>
-                  <div className="text-white/80 text-sm">{t.profile.followers}</div>
+                  <div className="text-white/80 text-sm dark:text-gray-300">{t.profile.followers}</div>
                 </div>
               </div>
             </div>
@@ -403,8 +403,8 @@ export default function DesktopProfilePage() {
         <div className="px-8 py-8">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Badges */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">{t.profile.achievementBadges}</h2>
+            <section className="bg-card rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-bold text-foreground mb-6">{t.profile.achievementBadges}</h2>
               {profile.badges && profile.badges.length > 0 ? (
                 <div className="grid grid-cols-3 gap-4">
                   {profile.badges.map((badge) => (
@@ -413,13 +413,13 @@ export default function DesktopProfilePage() {
                       className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200"
                     >
                       <div className="text-4xl mb-3">{badge.icon}</div>
-                      <h3 className="font-bold text-gray-900 mb-2">{badge.name}</h3>
+                      <h3 className="font-bold text-foreground mb-2">{badge.name}</h3>
                       <p className="text-sm text-gray-600">{badge.description}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Award size={48} className="mx-auto mb-4 text-gray-300" />
                   <p>{t.profile.noBadgesYet}</p>
                 </div>
@@ -431,12 +431,12 @@ export default function DesktopProfilePage() {
               {/* Tabs - 只有自己的页面才显示Tab栏 */}
               {!isOtherUser && (
                 <>
-                  <div className="flex gap-6 border-b border-gray-200 mb-6">
+                  <div className="flex gap-6 border-b border-border mb-6">
                     <button
                       onClick={() => setActiveTab('uploaded')}
                       className="relative pb-4 font-semibold transition-colors"
                     >
-                      <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-gray-500'}>
+                      <span className={activeTab === 'uploaded' ? 'text-blue-600' : 'text-muted-foreground'}>
                         {t.profile.uploaded}
                       </span>
                       {activeTab === 'uploaded' && (
@@ -450,7 +450,7 @@ export default function DesktopProfilePage() {
                       onClick={() => setActiveTab('favorites')}
                       className="relative pb-4 font-semibold transition-colors"
                     >
-                      <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-gray-500'}>
+                      <span className={activeTab === 'favorites' ? 'text-blue-600' : 'text-muted-foreground'}>
                         {t.profile.favorites}
                       </span>
                       {activeTab === 'favorites' && (
@@ -464,7 +464,7 @@ export default function DesktopProfilePage() {
                       onClick={() => setActiveTab('following')}
                       className="relative pb-4 font-semibold transition-colors"
                     >
-                      <span className={activeTab === 'following' ? 'text-blue-600' : 'text-gray-500'}>
+                      <span className={activeTab === 'following' ? 'text-blue-600' : 'text-muted-foreground'}>
                         {t.profile.following}
                       </span>
                       {activeTab === 'following' && (
@@ -478,7 +478,7 @@ export default function DesktopProfilePage() {
                       onClick={() => setActiveTab('followers')}
                       className="relative pb-4 font-semibold transition-colors"
                     >
-                      <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-gray-500'}>
+                      <span className={activeTab === 'followers' ? 'text-blue-600' : 'text-muted-foreground'}>
                         {t.profile.followers}
                       </span>
                       {activeTab === 'followers' && (
@@ -497,7 +497,7 @@ export default function DesktopProfilePage() {
                         onClick={() => setWallpaperFilter('phone')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-muted text-foreground hover:bg-muted'
                           }`}
                       >
                         {t.profile.phoneWallpaper}
@@ -506,7 +506,7 @@ export default function DesktopProfilePage() {
                         onClick={() => setWallpaperFilter('pc')}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-muted text-foreground hover:bg-muted'
                           }`}
                       >
                         {t.profile.pcWallpaper}
@@ -520,14 +520,14 @@ export default function DesktopProfilePage() {
               {isOtherUser && (
                 <>
                   <div className="mb-4">
-                    <h2 className="text-xl font-bold text-gray-900">{t.profile.uploaded}</h2>
+                    <h2 className="text-xl font-bold text-foreground">{t.profile.uploaded}</h2>
                   </div>
                   <div className="flex gap-3 mb-6">
                     <button
                       onClick={() => setWallpaperFilter('phone')}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'phone'
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                         }`}
                     >
                       {t.profile.phoneWallpaper}
@@ -536,7 +536,7 @@ export default function DesktopProfilePage() {
                       onClick={() => setWallpaperFilter('pc')}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${wallpaperFilter === 'pc'
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                         }`}
                     >
                       {t.profile.pcWallpaper}
@@ -551,7 +551,7 @@ export default function DesktopProfilePage() {
                 <>
                   {uploadsLoading ? (
                     <div className="py-16 text-center">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : uploadsError ? (
                     <div className="py-16 text-center">
@@ -565,10 +565,10 @@ export default function DesktopProfilePage() {
                   ) : (
                     // 空状态 - 没有上传的壁纸
                     <div className="py-16 text-center">
-                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                        <ImageIcon size={40} className="text-gray-400" />
+                      <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                        <ImageIcon size={40} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {t.profile.noUploadsYet}
                       </h3>
                     </div>
@@ -579,23 +579,23 @@ export default function DesktopProfilePage() {
                 <>
                   {followingLoading ? (
                     <div className="py-16 text-center">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : followingError ? (
                     <div className="py-16 text-center">
                       <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followingUsers.length > 0 ? (
-                    <div className="divide-y divide-gray-100 bg-white rounded-xl shadow-sm">
+                    <div className="divide-y divide-gray-100 bg-card rounded-xl shadow-sm">
                       {followingUsers.map((user) => (
                         <div
                           key={user.id}
-                          className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                          className="px-6 py-4 flex items-center gap-4 hover:bg-background transition-colors cursor-pointer"
                           onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                         >
                           {/* 头像 */}
                           <div
-                            className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                            className="w-14 h-14 rounded-full overflow-hidden bg-muted flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
                           >
                             <img
                               src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'UN') as string)}`}
@@ -606,7 +606,7 @@ export default function DesktopProfilePage() {
 
                           {/* 用户信息 */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
+                            <h3 className="font-semibold text-foreground truncate text-base hover:text-blue-600 transition-colors">
                               {user.nickname || user.username}
                             </h3>
                           </div>
@@ -618,7 +618,7 @@ export default function DesktopProfilePage() {
                               handleToggleFollow(user.id, true);
                             }}
                             disabled={followingActionId === user.id}
-                            className="px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            className="px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 bg-muted text-foreground hover:bg-muted"
                           >
                             {followingActionId === user.id
                               ? t.common.loading
@@ -629,13 +629,13 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : (
                     <div className="py-16 text-center">
-                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Users size={40} className="text-gray-400" />
+                      <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                        <Users size={40} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {t.profile.noFollowingYet}
                       </h3>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         {t.profile.startFollowing}
                       </p>
                     </div>
@@ -658,23 +658,23 @@ export default function DesktopProfilePage() {
                 <>
                   {followersLoading ? (
                     <div className="py-16 text-center">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : followersError ? (
                     <div className="py-16 text-center">
                       <p className="text-red-500">{t.profile.loadFailedRetry}</p>
                     </div>
                   ) : followersUsers.length > 0 ? (
-                    <div className="divide-y divide-gray-100 bg-white rounded-xl shadow-sm">
+                    <div className="divide-y divide-gray-100 bg-card rounded-xl shadow-sm">
                       {followersUsers.map((user) => (
                         <div
                           key={user.id}
-                          className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                          className="px-6 py-4 flex items-center gap-4 hover:bg-background transition-colors cursor-pointer"
                           onClick={() => navigate(`/profile/${user.id}?other_id=${user.id}`)}
                         >
                           {/* 头像 */}
                           <div
-                            className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
+                            className="w-14 h-14 rounded-full overflow-hidden bg-muted flex-shrink-0 ring-2 ring-gray-100 hover:ring-blue-300 transition-all"
                           >
                             <img
                               src={user.avatar_url || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user.nickname || user.username || 'UN') as string)}`}
@@ -685,7 +685,7 @@ export default function DesktopProfilePage() {
 
                           {/* 用户信息 */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 truncate text-base hover:text-blue-600 transition-colors">
+                            <h3 className="font-semibold text-foreground truncate text-base hover:text-blue-600 transition-colors">
                               {user.nickname || user.username}
                             </h3>
                           </div>
@@ -698,7 +698,7 @@ export default function DesktopProfilePage() {
                             }}
                             disabled={followingActionId === user.id}
                             className={`px-6 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-all active:scale-95 ${user.is_followed
-                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-muted text-foreground hover:bg-muted'
                                 : 'bg-blue-600 text-white hover:bg-blue-700'
                               }`}
                           >
@@ -713,13 +713,13 @@ export default function DesktopProfilePage() {
                     </div>
                   ) : (
                     <div className="py-16 text-center">
-                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Users size={40} className="text-gray-400" />
+                      <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                        <Users size={40} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {t.profile.noFollowersYet}
                       </h3>
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         {t.profile.startFollowing}
                       </p>
                     </div>
@@ -742,7 +742,7 @@ export default function DesktopProfilePage() {
                 <>
                   {favoritesLoading ? (
                     <div className="py-16 text-center">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : favoritesError ? (
                     <div className="py-16 text-center">
@@ -770,13 +770,13 @@ export default function DesktopProfilePage() {
                     </>
                   ) : (
                     <div className="py-16 text-center">
-                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Heart size={40} className="text-gray-400" />
+                      <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                        <Heart size={40} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {t.profile.noFavoritesYet}
                       </h3>
-                      <p className="text-gray-500 mb-8">
+                      <p className="text-muted-foreground mb-8">
                         {t.profile.startFavoriting}
                       </p>
                     </div>
@@ -787,7 +787,7 @@ export default function DesktopProfilePage() {
                 <>
                   {uploadsLoading ? (
                     <div className="py-16 text-center">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : uploadsError ? (
                     <div className="py-16 text-center">
@@ -816,13 +816,13 @@ export default function DesktopProfilePage() {
                     </>
                   ) : (
                     <div className="py-16 text-center">
-                      <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                        <ImageIcon size={40} className="text-gray-400" />
+                      <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
+                        <ImageIcon size={40} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-foreground mb-3">
                         {t.profile.noUploadsYet}
                       </h3>
-                      <p className="text-gray-500 mb-8">
+                      <p className="text-muted-foreground mb-8">
                         {t.profile.uploadFirstWallpaper}
                       </p>
                     </div>

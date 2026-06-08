@@ -29,12 +29,12 @@ export default function UploadPage() {
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
         {/* 顶部导航 */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="sticky top-0 z-10 bg-card border-b border-border">
           <div className="px-4 py-4 flex items-center gap-2">
             <Upload className="w-5 h-5 text-blue-500" />
-            <h1 className="text-lg font-semibold text-gray-900">
+            <h1 className="text-lg font-semibold text-foreground">
               {t.upload.uploadWallpaper}
             </h1>
           </div>
@@ -42,13 +42,13 @@ export default function UploadPage() {
 
         {/* 未登录提示 */}
         <div className="flex flex-col items-center justify-center py-20 px-6">
-          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-            <Lock className="w-10 h-10 text-gray-400" />
+          <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+            <Lock className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             {t.upload.pleaseLogin}
           </h2>
-          <p className="text-gray-500 text-center mb-8">
+          <p className="text-muted-foreground text-center mb-8">
             {t.upload.loginPrompt}
           </p>
           <button
@@ -187,7 +187,7 @@ export default function UploadPage() {
 
   if (currentStep === 'uploading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
@@ -196,7 +196,7 @@ export default function UploadPage() {
           >
             <Loader size={64} className="text-blue-600" />
           </motion.div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t.upload.uploading}</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-2">{t.upload.uploading}</h2>
           <p className="text-sm text-gray-600">{t.upload.pleaseWait}</p>
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function UploadPage() {
 
   if (currentStep === 'success') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -215,7 +215,7 @@ export default function UploadPage() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle size={48} className="text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.upload.uploadSuccessful}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t.upload.uploadSuccessful}</h2>
           <p className="text-sm text-gray-600">{t.upload.uploadSuccessMessage}</p>
         </motion.div>
       </div>
@@ -223,17 +223,17 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+    <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full"
+            className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full"
           >
-            <ChevronLeft size={24} className="text-gray-900" />
+            <ChevronLeft size={24} className="text-foreground" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">{t.upload.uploadWallpaper}</h1>
+          <h1 className="text-xl font-bold text-foreground">{t.upload.uploadWallpaper}</h1>
         </div>
 
         {/* Progress Steps - 垂直布局 */}
@@ -265,7 +265,7 @@ export default function UploadPage() {
                           ? isCurrent
                             ? 'bg-blue-600 text-white ring-2 ring-blue-200'
                             : 'bg-green-500 text-white'
-                          : 'bg-gray-200 text-gray-400'
+                          : 'bg-muted text-muted-foreground'
                       }`}
                     >
                       {isActive && !isCurrent ? (
@@ -282,7 +282,7 @@ export default function UploadPage() {
                           ? 'text-blue-600'
                           : isActive
                           ? 'text-green-600'
-                          : 'text-gray-400'
+                          : 'text-muted-foreground'
                       }`}
                     >
                       {step.label}
@@ -292,7 +292,7 @@ export default function UploadPage() {
               })}
               
               {/* 连接线背景 */}
-              <div className="absolute top-4 left-0 w-full h-0.5 bg-gray-200 -z-0" style={{ width: 'calc(100% - 2rem)', left: '1rem' }}></div>
+              <div className="absolute top-4 left-0 w-full h-0.5 bg-muted -z-0" style={{ width: 'calc(100% - 2rem)', left: '1rem' }}></div>
               
               {/* 激活的连接线 */}
               <div 
@@ -314,13 +314,13 @@ export default function UploadPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl p-8"
+            className="bg-card rounded-xl p-8"
           >
             <div className="text-center mb-6">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Upload size={40} className="text-blue-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">{t.upload.uploadYourWallpaper}</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-2">{t.upload.uploadYourWallpaper}</h2>
               <p className="text-sm text-gray-600">{t.upload.selectHighQuality}</p>
             </div>
 
@@ -369,9 +369,9 @@ export default function UploadPage() {
                   className="hidden"
                 />
                 <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
-                  <ImageIcon size={48} className="text-gray-400 mx-auto mb-3" />
+                  <ImageIcon size={48} className="text-muted-foreground mx-auto mb-3" />
                   <p className="text-sm text-gray-600 mb-1">{t.upload.clickToSelect}</p>
-                  <p className="text-xs text-gray-400">{t.upload.supportedFormats}</p>
+                  <p className="text-xs text-muted-foreground">{t.upload.supportedFormats}</p>
                 </div>
               </label>
             )}
@@ -386,17 +386,17 @@ export default function UploadPage() {
             className="space-y-4"
           >
             {selectedImage && (
-              <div className="bg-white rounded-xl overflow-hidden">
+              <div className="bg-card rounded-xl overflow-hidden">
                 <div className="aspect-[3/4] bg-gray-900">
                   <img src={selectedImage} alt="Preview" className="w-full h-full object-contain" />
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl p-4">
+            <div className="bg-card rounded-xl p-4">
               {/* Platform Selection */}
               <label className="block mb-4">
-                <span className="text-sm font-medium text-gray-700 mb-2 block">
+                <span className="text-sm font-medium text-foreground mb-2 block">
                  {t.profile.wallpaperType}
                   <span className="text-red-500 ml-1">*</span>
                 </span>
@@ -407,7 +407,7 @@ export default function UploadPage() {
                     className={`flex-1 px-3 py-2.5 border-2 rounded-lg text-sm font-medium transition-all ${
                       platform === 'PHONE'
                         ? 'border-blue-600 bg-blue-50 text-blue-600'
-                        : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                        : 'border-gray-300 hover:border-blue-300 text-foreground'
                     }`}
                   >
                      📱{t.profile.phoneWallpaper}
@@ -418,7 +418,7 @@ export default function UploadPage() {
                     className={`flex-1 px-3 py-2.5 border-2 rounded-lg text-sm font-medium transition-all ${
                       platform === 'PC'
                         ? 'border-blue-600 bg-blue-50 text-blue-600'
-                        : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                        : 'border-gray-300 hover:border-blue-300 text-foreground'
                     }`}
                   >
                     💻 {t.profile.pcWallpaper}
@@ -427,7 +427,7 @@ export default function UploadPage() {
               </label>
 
               <label className="block mb-4">
-                <span className="text-sm font-medium text-gray-700 mb-2 block">
+                <span className="text-sm font-medium text-foreground mb-2 block">
                   {t.upload.title}
                   <span className="text-red-500 ml-1">*</span>
                 </span>
@@ -441,7 +441,7 @@ export default function UploadPage() {
               </label>
 
               <label className="block">
-                <span className="text-sm font-medium text-gray-700 mb-2 block">
+                <span className="text-sm font-medium text-foreground mb-2 block">
                   {t.upload.descriptionOptional}
                 </span>
                 <textarea
@@ -471,8 +471,8 @@ export default function UploadPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-4"
           >
-            <div className="bg-white rounded-xl p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">{t.upload.addTags}</h3>
+            <div className="bg-card rounded-xl p-4">
+              <h3 className="text-sm font-medium text-foreground mb-3">{t.upload.addTags}</h3>
 
               <div className="flex gap-2 mb-4">
                 <input
@@ -513,7 +513,7 @@ export default function UploadPage() {
               )}
 
               <div>
-                <p className="text-xs text-gray-500 mb-2">{t.upload.suggestedTags}</p>
+                <p className="text-xs text-muted-foreground mb-2">{t.upload.suggestedTags}</p>
                 <div className="flex flex-wrap gap-2">
                   {tagList
                     .filter((tag) => !tags.includes(tag.name.toLowerCase()))
@@ -522,7 +522,7 @@ export default function UploadPage() {
                       <button
                         key={tag.id}
                         onClick={() => handleAddTag(tag.name.toLowerCase())}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200"
+                        className="px-3 py-1 bg-muted text-foreground text-sm rounded-full hover:bg-muted"
                       >
                         #{tag.name}
                       </button>
@@ -554,12 +554,12 @@ export default function UploadPage() {
               </div>
             )}
 
-            <div className="bg-white rounded-xl overflow-hidden">
+            <div className="bg-card rounded-xl overflow-hidden">
               <div className="aspect-[3/4] bg-gray-900">
                 <img src={selectedImage!} alt="Preview" className="w-full h-full object-contain" />
               </div>
               <div className="p-4">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-2">{title}</h2>
                 
                 {/* Platform Display */}
                 <div className="mb-3">
@@ -584,7 +584,7 @@ export default function UploadPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4">
+            <div className="bg-card rounded-xl p-4">
               <label className="flex items-start gap-3">
                 <input
                   type="checkbox"

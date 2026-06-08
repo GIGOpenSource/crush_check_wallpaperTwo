@@ -28,16 +28,16 @@ export default function DesktopUploadPage() {
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
 
         <main className="flex-1 ml-64">
           {/* 顶部导航 */}
-          <header className="bg-white border-b border-gray-200">
+          <header className="bg-card border-b border-border">
             <div className="px-8 py-6">
               <div className="max-w-4xl mx-auto flex items-center gap-2">
                 <Upload className="w-6 h-6 text-blue-500" />
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-foreground">
                   {t.upload.uploadWallpaper}
                 </h1>
               </div>
@@ -46,13 +46,13 @@ export default function DesktopUploadPage() {
 
           {/* 未登录提示 */}
           <div className="flex flex-col items-center justify-center py-20 px-6">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-              <Lock className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
+              <Lock className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-2xl font-semibold text-foreground mb-3">
               {t.upload.pleaseLogin}
             </h2>
-            <p className="text-gray-500 text-center mb-8">
+            <p className="text-muted-foreground text-center mb-8">
               {t.upload.loginPrompt}
             </p>
             <button
@@ -186,7 +186,7 @@ export default function DesktopUploadPage() {
 
   if (currentStep === 'uploading') {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
           <div className="text-center">
@@ -197,7 +197,7 @@ export default function DesktopUploadPage() {
             >
               <Loader size={80} className="text-blue-600" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">{t.upload.uploading}</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-3">{t.upload.uploading}</h2>
             <p className="text-gray-600">{t.upload.pleaseWait}</p>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function DesktopUploadPage() {
 
   if (currentStep === 'success') {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
           <motion.div
@@ -219,7 +219,7 @@ export default function DesktopUploadPage() {
             <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={64} className="text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">{t.upload.uploadSuccessful}</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-3">{t.upload.uploadSuccessful}</h2>
             <p className="text-gray-600">{t.upload.uploadSuccessMessage}</p>
           </motion.div>
         </div>
@@ -228,15 +228,15 @@ export default function DesktopUploadPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">{t.upload.uploadWallpaper}</h1>
+              <h1 className="text-2xl font-bold text-foreground mb-6">{t.upload.uploadWallpaper}</h1>
 
               {/* Progress Steps */}
               {currentStep !== 'select' && (
@@ -262,7 +262,7 @@ export default function DesktopUploadPage() {
                                 ? isCurrent
                                   ? 'bg-blue-600 text-white'
                                   : 'bg-green-500 text-white'
-                                : 'bg-gray-200 text-gray-400'
+                                : 'bg-muted text-muted-foreground'
                             }`}
                             title={canClick ? `返回到${step.label}` : ''}
                           >
@@ -274,7 +274,7 @@ export default function DesktopUploadPage() {
                           </button>
                           <span
                             className={`text-sm font-medium ${
-                              isActive ? 'text-gray-900' : 'text-gray-400'
+                              isActive ? 'text-foreground' : 'text-muted-foreground'
                             }`}
                           >
                             {step.label}
@@ -283,7 +283,7 @@ export default function DesktopUploadPage() {
                         {index < steps.length - 1 && (
                           <div
                             className={`flex-1 h-1 mx-4 -mt-8 ${
-                              index < currentStepIndex ? 'bg-green-500' : 'bg-gray-200'
+                              index < currentStepIndex ? 'bg-green-500' : 'bg-muted'
                             }`}
                           />
                         )}
@@ -303,13 +303,13 @@ export default function DesktopUploadPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl p-12"
+                className="bg-card rounded-2xl p-12"
               >
                 <div className="text-center mb-8">
                   <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Upload size={48} className="text-blue-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">{t.upload.uploadYourWallpaper}</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-3">{t.upload.uploadYourWallpaper}</h2>
                   <p className="text-gray-600">{t.upload.selectHighQuality}</p>
                 </div>
 
@@ -358,9 +358,9 @@ export default function DesktopUploadPage() {
                       className="hidden"
                     />
                     <div className="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
-                      <ImageIcon size={64} className="text-gray-400 mx-auto mb-4" />
+                      <ImageIcon size={64} className="text-muted-foreground mx-auto mb-4" />
                       <p className="text-lg text-gray-600 mb-2">{t.upload.clickToSelect}</p>
-                      <p className="text-sm text-gray-400">{t.upload.supportedFormats}</p>
+                      <p className="text-sm text-muted-foreground">{t.upload.supportedFormats}</p>
                     </div>
                   </label>
                 )}
@@ -375,17 +375,17 @@ export default function DesktopUploadPage() {
                 className="space-y-6"
               >
                 {selectedImage && (
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+                  <div className="bg-card rounded-2xl overflow-hidden shadow-sm">
                     <div className="aspect-video bg-gray-900">
                       <img src={selectedImage} alt="Preview" className="w-full h-full object-contain" />
                     </div>
                   </div>
                 )}
 
-                <div className="bg-white rounded-2xl p-8 space-y-6">
+                <div className="bg-card rounded-2xl p-8 space-y-6">
                   {/* Platform Selection */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    <label className="block text-sm font-semibold text-foreground mb-3">
                       {t.profile.wallpaperType}
                       <span className="text-red-500 ml-1">*</span>
                     </label>
@@ -396,7 +396,7 @@ export default function DesktopUploadPage() {
                         className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
                           platform === 'PHONE'
                             ? 'border-blue-600 bg-blue-50 text-blue-600'
-                            : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                            : 'border-gray-300 hover:border-blue-300 text-foreground'
                         }`}
                       >
                         📱 {t.profile.phoneWallpaper}
@@ -407,7 +407,7 @@ export default function DesktopUploadPage() {
                         className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
                           platform === 'PC'
                             ? 'border-blue-600 bg-blue-50 text-blue-600'
-                            : 'border-gray-300 hover:border-blue-300 text-gray-700'
+                            : 'border-gray-300 hover:border-blue-300 text-foreground'
                         }`}
                       >
                         💻 {t.profile.pcWallpaper}
@@ -416,7 +416,7 @@ export default function DesktopUploadPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    <label className="block text-sm font-semibold text-foreground mb-3">
                       {t.upload.title}
                       <span className="text-red-500 ml-1">*</span>
                     </label>
@@ -430,7 +430,7 @@ export default function DesktopUploadPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    <label className="block text-sm font-semibold text-foreground mb-3">
                       {t.upload.descriptionOptional}
                     </label>
                     <textarea
@@ -460,8 +460,8 @@ export default function DesktopUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-white rounded-2xl p-8">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6">{t.upload.addTags}</h3>
+                <div className="bg-card rounded-2xl p-8">
+                  <h3 className="text-lg font-bold text-foreground mb-6">{t.upload.addTags}</h3>
 
                   <div className="flex gap-3 mb-6">
                     <input
@@ -502,7 +502,7 @@ export default function DesktopUploadPage() {
                   )}
 
                   <div>
-                    <p className="text-sm text-gray-500 mb-3">{t.upload.suggestedTags}</p>
+                    <p className="text-sm text-muted-foreground mb-3">{t.upload.suggestedTags}</p>
                     <div className="flex flex-wrap gap-3">
                       {tagList
                         .filter((tag) => !tags.includes(tag.name.toLowerCase()))
@@ -511,7 +511,7 @@ export default function DesktopUploadPage() {
                           <button
                             key={tag.id}
                             onClick={() => handleAddTag(tag.name.toLowerCase())}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
+                            className="px-4 py-2 bg-muted text-foreground rounded-xl hover:bg-muted transition-colors font-medium"
                           >
                             #{tag.name}
                           </button>
@@ -539,16 +539,16 @@ export default function DesktopUploadPage() {
               >
                 {uploadError && (
                   <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-                    <p className="text-gray-900">{uploadError}</p>
+                    <p className="text-foreground">{uploadError}</p>
                   </div>
                 )}
 
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+                <div className="bg-card rounded-2xl overflow-hidden shadow-sm">
                   <div className="aspect-video bg-gray-900">
                     <img src={selectedImage!} alt="Preview" className="w-full h-full object-contain" />
                   </div>
                   <div className="p-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-3">{title}</h2>
                     
                     {/* Platform Display */}
                     <div className="mb-4">
@@ -576,7 +576,7 @@ export default function DesktopUploadPage() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6">
+                <div className="bg-card rounded-2xl p-6">
                   <label className="flex items-start gap-4">
                     <input
                       type="checkbox"
@@ -584,7 +584,7 @@ export default function DesktopUploadPage() {
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
                       className="mt-1 w-5 h-5"
                     />
-                    <span className="text-gray-700">{t.upload.termsConfirm}</span>
+                    <span className="text-foreground">{t.upload.termsConfirm}</span>
                   </label>
                 </div>
 

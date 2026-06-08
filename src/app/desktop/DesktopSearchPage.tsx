@@ -140,22 +140,22 @@ export default function DesktopSearchPage() {
         <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/search`} />
       </Helmet>
-      <div className="flex h-screen overflow-hidden bg-gray-50">
+      <div className="flex h-screen overflow-hidden bg-background">
         <DesktopSidebar />
 
         <main className="flex-1 ml-64 overflow-y-auto">
           {/* Header */}
-          <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+          <header className="bg-card border-b border-border sticky top-0 z-30">
             <div className="px-8 py-6">
               <div className="max-w-7xl mx-auto">
                 <div className="flex items-center gap-4 mb-4">
-                  <h1 className="text-2xl font-bold text-gray-900">{t.searchPage.searchWallpapers}</h1>
+                  <h1 className="text-2xl font-bold text-foreground">{t.searchPage.searchWallpapers}</h1>
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       showFilters
                         ? 'bg-blue-100 text-blue-600'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-muted text-gray-600 hover:bg-muted'
                     }`}
                   >
                     <SlidersHorizontal size={20} />
@@ -186,9 +186,9 @@ export default function DesktopSearchPage() {
                       exit={{ width: 0, opacity: 0 }}
                       className="flex-shrink-0"
                     >
-                      <div ref={filtersRef} className="bg-white rounded-xl p-6 shadow-sm sticky top-[180px] max-h-[calc(100vh-160px)] overflow-y-auto">
+                      <div ref={filtersRef} className="bg-card rounded-xl p-6 shadow-sm sticky top-[180px] max-h-[calc(100vh-160px)] overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
-                          <h3 className="font-bold text-gray-900">{t.searchPage.filters}</h3>
+                          <h3 className="font-bold text-foreground">{t.searchPage.filters}</h3>
                           {activeFilterCount > 0 && (
                             <button
                               onClick={handleClearFilters}
@@ -201,7 +201,7 @@ export default function DesktopSearchPage() {
 
                         {/* Resolution */}
                         <div className="mb-6">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          <h4 className="text-sm font-semibold text-foreground mb-3">
                             {t.searchPage.resolution}
                           </h4>
                           <div className="space-y-2">
@@ -212,7 +212,7 @@ export default function DesktopSearchPage() {
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                   filters.resolution.includes(res)
                                     ? 'bg-blue-100 text-blue-700 font-medium'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                    : 'hover:bg-muted text-foreground'
                                 }`}
                               >
                                 {res}
@@ -223,7 +223,7 @@ export default function DesktopSearchPage() {
 
                         {/* Aspect Ratio */}
                         <div className="mb-6">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                          <h4 className="text-sm font-semibold text-foreground mb-3">
                             {t.searchPage.aspectRatio}
                           </h4>
                           <div className="space-y-2">
@@ -234,7 +234,7 @@ export default function DesktopSearchPage() {
                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                   filters.aspectRatio.includes(ratio)
                                     ? 'bg-blue-100 text-blue-700 font-medium'
-                                    : 'hover:bg-gray-100 text-gray-700'
+                                    : 'hover:bg-muted text-foreground'
                                 }`}
                               >
                                 {ratio}
@@ -272,7 +272,7 @@ export default function DesktopSearchPage() {
                   {/* Grid */}
                   {loading && filteredWallpapers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 px-4">
-                      <p className="text-gray-500">{t.common.loading}</p>
+                      <p className="text-muted-foreground">{t.common.loading}</p>
                     </div>
                   ) : error ? (
                     <div className="flex flex-col items-center justify-center py-20 px-4">
@@ -287,16 +287,16 @@ export default function DesktopSearchPage() {
                       )}
                       {/* 加载中提示 */}
                       {loading && (
-                        <p className="py-6 text-center text-sm text-gray-400">{t.common.loading}</p>
+                        <p className="py-6 text-center text-sm text-muted-foreground">{t.common.loading}</p>
                       )}
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-20 px-4">
-                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <SlidersHorizontal size={40} className="text-gray-400" />
+                      <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <SlidersHorizontal size={40} className="text-muted-foreground" />
                       </div>
-                      <p className="text-xl text-gray-500 mb-2">{t.searchPage.noWallpapersFound}</p>
-                      <p className="text-gray-400">{t.searchPage.tryAdjusting}</p>
+                      <p className="text-xl text-muted-foreground mb-2">{t.searchPage.noWallpapersFound}</p>
+                      <p className="text-muted-foreground">{t.searchPage.tryAdjusting}</p>
                     </div>
                   )}
                 </div>

@@ -125,20 +125,20 @@ export default function TagsPage() {
         <meta property="og:description" content={seoData?.description || 'Discover amazing collections of HD wallpapers organized by tags'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/tags`} />
       </Helmet>
-      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-gray-900 mb-3">{t.tags.browseTags}</h1>
+          <h1 className="text-xl font-bold text-foreground mb-3">{t.tags.browseTags}</h1>
           <form onSubmit={handleSearchSubmit} className="flex gap-2 items-stretch w-full">
             <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={20} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t.tags.searchTags}
-                className="w-full pl-12 pr-[4.5rem] py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
+                className="w-full pl-12 pr-[4.5rem] py-3 bg-muted rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
               />
               {isSearching ? (
                 <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
@@ -158,22 +158,22 @@ export default function TagsPage() {
       </header>
 
       {/* Popular Tags */}
-      <section className="bg-white py-4 mb-4">
+      <section className="bg-card py-4 mb-4">
         <div className="px-4 mb-3 flex items-center gap-2">
           <TrendingUp size={20} className="text-blue-600" />
-          <h2 className="text-lg font-semibold text-gray-900">{t.tags.trendingTags}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t.tags.trendingTags}</h2>
         </div>
         <div className="px-4 space-y-2">
           {hotLoading && (
-            <p className="text-sm text-gray-500 py-4 text-center">{t.common.loading}</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">{t.common.loading}</p>
           )}
           {hotError && !hotLoading && (
             <p className="text-sm text-red-500 py-4 text-center">{t.common.loadFailed}</p>
           )}
           {!hotLoading && !hotError && popularTags.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                <SlidersHorizontal size={32} className="text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-3">
+                <SlidersHorizontal size={32} className="text-muted-foreground" />
               </div>
               <p className="text-sm">{t.common.noResults}</p>
             </div>
@@ -195,24 +195,24 @@ export default function TagsPage() {
                     description: tag.description,
                   },
                 }}
-                className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:shadow-md transition-shadow"
+                className="flex items-center justify-between p-4 bg-card rounded-xl hover:shadow-md transition-shadow border border-border"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                    <Hash size={20} className="text-blue-600" />
+                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center shadow-sm">
+                    <Hash size={20} className="text-blue-500" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-foreground">
                       #{getTagDisplayName(tag) || tag.name}
                     </h3>
                     {tag.description && (
-                      <p className="text-xs text-gray-500 mt-0.5">{tag.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{tag.description}</p>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-blue-600">{formatNumber(tag.wallpaperCount)}</p>
-                  <p className="text-xs text-gray-500">{t.tags.wallpapers}</p>
+                  <p className="text-xs text-muted-foreground">{t.tags.wallpapers}</p>
                 </div>
               </Link>
             </motion.div>
@@ -223,19 +223,19 @@ export default function TagsPage() {
       {/* All Tags */}
       <section className="py-4">
         <div className="px-4 mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">{t.tags.allTags}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t.tags.allTags}</h2>
         </div>
         <div className="px-4 flex flex-wrap gap-2">
           {(allLoading || allTagsLoading) && (
-            <p className="text-sm text-gray-500 w-full py-4 text-center">{t.common.loading}</p>
+            <p className="text-sm text-muted-foreground w-full py-4 text-center">{t.common.loading}</p>
           )}
           {allError && !allLoading && !allTagsLoading && (
             <p className="text-sm text-red-500 w-full py-4 text-center">{t.common.loadFailed}</p>
           )}
           {!allLoading && !allTagsLoading && !allError && filteredTags.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-8 text-gray-400 w-full">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                <SlidersHorizontal size={32} className="text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground w-full">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-3">
+                <SlidersHorizontal size={32} className="text-muted-foreground" />
               </div>
               <p className="text-sm">{t.common.noResults}</p>
             </div>
@@ -252,10 +252,10 @@ export default function TagsPage() {
                   description: tag.description,
                 },
               }}
-              className="px-4 py-2 bg-white border border-gray-200 hover:border-blue-600 hover:bg-blue-50 rounded-full text-sm text-gray-700 hover:text-blue-600 transition-all"
+              className="px-4 py-2 bg-card border border-border hover:border-blue-600 hover:bg-blue-50 rounded-full text-sm text-foreground hover:text-blue-600 transition-all"
             >
               <span className="font-medium">#{getTagDisplayName(tag) || tag.name}</span>
-              <span className="ml-2 text-gray-400">({formatNumber(tag.wallpaperCount)})</span>
+              <span className="ml-2 text-muted-foreground">({formatNumber(tag.wallpaperCount)})</span>
             </Link>
           ))}
         </div>

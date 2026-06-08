@@ -116,7 +116,7 @@ function DesktopWallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className={`relative ${aspectRatio} rounded-xl overflow-hidden bg-gray-100 group shadow-md hover:shadow-xl transition-shadow`}>
+        <div className={`relative ${aspectRatio} rounded-xl overflow-hidden bg-muted group shadow-md hover:shadow-xl transition-shadow`}>
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}

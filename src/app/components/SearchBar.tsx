@@ -61,13 +61,13 @@ export function SearchBar({
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 items-stretch w-full">
       <div className="relative flex-1 min-w-0">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={20} />
         <input
           type="text"
           value={query}
           onChange={handleChange}
           placeholder={t.searchPage.searchPlaceholder}
-          className="w-full pl-12 pr-[4.5rem] py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
+          className="w-full pl-12 pr-[4.5rem] py-3 bg-muted rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
         />
         <button
           type="submit"
@@ -80,7 +80,7 @@ export function SearchBar({
         <button
           type="button"
           onClick={onFiltersClick}
-          className="shrink-0 px-3 py-3 bg-gray-100 rounded-xl text-gray-700 hover:bg-gray-200 border border-gray-200"
+          className="shrink-0 px-3 py-3 bg-muted rounded-xl text-foreground hover:bg-muted border border-border"
           aria-label={t.searchPage.filters}
         >
           <SlidersHorizontal size={20} />

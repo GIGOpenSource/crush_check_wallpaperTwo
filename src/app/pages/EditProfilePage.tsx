@@ -4,6 +4,7 @@ import { App } from 'antd';
 import { ArrowLeft, Camera, User, Save } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { updateUserProfile, uploadAvatar } from '../../api/wallpaper';
 import { motion } from 'motion/react';
@@ -12,6 +13,7 @@ export default function EditProfilePage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isDarkMode } = useTheme();
   const { profile, refresh } = useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -116,37 +118,37 @@ export default function EditProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">{t.common.loading}</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">{t.common.loading}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+    <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="px-4 py-4 flex items-center">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
-            <ArrowLeft size={24} className="text-gray-700" />
+            <ArrowLeft size={24} className="text-foreground" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">{t.editProfile.title}</h1>
+          <h1 className="text-xl font-bold text-foreground">{t.editProfile.title}</h1>
         </div>
       </header>
 
       {/* Content */}
       <div className="py-6 space-y-6">
         {/* Avatar Section */}
-        <div className="bg-white px-4 py-6">
+        <div className="bg-card px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">{t.editProfile.avatar}</h3>
+            <h3 className="font-semibold text-foreground">{t.editProfile.avatar}</h3>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-20 h-20 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-20 h-20 bg-muted rounded-full overflow-hidden">
                 <img
                   src={avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nickname || 'UN')}`}
                   alt="Avatar"
@@ -174,16 +176,16 @@ export default function EditProfilePage() {
               />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-700">{t.editProfile.avatarUploadHint}</p>
-              <p className="text-xs text-gray-500 mt-1">{t.editProfile.avatarFormatHint}</p>
+              <p className="text-sm text-foreground">{t.editProfile.avatarUploadHint}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.editProfile.avatarFormatHint}</p>
             </div>
           </div>
         </div>
 
         {/* Nickname Section */}
-        <div className="bg-white px-4 py-6">
+        <div className="bg-card px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
               <User size={18} />
               {t.editProfile.nickname}
             </h3>
@@ -196,13 +198,13 @@ export default function EditProfilePage() {
             maxLength={20}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-2">{nickname.length}/20</p>
+          <p className="text-xs text-muted-foreground mt-2">{nickname.length}/20</p>
         </div>
 
         {/* Gender Section */}
-        <div className="bg-white px-4 py-6">
+        <div className="bg-card px-4 py-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">{t.editProfile.gender}</h3>
+            <h3 className="font-semibold text-foreground">{t.editProfile.gender}</h3>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {genderOptions.map((option) => (
@@ -212,8 +214,8 @@ export default function EditProfilePage() {
                 onClick={() => setGender(option.value as 0 | 1 | 2)}
                 className={`py-3 px-4 rounded-lg border-2 font-medium transition-all ${
                   gender === option.value
-                    ? 'border-blue-600 bg-blue-50 text-blue-600'
-                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                    ? isDarkMode ? 'border-blue-500 bg-slate-700 text-white' : 'border-blue-600 bg-blue-50 text-blue-600'
+                    : 'border-border text-foreground hover:border-gray-300'
                 }`}
               >
                 {option.label}
@@ -224,8 +226,8 @@ export default function EditProfilePage() {
 
         {/* Info */}
         <div className="px-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
+          <div className={`rounded-lg p-4 border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-blue-50 border-blue-200'}`}>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-blue-800'}`}>
               💡 {t.editProfile.tipContent}
             </p>
           </div>

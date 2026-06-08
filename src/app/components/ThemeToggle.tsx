@@ -9,7 +9,7 @@ export function ThemeToggle() {
     <motion.button
       whileTap={{ scale: 0.95 }}
       onClick={toggleTheme}
-      className="fixed top-4 right-20 z-50 flex items-center gap-2 px-4 py-2 h-11 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full shadow-lg hover:shadow-xl transition-all"
+      className="fixed top-4 right-20 z-50 flex items-center gap-2 px-4 py-2 h-11 bg-card dark:bg-gray-800 border-2 border-border dark:border-gray-700 rounded-full shadow-lg hover:shadow-xl transition-all"
       title={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
     >
       <motion.div
@@ -23,7 +23,7 @@ export function ThemeToggle() {
           <Sun size={20} className="text-yellow-500" />
         )}
       </motion.div>
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+      <span className="text-sm font-medium text-foreground dark:text-gray-200">
         {isDarkMode ? '深色' : '浅色'}
       </span>
     </motion.button>

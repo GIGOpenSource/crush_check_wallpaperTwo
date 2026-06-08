@@ -21,21 +21,48 @@ import {
 } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken, getAuthToken } from '../../api/request';
 import { logoutUser } from '../../api/auth';
 import { useUnreadCount } from '../hooks/useUnreadCount';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function SettingsPage() {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .dark-modal .ant-modal-content {
+        background-color: #0f1f36 !important;
+        border-color: #1e3a5f !important;
+      }
+      .dark-modal .ant-modal-header {
+        background-color: #0f1f36 !important;
+        border-bottom-color: #1e3a5f !important;
+      }
+      .dark-modal .ant-modal-title {
+        color: #e8eef5 !important;
+      }
+      .dark-modal .ant-modal-close-icon {
+        color: #e8eef5 !important;
+      }
+      .dark-modal .ant-modal-body {
+        background-color: #0f1f36 !important;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const { modal } = App.useApp();
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
+  const { isDarkMode, setTheme } = useTheme();
   const { profile } = useUserProfile();
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const { clear: clearUnreadCount } = useUnreadCount();
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   
   // 检查是否登录
@@ -60,11 +87,6 @@ export default function SettingsPage() {
     { code: 'es', name: 'Español', flag: 'ES' },
     { code: 'fr', name: 'Français', flag: 'FR' },
   ];
-
-  const handleLanguageChange = (langCode: 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr') => {
-    setLanguage(langCode);
-    setShowLanguageModal(false);
-  };
 
   const handleLogout = async () => {
     modal.confirm({
@@ -126,13 +148,13 @@ export default function SettingsPage() {
           chevron: true,
           value: languageOptions.find(lang => lang.code === language)?.name || 'English',
         },
-        // {
-        //   icon: isDarkMode ? Moon : Sun,
-        //   label: isDarkMode ? t.settings.darkMode : t.settings.lightMode,
-        //   toggle: true,
-        //   value: isDarkMode,
-        //   onChange: setIsDarkMode,
-        // },
+        {
+          icon: isDarkMode ? Moon : Sun,
+          label: isDarkMode ? t.settings.darkMode : t.settings.lightMode,
+          toggle: true,
+          value: isDarkMode,
+          onChange: (val: boolean) => setTheme(val ? 'dark' : 'light'),
+        },
       ],
     },
     {
@@ -198,45 +220,45 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+    <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
-            <ArrowLeft size={24} className="text-gray-700" />
+            <ArrowLeft size={24} className="text-foreground" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">{t.profile.settings}</h1>
+          <h1 className="text-xl font-bold text-foreground">{t.profile.settings}</h1>
         </div>
       </header>
 
       {/* Settings Sections */}
       <div className="py-4 space-y-6">
         {settingsSections.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="bg-white">
+          <div key={sectionIndex} className="bg-card">
             <div className="px-4 py-3">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                 {section.title}
               </h2>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border">
               {section.items.map((item, itemIndex) => (
                 <motion.div
                   key={itemIndex}
                   whileTap={{ scale: 0.98 }}
-                  className="px-4 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="px-4 py-4 flex items-center justify-between cursor-pointer hover:bg-muted transition-colors"
                   onClick={item.onClick}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <item.icon size={20} className="text-gray-700" />
+                    <div className="p-2 bg-muted rounded-lg">
+                      <item.icon size={20} className="text-foreground" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">{item.label}</span>
+                      <span className="font-medium text-foreground">{item.label}</span>
                       {item.value && typeof item.value === 'string' && (
-                        <span className="text-sm text-gray-500">{item.value}</span>
+                        <span className="text-sm text-muted-foreground">{item.value}</span>
                       )}
                     </div>
                   </div>
@@ -256,7 +278,7 @@ export default function SettingsPage() {
                     >
                       <motion.div
                         layout
-                        className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm"
+                        className="absolute top-0.5 w-5 h-5 bg-card rounded-full shadow-sm"
                         animate={{ left: item.value ? '26px' : '2px' }}
                         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                       />
@@ -264,7 +286,7 @@ export default function SettingsPage() {
                   )}
                   
                   {item.chevron && (
-                    <ChevronRight size={20} className="text-gray-400" />
+                    <ChevronRight size={20} className="text-muted-foreground" />
                   )}
                 </motion.div>
               ))}
@@ -277,7 +299,7 @@ export default function SettingsPage() {
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className="w-full bg-white border-2 border-red-200 text-red-600 py-4 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-red-50 transition-colors"
+            className="w-full bg-card border-2 border-destructive/30 text-destructive py-4 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-destructive/10 transition-colors"
           >
             <LogOut size={20} />
             <span>{t.settings.logOut}</span>
@@ -286,54 +308,66 @@ export default function SettingsPage() {
 
         {/* Version Info */}
         <div className="px-4 text-center">
-          <p className="text-sm text-gray-400">{t.settings.appVersion}</p>
-          <p className="text-xs text-gray-400 mt-1">{t.settings.copyright}</p>
+          <p className="text-sm text-muted-foreground">{t.settings.appVersion}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t.settings.copyright}</p>
         </div>
       </div>
 
       {/* Language Selection Modal */}
-      <Modal
-        title={t.settings.language}
-        open={showLanguageModal}
-        onCancel={() => setShowLanguageModal(false)}
-        footer={null}
-        width={280}
-        className="rounded-2xl"
-        styles={{
-          body: { padding: '12px' }
-        }}
-      >
-        <div className="space-y-1 py-1">
-          {languageOptions.map((lang) => (
-            <motion.button
-              key={lang.code}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleLanguageChange(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr')}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
-                language === lang.code
-                  ? 'bg-blue-50 border-2 border-blue-500'
-                  : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
-              }`}
+      <AnimatePresence>
+        {showLanguageModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className={`fixed inset-0 z-50 ${isDarkMode ? 'bg-black/60' : 'bg-black/50'}`}
+              onClick={() => setShowLanguageModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className={`fixed z-50 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[280px] rounded-2xl shadow-xl border overflow-hidden ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="text-sm font-bold text-gray-800 w-7 text-center">
-                  {lang.flag}
-                </span>
-                <span className={`text-sm ${language === lang.code ? 'text-blue-600 font-semibold' : 'text-gray-700 font-medium'}`}>
-                  {lang.name}
-                </span>
+              <div className="px-3 py-2 max-h-[50vh] overflow-y-auto">
+                {languageOptions.map((lang) => (
+                  <motion.button
+                    key={lang.code}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr');
+                      setShowLanguageModal(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all ${
+                      language === lang.code
+                        ? isDarkMode ? 'bg-blue-600' : 'bg-blue-100'
+                        : isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-bold w-8 ${isDarkMode ? (language === lang.code ? 'text-white' : 'text-gray-300') : (language === lang.code ? 'text-blue-700' : 'text-gray-800')}`}>
+                        {lang.flag}
+                      </span>
+                      <span className={`text-sm ${language === lang.code ? (isDarkMode ? 'text-white font-semibold' : 'text-blue-700 font-semibold') : (isDarkMode ? 'text-gray-200 font-medium' : 'text-gray-700 font-medium')}`}>
+                        {lang.name}
+                      </span>
+                    </div>
+                    {language === lang.code && (
+                      <motion.div
+                        layoutId="activeLang"
+                        className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-white' : 'bg-blue-600'}`}
+                      />
+                    )}
+                  </motion.button>
+                ))}
               </div>
-              {language === lang.code && (
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              )}
-            </motion.button>
-          ))}
-        </div>
-      </Modal>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <BottomNav />
     </div>

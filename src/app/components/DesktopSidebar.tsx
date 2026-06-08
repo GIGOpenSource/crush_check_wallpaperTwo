@@ -67,13 +67,13 @@ export function DesktopSidebar() {
     <>
       {/* 折叠后的图标菜单 */}
       <aside 
-        className={`fixed left-0 top-0 bottom-0 bg-white border-r border-gray-200 z-40 transition-all duration-300 ${
+        className={`fixed left-0 top-0 bottom-0 bg-card border-r border-border z-40 transition-all duration-300 ${
           isCollapsed ? 'w-16 block' : 'w-0 hidden'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo - 简化版 */}
-          <div className="p-4 border-b border-gray-200 flex justify-center items-center h-16">
+          <div className="p-4 border-b border-border flex justify-center items-center h-16">
             <span className="text-lg font-bold text-blue-600">MW</span>
           </div>
 
@@ -90,10 +90,10 @@ export function DesktopSidebar() {
                       to={item.path}
                       data-active={isActive ? 'true' : undefined}
                       className={`flex items-center justify-center w-full py-3 rounded-lg transition-colors relative group ${
-                        isActive ? 'bg-blue-50' : 'hover:bg-gray-50'
+                        isActive ? 'bg-blue-500/10' : 'hover:bg-background'
                       }`}
                     >
-                      <Icon size={20} strokeWidth={isActive ? 2.25 : 2} className={isActive ? 'text-blue-600' : 'text-gray-600'} />
+                      <Icon size={20} strokeWidth={isActive ? 2.25 : 2} className={isActive ? 'text-blue-400' : 'text-gray-300 dark:text-gray-200'} />
                       
                       {/* Tooltip */}
                       <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
@@ -115,24 +115,24 @@ export function DesktopSidebar() {
 
       {/* 完整的侧边栏 */}
       <aside 
-        className={`desktop-sidebar fixed left-0 top-0 bottom-0 bg-white border-r border-gray-200 z-40 transition-all duration-300 ${
+        className={`desktop-sidebar fixed left-0 top-0 bottom-0 bg-card border-r border-border z-40 transition-all duration-300 ${
           isCollapsed ? 'w-0 hidden' : 'w-64 block'
         }`}
       >
         {/* 设置按钮 - 右上角 */}
         <button
           onClick={() => navigate('/settings')}
-          className="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+          className="absolute top-4 right-4 w-10 h-10 bg-muted hover:bg-muted/80 rounded-full flex items-center justify-center transition-colors"
           aria-label="设置"
         >
-          <Settings size={20} className="text-gray-600" />
+          <Settings size={20} className="text-foreground" />
         </button>
 
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-800">{t.home.title}</h1>
-            <p className="text-sm text-gray-500 mt-1">{t.home.subtitle}</p>
+          <div className="p-6 border-b border-border">
+            <h1 className="text-xl font-bold text-foreground">{t.home.title}</h1>
+            <p className="text-sm text-muted-foreground mt-1">{t.home.subtitle}</p>
           </div>
 
           {/* Navigation */}
@@ -148,7 +148,7 @@ export function DesktopSidebar() {
                       to={item.path}
                       data-active={isActive ? 'true' : undefined}
                       className={`desktop-sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                        isActive ? 'font-semibold' : 'hover:bg-gray-50'
+                        isActive ? 'font-semibold bg-slate-700 text-blue-400' : 'text-gray-200 hover:bg-slate-700/50 hover:text-white'
                       }`}
                       onClick={() => {
                         // 点击通知项时刷新未读数量
@@ -173,8 +173,8 @@ export function DesktopSidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">{settings?.site_name}</p>
+          <div className="p-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">{settings?.site_name}</p>
           </div>
         </div>
       </aside>
@@ -183,14 +183,14 @@ export function DesktopSidebar() {
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="fixed top-4 right-54 z-50 flex items-center gap-2 px-5 py-2 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        className="fixed top-4 right-54 z-50 flex items-center gap-2 px-5 py-2 bg-card border-2 border-border rounded-full shadow-lg hover:shadow-xl transition-shadow"
         aria-label={isCollapsed ? '展开侧边栏' : '折叠侧边栏'}
         // title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (
-          <PanelLeftOpen size={18} className="text-gray-700" />
+          <PanelLeftOpen size={18} className="text-foreground" />
         ) : (
-          <PanelLeftClose size={18} className="text-gray-700" />
+          <PanelLeftClose size={18} className="text-foreground" />
         )}
       </motion.button>
     </>

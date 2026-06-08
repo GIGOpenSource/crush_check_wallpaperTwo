@@ -126,9 +126,9 @@ export default function SearchPage() {
         <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/search`} />
       </Helmet>
-      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
         <div className="px-4 py-3">
           <SearchBar
             onSearch={(q) => setQuery(q)}
@@ -147,11 +147,11 @@ export default function SearchPage() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-white border-b border-gray-200 overflow-hidden"
+            className="bg-card border-b border-border overflow-hidden"
           >
             <div className="px-4 py-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-900">{t.searchPage.filters}</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t.searchPage.filters}</h3>
                 {activeFilterCount > 0 && (
                   <button
                     onClick={clearFilters}
@@ -164,7 +164,7 @@ export default function SearchPage() {
 
               {/* Resolution */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.resolution}</h4>
+                <h4 className="text-xs font-medium text-foreground mb-2">{t.searchPage.resolution}</h4>
                 <div className="flex flex-wrap gap-2">
                   {resolutionOptions.map((res) => (
                     <button
@@ -173,7 +173,7 @@ export default function SearchPage() {
                       className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
                         filters.resolution.includes(res)
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                       }`}
                     >
                       {res}
@@ -184,7 +184,7 @@ export default function SearchPage() {
 
               {/* Aspect Ratio */}
               <div className="mb-4">
-                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.aspectRatio}</h4>
+                <h4 className="text-xs font-medium text-foreground mb-2">{t.searchPage.aspectRatio}</h4>
                 <div className="flex flex-wrap gap-2">
                   {aspectRatioOptions.map((ratio) => (
                     <button
@@ -193,7 +193,7 @@ export default function SearchPage() {
                       className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
                         filters.aspectRatio.includes(ratio)
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                       }`}
                     >
                       {ratio}
@@ -204,7 +204,7 @@ export default function SearchPage() {
 
               {/* Purity - 暂时注释掉 */}
               {/* <div>
-                <h4 className="text-xs font-medium text-gray-700 mb-2">{t.searchPage.contentRating}</h4>
+                <h4 className="text-xs font-medium text-foreground mb-2">{t.searchPage.contentRating}</h4>
                 <div className="flex flex-wrap gap-2">
                   {purityOptions.map((purity) => (
                     <button
@@ -213,7 +213,7 @@ export default function SearchPage() {
                       className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
                         filters.purity.includes(purity)
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                       }`}
                     >
                       {t.purity[purity]}
@@ -228,7 +228,7 @@ export default function SearchPage() {
 
       {/* Active Filters */}
       {activeFilterCount > 0 && (
-        <div className="bg-white border-b border-gray-200 px-4 py-2">
+        <div className="bg-card border-b border-border px-4 py-2">
           <div className="flex flex-wrap gap-2">
             {filters.resolution.map((res) => (
               <FilterChip
@@ -259,7 +259,7 @@ export default function SearchPage() {
       <div className="py-4">
         {loading && filteredWallpapers.length === 0 ? (
            <div className="flex flex-col items-center justify-center py-16 px-4">
-             <p className="text-gray-500">{t.common.loading}</p>
+             <p className="text-muted-foreground">{t.common.loading}</p>
            </div>
         ) : error ? (
            <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -272,7 +272,7 @@ export default function SearchPage() {
               <div className="flex justify-center mt-4">
                 <button 
                   onClick={loadMore}
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 bg-card border border-gray-300 rounded-md text-sm text-foreground hover:bg-background"
                 >
                    {t.common.loadMore}
                 </button>
@@ -281,11 +281,11 @@ export default function SearchPage() {
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <SlidersHorizontal size={32} className="text-gray-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+              <SlidersHorizontal size={32} className="text-muted-foreground" />
             </div>
-            <p className="text-gray-500 text-center mb-2">{t.searchPage.noWallpapersFound}</p>
-            <p className="text-sm text-gray-400 text-center">{t.searchPage.tryAdjusting}</p>
+            <p className="text-muted-foreground text-center mb-2">{t.searchPage.noWallpapersFound}</p>
+            <p className="text-sm text-muted-foreground text-center">{t.searchPage.tryAdjusting}</p>
           </div>
         )}
       </div>

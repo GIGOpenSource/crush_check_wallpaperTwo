@@ -111,25 +111,25 @@ export default function HomePage() {
         <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/`} />
       </Helmet>
-      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <header className="bg-card border-b border-border sticky top-0 z-40">
           <div className="px-4 py-3">
-            <h1 className="text-xl font-bold text-gray-900 mb-3">{t.home.title}</h1>
+            <h1 className="text-xl font-bold text-foreground mb-3">{t.home.title}</h1>
             <SearchBar />
           </div>
         </header>
 
         {showEditorsBanner ? (
-          <section className="bg-white py-4 mb-6">
+          <section className="bg-card py-4 mb-6">
             <div className="px-4 mb-3">
-              <h2 className="text-lg font-semibold text-gray-900">{t.home.editorsPicks}</h2>
+              <h2 className="text-lg font-semibold text-foreground">{t.home.editorsPicks}</h2>
             </div>
 
             {featuredLoading ? (
-              <div className="px-4 py-8 text-center text-sm text-gray-500">{t.common.loading}</div>
+              <div className="px-4 py-8 text-center text-sm text-muted-foreground">{t.common.loading}</div>
             ) : featuredError || featuredWallpapers.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-gray-500">{t.searchPage.noWallpapersFound}</div>
+              <div className="px-4 py-8 text-center text-sm text-muted-foreground">{t.searchPage.noWallpapersFound}</div>
             ) : (
               <div className="relative">
                 <div
@@ -169,16 +169,16 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={handlePrev}
-                  className="absolute left-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white/90 transition-all"
+                  className="absolute left-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-card/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-card/90 transition-all"
                 >
-                  <ChevronLeft size={24} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
+                  <ChevronLeft size={24} className="text-foreground/60 hover:text-foreground transition-colors" />
                 </button>
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="absolute right-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white/90 transition-all"
+                  className="absolute right-6 top-2/5 -translate-y-1/2 w-10 h-10 bg-card/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-card/90 transition-all"
                 >
-                  <ChevronRight size={24} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
+                  <ChevronRight size={24} className="text-foreground/60 hover:text-foreground transition-colors" />
                 </button>
 
                 <div className="flex items-center justify-center gap-2 mt-4">
@@ -205,7 +205,7 @@ export default function HomePage() {
         {/* Popular Wallpapers */}
         <section className="py-4">
           <div className="px-4 mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-foreground">
               {isTrendingRoute ? t.home.hotWallpapers : t.home.popularWallpapers}
             </h2>
             <Link to="/search" className="text-sm text-blue-600 hover:text-blue-700">
@@ -213,9 +213,9 @@ export default function HomePage() {
             </Link>
           </div>
           {popularLoading ? (
-            <p className="px-4 py-8 text-center text-sm text-gray-500">{t.common.loading}</p>
+            <p className="px-4 py-8 text-center text-sm text-muted-foreground">{t.common.loading}</p>
           ) : popularError || popularWallpapers.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-gray-500">{t.searchPage.noWallpapersFound}</p>
+            <p className="px-4 py-8 text-center text-sm text-muted-foreground">{t.searchPage.noWallpapersFound}</p>
           ) : (
             <>
               <WallpaperGrid wallpapers={popularWallpapers} listNavBase={popularListNavBase} />
@@ -223,7 +223,7 @@ export default function HomePage() {
                 <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
               ) : null}
               {popularLoadingMore ? (
-                <p className="px-4 py-4 text-center text-xs text-gray-400">{t.common.loading}</p>
+                <p className="px-4 py-4 text-center text-xs text-muted-foreground">{t.common.loading}</p>
               ) : null}
             </>
           )}

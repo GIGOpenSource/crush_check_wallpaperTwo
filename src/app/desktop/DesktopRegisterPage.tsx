@@ -5,11 +5,13 @@ import { Mail, Lock, UserPlus, Info, Eye, EyeOff } from 'lucide-react';
 import { ApiError } from '../../api/request';
 import { registerUser } from '../../api/auth';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function DesktopRegisterPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -23,14 +25,18 @@ export default function DesktopRegisterPage() {
       message.warning(t.register.fillAllFields);
       return;
     }
-    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      message.warning(t.login.invalidEmail);
+      return;
+    }
+
     // 密码正则校验：最少8位，必须包含字母和数字
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(password)) {
       message.error(t.register.passwordRequirement);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       message.error(t.register.passwordMismatch);
       return;
@@ -42,7 +48,7 @@ export default function DesktopRegisterPage() {
         password,
         confirm_password: confirmPassword,
       });
-      
+
       // 检查响应中的code字段（业务状态码）
       const responseData = response as any;
       if (responseData && responseData.code !== undefined && responseData.code !== 200) {
@@ -51,7 +57,7 @@ export default function DesktopRegisterPage() {
         message.error(errorMessage);
         return;
       }
-      
+
       // 注册成功
       message.success(t.register.registerSuccess);
       navigate('/login');
@@ -59,7 +65,7 @@ export default function DesktopRegisterPage() {
       // 处理HTTP错误（非2xx状态码）
       if (error instanceof ApiError) {
         const responseData = error.data as any;
-        
+
         // 优先从响应的data中提取详细错误信息
         if (responseData && responseData.data && typeof responseData.data === 'object') {
           // 尝试从data对象中提取第一个错误信息
@@ -73,7 +79,7 @@ export default function DesktopRegisterPage() {
             return;
           }
         }
-        
+
         // 使用message字段
         if (error.message && error.message !== 'Request failed') {
           message.error(error.message);
@@ -89,8 +95,8 @@ export default function DesktopRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+    <div className="min-h-screen bg-background">
+      <header className="text-white" style={{ backgroundColor: theme === 'dark' ? '#0a1628' : undefined, background: theme !== 'dark' ? 'linear-gradient(to bottom right, #2563eb, #9333ea)' : undefined }}>
         <div className="max-w-lg mx-auto px-5 pt-10 pb-12">
           <h1 className="text-3xl font-bold">{t.register.createAccount}</h1>
           <p className="mt-2 text-white/85">{t.register.registerToUpload}</p>
@@ -98,65 +104,69 @@ export default function DesktopRegisterPage() {
       </header>
 
       <main className="max-w-lg mx-auto px-5 -mt-7 pb-10">
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border">
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.emailAddress}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-                <Mail size={18} className="text-gray-400" />
+              <span className="mb-2 block text-sm font-medium text-foreground">{t.register.emailAddress}</span>
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3">
+                <Mail size={18} className="text-muted-foreground" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.register.emailPlaceholder}
-                  className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                  className="h-12 w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.setPassword}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-                <Lock size={18} className="text-gray-400" />
+              <span className="mb-2 block text-sm font-medium text-foreground">{t.register.setPassword}</span>
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3">
+                <Lock size={18} className="text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.register.passwordPlaceholder}
-                  className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                  className="h-12 w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  {showPassword ? <Eye size={18} className="text-gray-500" /> :  <EyeOff size={18} className="text-gray-500" />}
-                </button>
+                {!/Edge|Edg/i.test(navigator.userAgent) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="p-1 rounded-full hover:bg-muted transition-colors"
+                  >
+                    {showPassword ? <Eye size={18} className="text-muted-foreground" /> : <EyeOff size={18} className="text-muted-foreground" />}
+                  </button>
+                )}
               </div>
-              <p className="mt-2 flex items-start gap-1.5 text-sm text-gray-500">
+              <p className="mt-2 flex items-start gap-1.5 text-sm text-muted-foreground">
                 <Info size={16} className="mt-0.5 shrink-0" />
                 <span>{t.register.passwordHint}</span>
               </p>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">{t.register.confirmPassword}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-                <Lock size={18} className="text-gray-400" />
+              <span className="mb-2 block text-sm font-medium text-foreground">{t.register.confirmPassword}</span>
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3">
+                <Lock size={18} className="text-muted-foreground" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder={t.register.confirmPasswordPlaceholder}
-                  className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                  className="h-12 w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  {showConfirmPassword ? <Eye size={18} className="text-gray-500" />  : <EyeOff size={18} className="text-gray-500" />}
-                </button>
+                {!/Edge|Edg/i.test(navigator.userAgent) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="p-1 rounded-full hover:bg-muted transition-colors"
+                  >
+                    {showConfirmPassword ? <Eye size={18} className="text-muted-foreground" /> : <EyeOff size={18} className="text-muted-foreground" />}
+                  </button>
+                )}
               </div>
             </label>
 

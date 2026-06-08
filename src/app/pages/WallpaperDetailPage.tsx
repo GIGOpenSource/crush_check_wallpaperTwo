@@ -102,9 +102,9 @@ export default function WallpaperDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-gray-50">
+      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-background">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-gray-500">{t.common.loading}</p>
+          <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
         <BottomNav />
       </div>
@@ -113,10 +113,10 @@ export default function WallpaperDetailPage() {
 
   if (!wallpaper || error) {
     return (
-      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-gray-50">
+      <div className="min-h-screen flex flex-col max-w-md mx-auto bg-background">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center px-4">
-            <p className="text-gray-500 mb-4">{t.wallpaperDetail.wallpaperNotFound}</p>
+            <p className="text-muted-foreground mb-4">{t.wallpaperDetail.wallpaperNotFound}</p>
             <button
               type="button"
               onClick={() => navigate(-1)}
@@ -232,7 +232,7 @@ export default function WallpaperDetailPage() {
         {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/wallpaper/${wallpaper?.id}`} />
       </Helmet>
-      <div className="min-h-screen bg-gray-50 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
         {/* Header */}
         <header className="bg-gradient-to-b from-black/50 to-transparent">
           <div className="flex p-4">
@@ -242,17 +242,17 @@ export default function WallpaperDetailPage() {
                 umengclick('detail_back');
                 navigate(-1);
               }}
-              className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center"
+              className="w-10 h-10 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center"
             >
-              <ChevronLeft size={24} className="text-gray-900" />
+              <ChevronLeft size={24} className="text-foreground" />
             </button>
-            <div className="font-bold ml-4 text-lg w-80 mt-2">{wallpaper.title}</div>
+            <div className="font-bold ml-4 text-lg w-80 mt-2 text-white">{wallpaper.title}</div>
           </div>
         </header>
 
         {/* Wallpaper Image Container */}
         <div className="px-4">
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
+          <div className="bg-card rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
             <div className="relative aspect-[3/4] bg-gray-900">
               <img
                 src={wallpaper.imageUrl}
@@ -265,10 +265,10 @@ export default function WallpaperDetailPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-white mt-4 rounded-t-3xl">
-          <div className="px-4 py-4 border-b border-gray-200">
+        <div className="bg-card mt-4 rounded-t-3xl">
+          <div className="px-4 py-4 border-b border-border">
             {wallpaper.description && (
-              <p className="text-sm text-gray-600 mb-3">{wallpaper.description}</p>
+              <p className="text-sm text-muted-foreground mb-3">{wallpaper.description}</p>
             )}
             {/* 上传者信息 - 只在有uploader时显示 */}
             {wallpaper.uploader && (
@@ -281,7 +281,7 @@ export default function WallpaperDetailPage() {
                     navigate(`/profile/${wallpaper.uploader?.id}?other_id=${wallpaper.uploader?.id}`);
                   }
                 }}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <User size={16} />
                 <span className="text-sm">{wallpaper.uploader.username}</span>
@@ -290,32 +290,32 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 px-4 py-4 border-b border-gray-200">
+          <div className="grid grid-cols-3 gap-4 px-4 py-4 border-b border-border">
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <div className="flex items-center justify-center gap-1 text-foreground mb-1">
                 <Eye size={18} />
                 <span className="text-lg font-semibold">{formatNumber(wallpaper.views)}</span>
               </div>
-              <p className="text-xs text-gray-500">{t.wallpaperDetail.views}</p>
+              <p className="text-xs text-muted-foreground">{t.wallpaperDetail.views}</p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <div className="flex items-center justify-center gap-1 text-foreground mb-1">
                 <Download size={18} />
                 <span className="text-lg font-semibold">{formatNumber(localDownloads ?? wallpaper.downloads)}</span>
               </div>
-              <p className="text-xs text-gray-500">{t.wallpaperDetail.downloads}</p>
+              <p className="text-xs text-muted-foreground">{t.wallpaperDetail.downloads}</p>
             </div>
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-gray-900 mb-1">
+              <div className="flex items-center justify-center gap-1 text-foreground mb-1">
                 <Heart size={18} />
                 <span className="text-lg font-semibold">{formatNumber(localLikes ?? wallpaper.likes)}</span>
               </div>
-              <p className="text-xs text-gray-500">{t.wallpaperDetail.likes}</p>
+              <p className="text-xs text-muted-foreground">{t.wallpaperDetail.likes}</p>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="px-4 py-4 flex gap-3 border-t border-gray-200 fixed bottom-0 left-0 right-0 bg-white z-50">
+          <div className="px-4 py-4 flex gap-3 border-t border-border fixed bottom-0 left-0 right-0 bg-card z-50">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleDownload}
@@ -328,44 +328,44 @@ export default function WallpaperDetailPage() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleCollect}
-              className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${isLiked
-                ? 'bg-red-50 border-red-500 text-red-500'
-                : 'bg-white border-gray-300 text-gray-600'
+              className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors ${isLiked
+                ? 'bg-red-500/10 border-red-500 text-red-400'
+                : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'
                 }`}
             >
-              <Heart size={20} className={isLiked ? 'fill-red-500' : ''} />
+              <Heart size={20} className={isLiked ? 'fill-red-400' : ''} />
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleShare}
-              className="w-12 h-12 bg-white border-2 border-gray-300 text-gray-600 rounded-full flex items-center justify-center"
+              className="w-12 h-12  border-2 border-border text-muted-foreground hover:text-foreground hover:border-foreground rounded-full flex items-center justify-center transition-colors"
             >
               <Share2 size={20} />
             </motion.button>
           </div>
 
           {/* Wallpaper Details */}
-          <div className="px-4 py-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.details}</h3>
+          <div className="px-4 py-4 border-b border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t.wallpaperDetail.details}</h3>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-500">{t.wallpaperDetail.resolution}</span>
-                <span className="text-gray-900 font-medium">{wallpaper.resolution}</span>
+                <span className="text-muted-foreground">{t.wallpaperDetail.resolution}</span>
+                <span className="text-foreground font-medium">{wallpaper.resolution}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-500">{t.wallpaperDetail.aspectRatio}</span>
-                <span className="text-gray-900 font-medium">{wallpaper.aspectRatio}</span>
+                <span className="text-muted-foreground">{t.wallpaperDetail.aspectRatio}</span>
+                <span className="text-foreground font-medium">{wallpaper.aspectRatio}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-500">{t.wallpaperDetail.uploadDate}</span>
-                <span className="text-gray-900 font-medium">
+                <span className="text-muted-foreground">{t.wallpaperDetail.uploadDate}</span>
+                <span className="text-foreground font-medium">
                   {new Date(wallpaper.uploadDate).toLocaleDateString()}
                 </span>
               </div>
               {/* 上传者信息 - 只在有uploader时显示 */}
               {wallpaper.uploader && (
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
-                  <span className="text-gray-500">{t.wallpaperDetail.uploader || '上传者'}</span>
+                <div className="flex items-center justify-between pt-2 border-t border-border mt-2">
+                  <span className="text-muted-foreground">{t.wallpaperDetail.uploader || '上传者'}</span>
                   <div className="flex items-center gap-2">
                     {wallpaper.uploader.avatar && (
                       <img
@@ -374,7 +374,7 @@ export default function WallpaperDetailPage() {
                         className="w-6 h-6 rounded-full object-cover"
                       />
                     )}
-                    <span className="text-gray-900 font-medium">{wallpaper.uploader.username}</span>
+                    <span className="text-foreground font-medium">{wallpaper.uploader.username}</span>
                   </div>
                 </div>
               )}
@@ -382,8 +382,8 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Tags */}
-          <div className="px-4 py-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t.wallpaperDetail.tagsHeading}</h3>
+          <div className="px-4 py-4 border-b border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t.wallpaperDetail.tagsHeading}</h3>
             <div className="flex flex-wrap gap-2">
               {wallpaper.tags.map((tag) => (
                 <Link
@@ -404,19 +404,19 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Comments Section */}
-          <div className="px-4 py-4 border-b border-gray-200">
+          <div className="px-4 py-4 border-b border-border">
             <CommentSection wallpaperId={id || ''} />
           </div>
 
           {(loadingRelated || relatedWallpapers.length > 0) && (
             <div className="py-4">
               <div className="px-4 mb-4">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-sm font-semibold text-foreground">
                   {t.wallpaperDetail.relatedWallpapers}
                 </h3>
               </div>
               {loadingRelated ? (
-                <p className="px-4 py-4 text-center text-sm text-gray-500">{t.common.loading}</p>
+                <p className="px-4 py-4 text-center text-sm text-muted-foreground">{t.common.loading}</p>
               ) : (
                 <WallpaperGrid wallpapers={relatedWallpapers} />
               )}
@@ -440,10 +440,10 @@ export default function WallpaperDetailPage() {
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 p-6"
+                className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl z-50 p-6"
               >
                 <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   {t.wallpaperDetail.shareWallpaper}
                 </h3>
                 <div className="grid grid-cols-5 gap-2 sm:gap-4 mb-4">
@@ -470,16 +470,22 @@ export default function WallpaperDetailPage() {
                         setShowShareSheet(false);
                       }}
                     >
-                      <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Share2 size={24} className="text-gray-600" />
+                      <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center">
+                        {key === 'copy' ? (
+                          <Share2 size={24} className="text-gray-600 dark:text-white" />
+                        ) : (
+                          <span className="text-lg font-bold text-gray-600 dark:text-white">
+                            {key === 'tw' ? 'X' : key === 'fb' ? 'F' : key === 'wa' ? 'W' : key === 'pin' ? 'P' : 'S'}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-xs text-gray-600">{label}</span>
+                      <span className="text-xs text-gray-600 dark:text-white">{label}</span>
                     </button>
                   ))}
                 </div>
                 <button
                   onClick={() => setShowShareSheet(false)}
-                  className="w-full py-3 bg-gray-100 text-gray-700 rounded-full font-medium"
+                  className="w-full py-3 bg-muted text-foreground rounded-full font-medium"
                 >
                   {t.common.cancel}
                 </button>

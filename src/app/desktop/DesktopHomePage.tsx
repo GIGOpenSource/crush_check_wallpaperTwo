@@ -128,16 +128,16 @@ export default function DesktopHomePage() {
         <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/${isTrendingRoute ? 'trending' : ''}`} />
       </Helmet>
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-4 mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">{t.home.discoverWallpapers}</h2>
+                <h2 className="text-2xl font-bold text-foreground">{t.home.discoverWallpapers}</h2>
               </div>
               <div className="max-w-2xl">
                 <SearchBar />
@@ -152,7 +152,7 @@ export default function DesktopHomePage() {
               <section>
                 <div className="flex items-center gap-2 mb-6">
                   <Sparkles size={24} className="text-yellow-500" />
-                  <h2 className="text-2xl font-bold text-gray-900">{t.home.editorsPicks}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">{t.home.editorsPicks}</h2>
                 </div>
 
                 <div className="relative">
@@ -162,11 +162,11 @@ export default function DesktopHomePage() {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
                     {featuredLoading ? (
-                      <div className="w-full h-96 flex items-center justify-center text-gray-500">
+                      <div className="w-full h-96 flex items-center justify-center text-muted-foreground">
                         {t.common.loading}
                       </div>
                     ) : featuredError || featuredWallpapers.length === 0 ? (
-                       <div className="w-full h-96 flex items-center justify-center text-gray-500">
+                       <div className="w-full h-96 flex items-center justify-center text-muted-foreground">
                          {t.searchPage.noWallpapersFound}
                        </div>
                     ) : (
@@ -205,16 +205,16 @@ export default function DesktopHomePage() {
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white/90 transition-all"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-card/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-card/90 transition-all"
                   >
-                    <ChevronLeft size={28} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
+                    <ChevronLeft size={28} className="text-foreground/60 hover:text-foreground transition-colors" />
                   </button>
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white/90 transition-all"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-card/50 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-card/90 transition-all"
                   >
-                    <ChevronRight size={28} className="text-gray-900/60 hover:text-gray-900 transition-colors" />
+                    <ChevronRight size={28} className="text-foreground/60 hover:text-foreground transition-colors" />
                   </button>
 
                   {!featuredLoading && !featuredError && featuredWallpapers.length > 0 && (
@@ -229,8 +229,8 @@ export default function DesktopHomePage() {
                           <div
                             className={`h-2 rounded-full transition-all ${
                               index === currentSlide
-                                ? 'bg-white w-8'
-                                : 'bg-white/50 w-2 hover:bg-white/70'
+                                ? 'bg-card w-8'
+                                : 'bg-card/50 w-2 hover:bg-card/70'
                             }`}
                           />
                         </button>
@@ -244,7 +244,7 @@ export default function DesktopHomePage() {
             {/* Popular Wallpapers */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-foreground">
                   {isTrendingRoute ? t.home.hotWallpapers : t.home.popularWallpapers}
                 </h2>
                 <Link
@@ -256,9 +256,9 @@ export default function DesktopHomePage() {
                 </Link>
               </div>
               {popularLoading ? (
-                <p className="py-12 text-center text-gray-500">{t.common.loading}</p>
+                <p className="py-12 text-center text-muted-foreground">{t.common.loading}</p>
               ) : popularError || popularWallpapers.length === 0 ? (
-                <p className="py-12 text-center text-gray-500">{t.searchPage.noWallpapersFound}</p>
+                <p className="py-12 text-center text-muted-foreground">{t.searchPage.noWallpapersFound}</p>
               ) : (
                 <>
                   <DesktopWallpaperGrid
@@ -270,7 +270,7 @@ export default function DesktopHomePage() {
                     <div ref={popularSentinelRef} className="h-1 w-full shrink-0" aria-hidden />
                   ) : null}
                   {popularLoadingMore ? (
-                    <p className="py-6 text-center text-sm text-gray-400">{t.common.loading}</p>
+                    <p className="py-6 text-center text-sm text-muted-foreground">{t.common.loading}</p>
                   ) : null}
                 </>
               )}

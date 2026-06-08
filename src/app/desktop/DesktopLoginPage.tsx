@@ -5,11 +5,13 @@ import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import { ApiError, setAuthToken } from '../../api/request';
 import { extractApiErrorMessage, extractApiToken, extractApiUserId, isApiSuccess, loginUser } from '../../api/auth';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function DesktopLoginPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -21,8 +23,13 @@ export default function DesktopLoginPage() {
       message.warning(t.login.fillEmailAndPassword);
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       message.warning(t.login.invalidEmail);
+      return;
+    }
+    // 2. 密码校验：有空格直接提示
+    if (password.includes(' ')) {
+      message.warning(t.login.passwordContainsSpace);
       return;
     }
     setSubmitting(true);
@@ -41,7 +48,7 @@ export default function DesktopLoginPage() {
         return;
       }
       setAuthToken(token);
-      
+
       // 提取并保存 user_id
       const userId = extractApiUserId(res);
       if (userId !== null) {
@@ -51,7 +58,7 @@ export default function DesktopLoginPage() {
           console.error('保存 user_id 失败:', e);
         }
       }
-      
+
       message.success(t.login.loginSuccess);
       navigate('/');
     } catch (error) {
@@ -66,8 +73,8 @@ export default function DesktopLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+    <div className="min-h-screen bg-background">
+      <header className="text-white" style={{ backgroundColor: theme === 'dark' ? '#0a1628' : undefined, background: theme !== 'dark' ? 'linear-gradient(to bottom right, #2563eb, #9333ea)' : undefined }}>
         <div className="max-w-lg mx-auto px-5 pt-10 pb-12">
           <h1 className="text-3xl font-bold">{t.login.welcomeBack}</h1>
           <p className="mt-2 text-white/85">{t.login.loginToContinue}</p>
@@ -75,40 +82,42 @@ export default function DesktopLoginPage() {
       </header>
 
       <main className="max-w-lg mx-auto px-5 -mt-7 pb-10">
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+        <div className="rounded-3xl bg-card p-6 shadow-sm border border-border">
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">{t.login.emailAddress}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-                <Mail size={18} className="text-gray-400" />
+              <span className="mb-2 block text-sm font-medium text-foreground">{t.login.emailAddress}</span>
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3">
+                <Mail size={18} className="text-muted-foreground" />
                 <input
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.login.emailPlaceholder}
-                  className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                  className="h-12 w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-medium text-gray-700">{t.login.password}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-                <Lock size={18} className="text-gray-400" />
+              <span className="mb-2 block text-sm font-medium text-foreground">{t.login.password}</span>
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-background px-3">
+                <Lock size={18} className="text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.login.passwordPlaceholder}
-                  className="h-12 w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
+                  className="h-12 w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  {showPassword ?  <Eye size={18} className="text-gray-500" />: <EyeOff size={18} className="text-gray-500" />}
-                </button>
+                {!/Edge|Edg/i.test(navigator.userAgent) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="p-1 rounded-full hover:bg-muted transition-colors"
+                  >
+                    {showPassword ? <Eye size={18} className="text-muted-foreground" /> : <EyeOff size={18} className="text-muted-foreground" />}
+                  </button>
+                )}
               </div>
             </label>
 

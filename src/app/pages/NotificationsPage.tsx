@@ -59,12 +59,12 @@ export default function MobileNotificationsPage() {
   // 如果未登录，显示需要登录的提示
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background dark:bg-gray-900 pb-20 max-w-md mx-auto">
         {/* 顶部导航 */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700">
           <div className="px-4 py-4 flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-lg font-semibold text-foreground dark:text-white">
               {t.notifications.title}
             </h1>
           </div>
@@ -72,13 +72,13 @@ export default function MobileNotificationsPage() {
 
         {/* 未登录提示 */}
         <div className="flex flex-col items-center justify-center py-20 px-6">
-          <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
-            <Lock className="w-10 h-10 text-gray-400" />
+          <div className="w-20 h-20 bg-muted dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+            <Lock className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-foreground dark:text-white mb-2">
             {t.notifications.loginRequired}
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-center mb-8">
+          <p className="text-muted-foreground dark:text-muted-foreground text-center mb-8">
             {t.notifications.loginPrompt}
           </p>
           <button
@@ -217,17 +217,17 @@ export default function MobileNotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background dark:bg-gray-900 pb-20">
       {/* 顶部导航 */}
-      <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700">
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-lg font-semibold text-foreground dark:text-white">
               {t.notifications.title}
             </h1>
             {total !== undefined && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                 ({tr('notifications.messagesCount', { count: total })})
               </span>
             )}
@@ -235,8 +235,8 @@ export default function MobileNotificationsPage() {
         </div>
 
         {/* 未读数量和全部已读按钮 */}
-        <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="px-4 py-3 border-t border-border dark:border-gray-700 flex items-center justify-between">
+          <span className="text-sm text-gray-600 dark:text-muted-foreground">
             {actualUnreadCount > 0 ? tr('notifications.unreadMessages', { count: actualUnreadCount }) : t.notifications.allRead}
           </span>
           {actualUnreadCount > 0 && (
@@ -256,13 +256,13 @@ export default function MobileNotificationsPage() {
           // 加载状态
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-3 animate-pulse">
+              <div key={i} className="bg-card dark:bg-gray-800 rounded-lg p-3 animate-pulse">
                 <div className="flex gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="w-10 h-10 rounded-full bg-muted dark:bg-gray-700"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+                    <div className="h-4 bg-muted dark:bg-gray-700 rounded w-1/3"></div>
+                    <div className="h-3 bg-muted dark:bg-gray-700 rounded w-full"></div>
+                    <div className="h-3 bg-muted dark:bg-gray-700 rounded w-2/3"></div>
                   </div>
                 </div>
               </div>
@@ -271,8 +271,8 @@ export default function MobileNotificationsPage() {
         ) : error ? (
           // 错误状态
           <div className="text-center py-12">
-            <div className="text-gray-400 dark:text-gray-600 text-5xl mb-3">⚠️</div>
-            <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm">{t.notifications.loadFailed}</p>
+            <div className="text-muted-foreground dark:text-gray-600 text-5xl mb-3">⚠️</div>
+            <p className="text-muted-foreground dark:text-muted-foreground mb-4 text-sm">{t.notifications.loadFailed}</p>
             <button
               onClick={refresh}
               className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
@@ -283,8 +283,8 @@ export default function MobileNotificationsPage() {
         ) : notifications.length === 0 ? (
           // 空状态
           <div className="text-center py-12">
-            <div className="text-gray-300 dark:text-gray-700 text-5xl mb-3">🔔</div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{t.notifications.noNotifications}</p>
+            <div className="text-gray-300 dark:text-foreground text-5xl mb-3">🔔</div>
+            <p className="text-muted-foreground dark:text-muted-foreground text-sm">{t.notifications.noNotifications}</p>
           </div>
         ) : (
           // 消息列表
@@ -298,9 +298,9 @@ export default function MobileNotificationsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
                   onClick={() => handleMessageClick(notification)}
-                  className={`bg-white dark:bg-gray-800 rounded-lg p-3 border transition-all active:scale-[0.98] cursor-pointer ${isUnread
+                  className={`bg-card dark:bg-gray-800 rounded-lg p-3 border transition-all active:scale-[0.98] cursor-pointer ${isUnread
                     ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-gray-200 dark:border-gray-700'
+                    : 'border-border dark:border-gray-700'
                     }`}
                 >
                   <div className="flex gap-3">
@@ -326,7 +326,7 @@ export default function MobileNotificationsPage() {
                         <div className="flex-1 min-w-0">
                           {/* 第一行：标题（大字）+ 未读蓝点 */}
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            <h3 className="text-sm font-medium text-foreground dark:text-white truncate">
                               {notification.sender_info?.nickname || notification.title || t.notifications.systemNotification}
                             </h3>
                             {isUnread && (
@@ -375,7 +375,7 @@ export default function MobileNotificationsPage() {
                           })()}
 
                           {/* 时间 */}
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                             {formatTime(notification.created_at)}
                           </p>
                         </div>
@@ -402,7 +402,7 @@ export default function MobileNotificationsPage() {
                                 handleDelete(notification.id);
                               }}
                               disabled={processingId === notification.id}
-                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full transition-colors disabled:opacity-50"
+                              className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full transition-colors disabled:opacity-50"
                               aria-label={t.notifications.deleteMessage}
                             >
                               <Trash2 size={16} />
@@ -419,7 +419,7 @@ export default function MobileNotificationsPage() {
             {/* 加载更多指示器 - 自动加载时显示 */}
             {loadingMore && (
               <div className="text-center py-4">
-                <div className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="inline-flex items-center gap-2 text-muted-foreground dark:text-muted-foreground text-sm">
                   <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   <span>{t.notifications.loading}</span>
                 </div>
@@ -428,7 +428,7 @@ export default function MobileNotificationsPage() {
 
             {/* 没有更多数据提示 */}
             {!hasMore && notifications.length > 0 && (
-              <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
+              <div className="text-center py-4 text-muted-foreground dark:text-muted-foreground text-sm">
                 {t.notifications.noMoreMessages}
               </div>
             )}

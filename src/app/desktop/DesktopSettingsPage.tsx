@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { DesktopSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken, getAuthToken } from '../../api/request';
@@ -34,10 +35,10 @@ export default function DesktopSettingsPage() {
   const { modal } = App.useApp();
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
+  const { isDarkMode, setTheme } = useTheme();
   const { profile } = useUserProfile();
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
   const { clear: clearUnreadCount } = useUnreadCount();
-  const [isDarkMode, setIsDarkMode] = useState(false);
   
   // 检查是否登录
   useEffect(() => {
@@ -106,21 +107,21 @@ export default function DesktopSettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-background flex">
       <DesktopSidebar />
       
       <div className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-4xl mx-auto flex items-center gap-4">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-muted rounded-full transition-colors"
               >
-                <ArrowLeft size={24} className="text-gray-700" />
+                <ArrowLeft size={24} className="text-foreground" />
               </button>
-              <h1 className="text-3xl font-bold text-gray-900">{t.profile.settings}</h1>
+              <h1 className="text-3xl font-bold text-foreground">{t.profile.settings}</h1>
             </div>
           </div>
         </header>
@@ -128,53 +129,53 @@ export default function DesktopSettingsPage() {
         <div className="px-8 py-8">
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Account Settings */}
-            <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">{t.settings.accountSettings}</h2>
+            <section className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">{t.settings.accountSettings}</h2>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border">
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => navigate('/profile/edit')}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-6 py-4 flex items-center justify-between hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-100 rounded-xl">
                       <User size={24} className="text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{t.settings.profileSettings}</h3>
-                      <p className="text-sm text-gray-500">{t.settings.profileSettingsDesc}</p>
+                      <h3 className="font-semibold text-foreground">{t.settings.profileSettings}</h3>
+                      <p className="text-sm text-muted-foreground">{t.settings.profileSettingsDesc}</p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-400" />
+                  <ChevronRight size={20} className="text-muted-foreground" />
                 </motion.div>
                 
                 <div 
                   onClick={() => navigate('/site-info/privacy')}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-6 py-4 flex items-center justify-between hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-purple-100 rounded-xl">
                       <Shield size={24} className="text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{t.settings.privacySecurity}</h3>
-                      <p className="text-sm text-gray-500">{t.settings.privacySecurityDesc}</p>
+                      <h3 className="font-semibold text-foreground">{t.settings.privacySecurity}</h3>
+                      <p className="text-sm text-muted-foreground">{t.settings.privacySecurityDesc}</p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-400" />
+                  <ChevronRight size={20} className="text-muted-foreground" />
                 </div>
               </div>
             </section>
 
             {/* Appearance */}
-            {/* <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">{t.settings.appearance}</h2>
+            <section className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">{t.settings.appearance}</h2>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border">
                 <div className="px-6 py-4 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-yellow-100 rounded-xl">
@@ -185,35 +186,35 @@ export default function DesktopSettingsPage() {
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-foreground">
                         {isDarkMode ? t.settings.darkMode : t.settings.lightMode}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {isDarkMode ? t.settings.themeDarkEnabled : t.settings.themeLightEnabled}
                       </p>
                     </div>
                   </div>
                   <button
-                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
                     className={`relative w-14 h-7 rounded-full transition-colors ${
                       isDarkMode ? 'bg-blue-600' : 'bg-gray-300'
                     }`}
                   >
                     <motion.div
                       layout
-                      className="absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md"
+                      className="absolute top-0.5 w-6 h-6 bg-card rounded-full shadow-md"
                       animate={{ left: isDarkMode ? '30px' : '2px' }}
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   </button>
                 </div>
               </div>
-            </section> */}
+            </section>
 
             {/* Language */}
-            <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">{t.settings.language}</h2>
+            <section className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">{t.settings.language}</h2>
               </div>
               <div className="px-6 py-6">
                 <div className="grid grid-cols-3 gap-3">
@@ -225,16 +226,16 @@ export default function DesktopSettingsPage() {
                       onClick={() => setLanguage(lang.code as any)}
                       className={`flex items-center gap-3 px-5 py-4 rounded-xl border-2 transition-all duration-200 ${
                         language === lang.code
-                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md'
-                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                          ? isDarkMode ? 'border-blue-500 bg-slate-700 shadow-md' : 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md'
+                          : 'border-border hover:border-blue-300 hover:bg-background'
                       }`}
                     >
-                      <span className="text-sm font-bold text-gray-800">
+                      <span className={`text-sm font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                         {lang.flag}
                       </span>
                       <span
                         className={`font-semibold ${
-                          language === lang.code ? 'text-blue-700' : 'text-gray-700'
+                          language === lang.code ? (isDarkMode ? 'text-white' : 'text-blue-700') : 'text-foreground'
                         }`}
                       >
                         {lang.name}
@@ -246,11 +247,11 @@ export default function DesktopSettingsPage() {
             </section>
 
             {/* Notifications */}
-            <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">{t.settings.notifications}</h2>
+            <section className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">{t.settings.notifications}</h2>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border">
                 {[
                   { 
                     key: 'enable_like_notification' as const, 
@@ -291,8 +292,8 @@ export default function DesktopSettingsPage() {
                         <item.icon size={24} className={item.iconColor} />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{item.label}</h3>
-                        <p className="text-sm text-gray-500">{item.description}</p>
+                        <h3 className="font-semibold text-foreground">{item.label}</h3>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
                       </div>
                     </div>
                     <button
@@ -304,7 +305,7 @@ export default function DesktopSettingsPage() {
                     >
                       <motion.div
                         layout
-                        className="absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-md"
+                        className="absolute top-0.5 w-6 h-6 bg-card rounded-full shadow-md"
                         animate={{ 
                           left: notificationSettings?.[item.key] ? '30px' : '2px' 
                         }}
@@ -317,55 +318,55 @@ export default function DesktopSettingsPage() {
             </section>
 
             {/* About */}
-            <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">{t.settings.about}</h2>
+            <section className="bg-card rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">{t.settings.about}</h2>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border">
                 <div 
                   onClick={() => navigate('/site-info/help')}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-6 py-4 flex items-center justify-between hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-gray-100 rounded-xl">
-                      <HelpCircle size={24} className="text-gray-600" />
+                    <div className="p-3 bg-muted rounded-xl">
+                      <HelpCircle size={24} className="text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{t.settings.helpSupport}</h3>
-                      <p className="text-sm text-gray-500">{t.settings.helpSupportDesc}</p>
+                      <h3 className="font-semibold text-foreground">{t.settings.helpSupport}</h3>
+                      <p className="text-sm text-muted-foreground">{t.settings.helpSupportDesc}</p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-400" />
+                  <ChevronRight size={20} className="text-muted-foreground" />
                 </div>
                 
                 <div 
                   onClick={() => navigate('/site-info/about')}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="px-6 py-4 flex items-center justify-between hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-gray-100 rounded-xl">
-                      <Palette size={24} className="text-gray-600" />
+                    <div className="p-3 bg-muted rounded-xl">
+                      <Palette size={24} className="text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{t.settings.aboutApp}</h3>
-                      <p className="text-sm text-gray-500">{t.settings.aboutAppDesc}</p>
+                      <h3 className="font-semibold text-foreground">{t.settings.aboutApp}</h3>
+                      <p className="text-sm text-muted-foreground">{t.settings.aboutAppDesc}</p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-400" />
+                  <ChevronRight size={20} className="text-muted-foreground" />
                 </div>
               </div>
             </section>
 
             {/* Danger Zone */}
-            <section className="bg-white rounded-2xl border-2 border-red-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-red-200">
-                <h2 className="text-xl font-bold text-red-600">{t.settings.dangerZone}</h2>
+            <section className="bg-card rounded-2xl border-2 border-destructive/30 overflow-hidden">
+              <div className="px-6 py-4 border-b border-destructive/30">
+                <h2 className="text-xl font-bold text-destructive">{t.settings.dangerZone}</h2>
               </div>
               <div className="px-6 py-4">
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
-                  className="flex items-center gap-3 px-6 py-3 bg-red-50 border-2 border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors"
+                  className="flex items-center gap-3 px-6 py-3 bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-xl font-semibold hover:bg-destructive/20 transition-colors"
                 >
                   <LogOut size={20} />
                   <span>{t.settings.logOut}</span>
@@ -375,8 +376,8 @@ export default function DesktopSettingsPage() {
 
             {/* Version Info */}
             <div className="text-center py-4">
-              <p className="text-sm text-gray-400">{t.settings.appVersion}</p>
-              <p className="text-xs text-gray-400 mt-1">{t.settings.copyright}</p>
+              <p className="text-sm text-muted-foreground">{t.settings.appVersion}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t.settings.copyright}</p>
             </div>
           </div>
         </div>

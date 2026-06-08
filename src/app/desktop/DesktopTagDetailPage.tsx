@@ -69,10 +69,10 @@ export default function DesktopTagDetailPage() {
 
   if (!displayTag) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
         <div className="flex-1 ml-64 flex items-center justify-center">
-          <p className="text-gray-500">{t.tags.tagNotFound}</p>
+          <p className="text-muted-foreground">{t.tags.tagNotFound}</p>
         </div>
       </div>
     );
@@ -99,23 +99,23 @@ export default function DesktopTagDetailPage() {
       <meta property="og:description" content={seoData?.description || displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
       <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
     </Helmet>
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center gap-4 mb-4">
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                  className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full transition-colors"
                 >
-                  <ChevronLeft size={24} className="text-gray-900" />
+                  <ChevronLeft size={24} className="text-foreground" />
                 </button>
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">#{displayTag.name}</h1>
+                  <h1 className="text-2xl font-bold text-foreground">#{displayTag.name}</h1>
                   <p className="text-gray-600 mt-1">
                     {formatNumber(displayTag.wallpaperCount)} {t.tags.wallpapers}
                   </p>
@@ -127,7 +127,7 @@ export default function DesktopTagDetailPage() {
               )}
 
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-medium text-gray-700">{t.tags.sortBy}</span>
+                <span className="text-sm font-medium text-foreground">{t.tags.sortBy}</span>
                 {sortOptions.map((option) => {
                   const Icon = option.icon;
                   return (
@@ -138,7 +138,7 @@ export default function DesktopTagDetailPage() {
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                         sortBy === option.value
                           ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-muted text-foreground hover:bg-muted'
                       }`}
                     >
                       <Icon size={16} />
@@ -154,18 +154,18 @@ export default function DesktopTagDetailPage() {
         <div className="px-8 py-8">
           <div className="max-w-7xl mx-auto">
             {loading && wallpapers.length === 0 && (
-              <p className="text-center text-gray-500 py-20">{t.common.loading}</p>
+              <p className="text-center text-muted-foreground py-20">{t.common.loading}</p>
             )}
             {error && wallpapers.length === 0 && !loading && (
               <p className="text-center text-red-500 py-20">{t.common.loadFailed}</p>
             )}
             {!loading && !error && wallpapers.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <SlidersHorizontal size={40} className="text-gray-400" />
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <SlidersHorizontal size={40} className="text-muted-foreground" />
                 </div>
-                <p className="text-xl text-gray-500 mb-2">{t.searchPage.noWallpapersFound}</p>
-                <p className="text-gray-400">{t.tags.noWallpapersWithTag}</p>
+                <p className="text-xl text-muted-foreground mb-2">{t.searchPage.noWallpapersFound}</p>
+                <p className="text-muted-foreground">{t.tags.noWallpapersWithTag}</p>
               </div>
             )}
             {wallpapers.length > 0 && (
@@ -176,7 +176,7 @@ export default function DesktopTagDetailPage() {
                   listNavBase={listNavBase}
                 />
                 {loadingMore && (
-                  <p className="text-center text-sm text-gray-500 py-6">{t.common.loading}</p>
+                  <p className="text-center text-sm text-muted-foreground py-6">{t.common.loading}</p>
                 )}
                 <div ref={sentinelRef} className="h-10" aria-hidden />
               </>

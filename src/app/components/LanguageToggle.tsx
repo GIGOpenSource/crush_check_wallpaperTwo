@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Language } from '../locales/translations';
+import { useTheme } from '../contexts/ThemeContext';
 
 const languageOptions: { code: Language; name: string; flag: string }[] = [
   { code: 'zh-CN', name: '简体中文', flag: 'CN' },
@@ -15,6 +16,7 @@ const languageOptions: { code: Language; name: string; flag: string }[] = [
 
 export function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
+  const { isDarkMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -38,11 +40,11 @@ export function LanguageToggle() {
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        className="flex items-center gap-2 px-3 py-2 bg-card border-2 border-border rounded-full shadow-lg hover:shadow-xl transition-shadow"
         title="Change language"
       >
         <span className="text-sm font-semibold">{currentLanguage?.flag}</span>
-        <Languages size={18} className="text-gray-700" />
+        <Languages size={18} className="text-foreground" />
       </motion.button>
 
       <AnimatePresence>
@@ -52,7 +54,7 @@ export function LanguageToggle() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="absolute top-14 right-0 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden min-w-[220px]"
+            className="absolute top-14 right-0 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden min-w-[220px] dark:bg-slate-900 dark:border-slate-700"
           >
             {languageOptions.map((lang) => (
               <motion.button
@@ -64,16 +66,16 @@ export function LanguageToggle() {
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 ${
                   language === lang.code 
-                    ? 'bg-gradient-to-r from-blue-50 to-blue-100' 
-                    : 'hover:bg-gray-50'
+                    ? isDarkMode ? 'bg-slate-700' : 'bg-gradient-to-r from-blue-50 to-blue-100' 
+                    : isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-50'
                 }`}
               >
-                <span className="text-sm font-bold text-gray-800 w-8 text-center">
+                <span className={`text-sm font-bold w-8 text-center ${language === lang.code ? (isDarkMode ? 'text-white' : 'text-blue-700') : (isDarkMode ? 'text-gray-300' : 'text-gray-800')}`}>
                   {lang.flag}
                 </span>
                 <span
                   className={`text-sm ${
-                    language === lang.code ? 'text-blue-700 font-semibold' : 'text-gray-700 font-medium'
+                    language === lang.code ? (isDarkMode ? 'text-white font-semibold' : 'text-blue-700 font-semibold') : (isDarkMode ? 'text-gray-200 font-medium' : 'text-gray-700 font-medium')
                   }`}
                 >
                   {lang.name}
@@ -81,7 +83,7 @@ export function LanguageToggle() {
                 {language === lang.code && (
                   <motion.div
                     layoutId="activeLanguage"
-                    className="ml-auto w-2.5 h-2.5 bg-blue-600 rounded-full"
+                    className={`ml-auto w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-white' : 'bg-blue-600'}`}
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

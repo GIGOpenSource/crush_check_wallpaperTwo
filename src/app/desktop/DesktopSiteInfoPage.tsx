@@ -53,22 +53,22 @@ export default function DesktopSiteInfoPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       {/* 侧边栏 */}
       <DesktopSidebar />
 
       {/* 主内容区 */}
       <div className="flex-1 ml-64">
         {/* 顶部导航栏 */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-200">
+        <div className="sticky top-0 z-40 bg-card border-b border-border">
           <div className="flex items-center gap-3 px-6 py-4">
             <button
               onClick={() => navigate(-1)}
-              className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+              className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full transition-colors"
             >
-              <ArrowLeft size={20} className="text-gray-700" />
+              <ArrowLeft size={20} className="text-foreground" />
             </button>
-            <h1 className="text-xl font-semibold text-gray-900">{getTitle()}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{getTitle()}</h1>
           </div>
         </div>
 
@@ -90,12 +90,12 @@ export default function DesktopSiteInfoPage() {
               </button>
             </div>
           ) : info ? (
-            <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="bg-card rounded-lg p-8 shadow-sm">
               {/* {info.title && (
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">{info.title}</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6">{info.title}</h2>
               )} */}
               <div
-                className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+                className="prose prose-lg max-w-none text-foreground leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: info.content ?? '' }}
               />
             </div>

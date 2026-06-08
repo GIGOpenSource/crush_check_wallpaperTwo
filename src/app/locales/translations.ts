@@ -358,6 +358,7 @@ export const translations = {
       loginFailed: '登录失败，请稍后重试',
       loginSuccessNoToken: '登录成功但未返回 token，请联系后端检查登录接口返回',
       loginSuccess: '登录成功',
+      passwordContainsSpace: '密码不能包含空格',
     },
     register: {
       createAccount: '创建账号',
@@ -397,6 +398,7 @@ export const translations = {
       loginFailed: 'Login failed, please try again later',
       loginSuccessNoToken: 'Login successful but no token returned. Please contact the backend to check the login API response',
       loginSuccess: 'Login successful',
+      passwordContainsSpace: 'Password cannot contain spaces',
     },
     register: {
       createAccount: 'Create an account',
@@ -765,6 +767,7 @@ export const translations = {
       loginFailed: 'ログインに失敗しました。後でもう一度お試しください',
       loginSuccessNoToken: 'ログインは成功しましたがトークンが返されませんでした。バックエンドに確認してください',
       loginSuccess: 'ログインに成功しました',
+      passwordContainsSpace: 'パスワードにはスペースを含むことはできません',
     },
     register: {
       createAccount: 'アカウント作成',
@@ -1133,6 +1136,7 @@ export const translations = {
       loginFailed: '로그인에 실패했습니다. 나중에 다시 시도해 주세요',
       loginSuccessNoToken: '로그인은 성공했으나 토큰이 반환되지 않았습니다. 백엔드에 문의하여 API 응답을 확인해 주세요',
       loginSuccess: '로그인 성공',
+      passwordContainsSpace: '비밀번호에는 공백을 포함할 수 없습니다',
     },
     register: {
       createAccount: '계정 만들기',
@@ -1502,6 +1506,7 @@ export const translations = {
       loginFailed: 'Error al iniciar sesión, inténtalo de nuevo más tarde',
       loginSuccessNoToken: 'Inicio de sesión exitoso pero no se devolvió token. Contacta al backend para revisar la respuesta de la API',
       loginSuccess: 'Inicio de sesión exitoso',
+      passwordContainsSpace: 'La contraseña no puede contener espacios',
     },
     register: {
       createAccount: 'Crear cuenta',
@@ -1882,6 +1887,7 @@ export const translations = {
       loginFailed: 'Échec de la connexion, veuillez réessayer plus tard',
       loginSuccessNoToken: 'Connexion réussie mais aucun token renvoyé. Contactez le backend pour vérifier la réponse de l’API',
       loginSuccess: 'Connexion réussie',
+      passwordContainsSpace: 'Le mot de passe ne peut pas contenir des espaces',
     },
     register: {
       createAccount: 'Créer un compte',

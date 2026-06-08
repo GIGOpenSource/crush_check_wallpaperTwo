@@ -85,7 +85,7 @@ function WallpaperCard({
         className="block"
         onClick={onClickTrack}
       >
-        <div className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-gray-100 group`}>
+        <div className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-muted group`}>
           <img
             src={wallpaperListCoverUrl(wallpaper)}
             alt={wallpaper.title}

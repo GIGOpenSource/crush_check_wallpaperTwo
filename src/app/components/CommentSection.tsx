@@ -230,7 +230,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
             maxLength={500}
           />
           <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">
               {t.comments.charCount.replace('{{count}}', String(commentContent.length))}
             </span>
             <button
@@ -247,15 +247,15 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
 
       {/* 评论列表区域 */}
       {isEmpty ? (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-12 text-muted-foreground dark:text-muted-foreground">
           <p className="text-lg">{t.comments.noComments}</p>
           <p className="text-sm mt-2">{t.comments.noCommentsHint}</p>
         </div>
       ) : (
         <>
           {/* 评论总数 */}
-          <div className="flex items-center justify-between pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between pb-4 border-t border-border dark:border-gray-700 pt-4">
+            <h3 className="text-lg font-semibold text-foreground dark:text-white">
               {t.comments.commentsTitle} {total !== undefined && t.comments.commentsCount.replace('{{count}}', String(total))}
             </h3>
             <button
@@ -288,7 +288,7 @@ export default function CommentSection({ wallpaperId }: CommentSectionProps) {
             <div className="text-center pt-4">
               <button
                 onClick={loadMore}
-                className="px-6 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="px-6 py-2 bg-muted dark:bg-gray-800 text-foreground dark:text-gray-300 rounded hover:bg-muted dark:hover:bg-gray-700 transition-colors"
               >
                 {t.comments.loadMore}
               </button>
@@ -373,19 +373,19 @@ const CommentItem = React.memo(function CommentItem({
       {/* 评论内容 */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-gray-900 dark:text-white">
+          <span className="font-medium text-foreground dark:text-white">
             {username}
           </span>
           {isReply && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">{t.comments.reply}</span>
+            <span className="text-xs text-muted-foreground dark:text-muted-foreground">{t.comments.reply}</span>
           )}
         </div>
 
-        <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed break-words">
+        <p className="text-foreground dark:text-gray-300 text-sm leading-relaxed break-words">
           {comment.content}
         </p>
 
-        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground dark:text-muted-foreground">
           <span>{formatTime(comment.created_at)}</span>
           <button 
             onClick={() => onToggleLike(comment.id)}

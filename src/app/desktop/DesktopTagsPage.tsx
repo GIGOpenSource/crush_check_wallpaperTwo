@@ -124,19 +124,19 @@ export default function DesktopTagsPage() {
         <meta property="og:description" content={seoData?.description || 'Discover amazing collections of HD wallpapers organized by tags'} />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/tags`} />
       </Helmet>
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
       <main className="flex-1 ml-64">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">{t.tags.browseTags}</h1>
+              <h1 className="text-2xl font-bold text-foreground mb-4">{t.tags.browseTags}</h1>
               <form onSubmit={handleSearchSubmit} className="max-w-2xl">
                 <div className="relative">
                   <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
                     size={20}
                   />
                   <input
@@ -144,7 +144,7 @@ export default function DesktopTagsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t.tags.searchTags}
-                    className="w-full pl-12 pr-[4.5rem] py-3 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
+                    className="w-full pl-12 pr-[4.5rem] py-3 bg-muted rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition-shadow"
                   />
                   {isSearching ? (
                     <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
@@ -170,19 +170,19 @@ export default function DesktopTagsPage() {
             <section>
               <div className="flex items-center gap-2 mb-6">
                 <TrendingUp size={24} className="text-blue-600" />
-                <h2 className="text-2xl font-bold text-gray-900">{t.tags.trendingTags}</h2>
+                <h2 className="text-2xl font-bold text-foreground">{t.tags.trendingTags}</h2>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {hotLoading && (
-                  <p className="text-sm text-gray-500 col-span-2 py-8 text-center">{t.common.loading}</p>
+                  <p className="text-sm text-muted-foreground col-span-2 py-8 text-center">{t.common.loading}</p>
                 )}
                 {hotError && !hotLoading && (
                   <p className="text-sm text-red-500 col-span-2 py-8 text-center">{t.common.loadFailed}</p>
                 )}
                 {!hotLoading && !hotError && popularTags.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-12 text-gray-400 col-span-2">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                      <SlidersHorizontal size={40} className="text-gray-400" />
+                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground col-span-2">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                      <SlidersHorizontal size={40} className="text-muted-foreground" />
                     </div>
                     <p className="text-base">{t.common.noResults}</p>
                   </div>
@@ -204,17 +204,17 @@ export default function DesktopTagsPage() {
                           description: tag.description,
                         },
                       }}
-                      className="flex items-center p-5 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all group border border-gray-100"
+                      className="flex items-center p-5 bg-card rounded-2xl shadow-sm hover:shadow-md transition-all group border border-border"
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                           <Hash size={20} className="text-blue-600" />
                         </div>
                         <div className="min-w-0">
-                          <h3 className="text-base font-bold text-gray-900 truncate">
+                          <h3 className="text-base font-bold text-foreground truncate">
                             #{getTagDisplayName(tag) || tag.name}
                           </h3>
-                          <p className="text-sm text-gray-500 mt-0.5">{t.tags.wallpapers}</p>
+                          <p className="text-sm text-muted-foreground mt-0.5">{t.tags.wallpapers}</p>
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0 ml-3">
@@ -231,21 +231,21 @@ export default function DesktopTagsPage() {
             {/* All Tags */}
             <section>
               <div className="flex items-center gap-2 mb-6">
-                <Grid3x3 size={24} className="text-gray-700" />
-                <h2 className="text-2xl font-bold text-gray-900">{t.tags.allTags}</h2>
+                <Grid3x3 size={24} className="text-foreground" />
+                <h2 className="text-2xl font-bold text-foreground">{t.tags.allTags}</h2>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="bg-card rounded-xl p-6 shadow-sm">
                 <div className="flex flex-wrap gap-3">
                   {(allLoading || allTagsLoading) && (
-                    <p className="text-sm text-gray-500 w-full py-8 text-center">{t.common.loading}</p>
+                    <p className="text-sm text-muted-foreground w-full py-8 text-center">{t.common.loading}</p>
                   )}
                   {allError && !allLoading && !allTagsLoading && (
                     <p className="text-sm text-red-500 w-full py-8 text-center">{t.common.loadFailed}</p>
                   )}
                   {!allLoading && !allTagsLoading && !allError && filteredTags.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-12 text-gray-400 w-full">
-                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <SlidersHorizontal size={40} className="text-gray-400" />
+                    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground w-full">
+                      <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <SlidersHorizontal size={40} className="text-muted-foreground" />
                       </div>
                       <p className="text-base">{t.common.noResults}</p>
                     </div>
@@ -262,10 +262,10 @@ export default function DesktopTagsPage() {
                           description: tag.description,
                         },
                       }}
-                      className="px-4 py-2 bg-gray-50 border border-gray-200 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all group"
+                      className="px-4 py-2 bg-background border border-border hover:border-blue-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all group"
                     >
                       <span className="font-medium">#{getTagDisplayName(tag) || tag.name}</span>
-                      <span className="ml-2 text-gray-400 group-hover:text-blue-400">
+                      <span className="ml-2 text-muted-foreground group-hover:text-blue-400">
                         ({formatNumber(tag.wallpaperCount)})
                       </span>
                     </Link>

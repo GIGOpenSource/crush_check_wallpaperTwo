@@ -2,10 +2,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'motion/react';
 
-export const MobileQuickActions: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface MobileQuickActionsProps {
+  externalOpen?: boolean;
+  onExternalOpenChange?: (open: boolean) => void;
+}
+
+export const MobileQuickActions: React.FC<MobileQuickActionsProps> = ({
+  externalOpen,
+  onExternalOpenChange,
+}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  
+  const isOpen = externalOpen !== undefined ? externalOpen : internalIsOpen;
+  const setIsOpen = (open: boolean) => {
+    if (onExternalOpenChange) {
+      onExternalOpenChange(open);
+    } else {
+      setInternalIsOpen(open);
+    }
+  };
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 12, y: 8 }); // 调整按钮位置，往上移动
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -15,6 +33,7 @@ export const MobileQuickActions: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { language, setLanguage } = useLanguage();
+  const { isDarkMode } = useTheme();
 
   // 判断是否在搜索页面
   const isSearchPage = location.pathname === '/search';
@@ -29,7 +48,7 @@ export const MobileQuickActions: React.FC = () => {
   // 判断是否是 trending 路由
   const isTrendingRoute = currentPath === '/trending';
 
-  // 排除 /trending 路由，不显示语言切换按钮
+  // 只在首页显示语言切换按钮，排除 /trending 路由
   const shouldShowLanguageToggle = isHomePage && !isTrendingRoute;
 
   const languageOptions = [
@@ -117,34 +136,31 @@ export const MobileQuickActions: React.FC = () => {
             transition={{ duration: 0.2 }}
             className={`absolute ${
               isSearchPage ? 'top-12' : 'top-11'
-            } right-0 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden min-w-[220px] max-h-[70vh]`}
+            } right-0 rounded-2xl shadow-xl border overflow-hidden min-w-[220px] max-h-[70vh] ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-card border-border'}`}
           >
             {/* 语言切换部分 */}
             <div className="px-3 py-3">
-              {/* <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
-                语言 / LANGUAGE
-              </p> */}
               <div className="space-y-1 max-h-[60vh] overflow-y-auto">
                 {languageOptions.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={(e) => {
-                      e.stopPropagation(); // 防止事件冒泡
+                      e.stopPropagation();
                       setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr');
-                      setIsOpen(false); // 立即关闭下拉菜单
+                      setIsOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                       language === lang.code 
-                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 shadow-sm' 
-                        : 'hover:bg-gray-50'
+                        ? isDarkMode ? 'bg-slate-700' : 'bg-gradient-to-r from-blue-50 to-blue-100 shadow-sm' 
+                        : isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-background'
                     }`}
                   >
-                    <span className="text-sm font-bold text-gray-800 w-8 text-center">
+                    <span className={`text-sm font-bold w-8 text-center ${isDarkMode ? (language === lang.code ? 'text-white' : 'text-gray-300') : (language === lang.code ? 'text-blue-700' : 'text-gray-800')}`}>
                       {lang.flag}
                     </span>
                     <span
                       className={`text-sm ${
-                        language === lang.code ? 'text-blue-700 font-semibold' : 'text-gray-600 font-medium'
+                        language === lang.code ? (isDarkMode ? 'text-white font-semibold' : 'text-blue-700 font-semibold') : (isDarkMode ? 'text-gray-200 font-medium' : 'text-gray-600 font-medium')
                       }`}
                     >
                       {lang.name}
@@ -152,7 +168,7 @@ export const MobileQuickActions: React.FC = () => {
                     {language === lang.code && (
                       <motion.div
                         layoutId="activeLang"
-                        className="ml-auto w-2 h-2 bg-blue-600 rounded-full"
+                        className={`ml-auto w-2 h-2 rounded-full ${isDarkMode ? 'bg-white' : 'bg-blue-600'}`}
                       />
                     )}
                   </button>
@@ -166,10 +182,10 @@ export const MobileQuickActions: React.FC = () => {
       {/* 主按钮 - 固定在首页右上角 */}
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="h-9 px-3 rounded-full bg-white hover:bg-gray-50 border border-gray-300 shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+        className={`h-9 px-3 rounded-full shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all ${isDarkMode ? 'bg-slate-700 border border-slate-600 hover:bg-slate-600' : 'bg-card border border-gray-300 hover:bg-background'}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-sm font-bold text-gray-800">
+        <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
           {currentLanguage?.flag || 'CN'}
         </span>
         <svg 
@@ -180,7 +196,7 @@ export const MobileQuickActions: React.FC = () => {
           strokeWidth="2" 
           strokeLinecap="round" 
           strokeLinejoin="round" 
-          className="w-4 h-4 text-gray-600"
+          className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}
         >
           <path d="m5 8 6 6" />
           <path d="m4 14 6-6 2-3" />
