@@ -252,7 +252,7 @@ export default function WallpaperDetailPage() {
 
         {/* Wallpaper Image Container */}
         <div className="px-4">
-          <div className="bg-card dark:bg-[#101727] dark:border dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
+          <div className="bg-card dark:bg-[#101727] dark:border dark:border-#1b3456 rounded-2xl overflow-hidden shadow-lg" onClick={() => setShowPreview(true)} >
             <div className="relative aspect-[3/4] bg-gray-900 dark:bg-[#101727]">
               <img
                 src={wallpaper.imageUrl}
