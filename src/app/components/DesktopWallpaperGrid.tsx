@@ -33,7 +33,7 @@ export function DesktopWallpaperGrid({
   onDelete,
   deletingId,
   platform = 'PC', // 默认电脑端
-  showAuditStatus = true,
+  showAuditStatus = false,
 }: DesktopWallpaperGridProps) {
   // 使用 grid 布局，固定为最多4列
   const gridClass = `grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4`;

@@ -34,7 +34,7 @@ export function UploadWallpaperGrid({
   onDelete,
   deletingId,
   platform = 'PHONE', // 默认手机端
-  showAuditStatus = true,
+  showAuditStatus = false,
 }: UploadWallpaperGridProps) {
   return (
     <div

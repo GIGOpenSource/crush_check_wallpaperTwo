@@ -561,7 +561,7 @@ export default function DesktopProfilePage() {
                     <DesktopWallpaperGrid 
                       wallpapers={uploadedWallpapers} 
                       platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
-                      showAuditStatus={false}
+                      showAuditStatus={!isOtherUser}
                     />
                   ) : (
                     // 空状态 - 没有上传的壁纸
