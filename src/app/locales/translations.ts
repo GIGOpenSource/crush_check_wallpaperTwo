@@ -24,6 +24,19 @@ export const translations = {
       appDownloadInProgress: '下载app开发中',
     },
 
+    // Audit Status
+    audit: {
+      pending: '待审核',
+      approved: '已通过',
+      rejected: '已拒绝',
+      rejectedTitle: '审核未通过',
+      pendingTitle: '审核中',
+      rejectedReason: '该壁纸未通过审核，以下是拒绝原因：',
+      noRejectReason: '暂无拒绝原因',
+      pendingMessage: '该壁纸正在审核中，请耐心等待审核结果。',
+      gotIt: '我知道了',
+    },
+
     // Navigation
     nav: {
       home: '首页',
@@ -466,6 +479,19 @@ export const translations = {
       gotIt: "Got it",
       appDownloadInProgress: "App download is in progress",
     },
+
+    // Audit Status
+    audit: {
+      pending: "Pending",
+      approved: "Approved",
+      rejected: "Rejected",
+      rejectedTitle: "Review Failed",
+      pendingTitle: "Under Review",
+      rejectedReason: "This wallpaper failed review. Here's why:",
+      noRejectReason: "No rejection reason provided",
+      pendingMessage: "This wallpaper is under review. Please wait for the result.",
+      gotIt: "Got it",
+    },
     nav: {
       home: "Home",
       search: "Search",
@@ -834,6 +860,19 @@ export const translations = {
       tip: "ヒント",
       gotIt: "了解",
       appDownloadInProgress: "アプリダウンロード進行中",
+    },
+
+    // Audit Status
+    audit: {
+      pending: "審査中",
+      approved: "承認済み",
+      rejected: "却下",
+      rejectedTitle: "審査失敗",
+      pendingTitle: "審査中",
+      rejectedReason: "この壁紙の審査に失敗しました。理由：",
+      noRejectReason: "却下理由がありません",
+      pendingMessage: "この壁紙は審査中です。結果をお待ちください。",
+      gotIt: "わかりました",
     },
     nav: {
       home: "ホーム",
@@ -1204,6 +1243,19 @@ export const translations = {
       gotIt: "확인",
       appDownloadInProgress: "앱 다운로드 진행 중",
     },
+
+    // Audit Status
+    audit: {
+      pending: "검토 중",
+      approved: "승인됨",
+      rejected: "거부됨",
+      rejectedTitle: "검토 실패",
+      pendingTitle: "검토 중",
+      rejectedReason: "이 배경화면이 검토에 실패했습니다. 이유:",
+      noRejectReason: "거부 이유가 제공되지 않았습니다",
+      pendingMessage: "이 배경화면은 검토 중입니다. 결과를 기다려주세요.",
+      gotIt: "알겠습니다",
+    },
     nav: {
       home: "홈",
       search: "검색",
@@ -1573,6 +1625,19 @@ export const translations = {
       tip: 'Aviso',
       gotIt: 'Entendido',
       appDownloadInProgress: 'La descarga de la aplicación está en desarrollo',
+    },
+
+    // Audit Status
+    audit: {
+      pending: 'Pendiente',
+      approved: 'Aprobado',
+      rejected: 'Rechazado',
+      rejectedTitle: 'Revisión fallida',
+      pendingTitle: 'En revisión',
+      rejectedReason: 'Este fondo de pantalla no pasó la revisión. Motivo:',
+      noRejectReason: 'No se proporcionó motivo de rechazo',
+      pendingMessage: 'Este fondo de pantalla está en revisión. Por favor, espera el resultado.',
+      gotIt: 'Entendido',
     },
 
     nav: {
@@ -1954,6 +2019,19 @@ export const translations = {
       tip: 'Information',
       gotIt: 'OK',
       appDownloadInProgress: 'Le téléchargement de l\'application est en cours de développement',
+    },
+
+    // Audit Status
+    audit: {
+      pending: 'En attente',
+      approved: 'Approuvé',
+      rejected: 'Rejeté',
+      rejectedTitle: 'Échec de la révision',
+      pendingTitle: 'En révision',
+      rejectedReason: 'Ce fond d\'écran n\'a pas passé la révision. Raison:',
+      noRejectReason: 'Aucune raison de rejet fournie',
+      pendingMessage: 'Ce fond d\'écran est en cours de révision. Veuillez attendre le résultat.',
+      gotIt: 'D\'accord',
     },
 
     nav: {

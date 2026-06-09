@@ -7,6 +7,7 @@ import type { WallpaperListNavBase } from '../types/wallpaperListNav';
 import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
 import { useWallpaperListCardTracking } from '../hooks/useWallpaperListCardTracking';
 import { wallpaperListCoverUrl } from '../utils/wallpaperApiMap';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface UploadWallpaperGridProps {
   wallpapers: Wallpaper[];
@@ -82,6 +83,7 @@ function UploadWallpaperCard({
     wallpaper.id,
     trackListEvents,
   );
+  const { t } = useLanguage();
   const listState =
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
@@ -142,7 +144,7 @@ function UploadWallpaperCard({
               <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded ${
                 isRejected ? 'bg-red-500/90 text-white' : 'bg-green-500/90 text-white'
               }`}>
-                {isRejected ? '已拒绝' : '待审核'}
+                {isRejected ? t.audit.rejected : t.audit.pending}
               </div>
             )}
           </div>
@@ -159,7 +161,7 @@ function UploadWallpaperCard({
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className={`text-lg font-bold ${isRejected ? 'text-red-500' : 'text-green-500'}`}>
-                    {isRejected ? '审核未通过' : '审核中'}
+                    {isRejected ? t.audit.rejectedTitle : t.audit.pendingTitle}
                   </h3>
                   <button
                     onClick={() => setShowRejectModal(false)}
@@ -171,24 +173,24 @@ function UploadWallpaperCard({
                 {isRejected ? (
                   <>
                     <p className="text-muted-foreground mb-4 text-sm">
-                      该壁纸未通过审核，以下是拒绝原因：
+                      {t.audit.rejectedReason}
                     </p>
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
                       <p className="text-red-700 whitespace-pre-wrap text-sm">
-                        {wallpaper.audit_remark || '暂无拒绝原因'}
+                        {wallpaper.audit_remark || t.audit.noRejectReason}
                       </p>
                     </div>
                   </>
                 ) : (
                   <p className="text-muted-foreground mb-6 text-sm">
-                    该壁纸正在审核中，请耐心等待审核结果。
+                    {t.audit.pendingMessage}
                   </p>
                 )}
                 <button
                   onClick={() => setShowRejectModal(false)}
                   className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
                 >
-                  我知道了
+                  {t.audit.gotIt}
                 </button>
               </div>
             </div>
