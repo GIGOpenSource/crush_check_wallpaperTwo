@@ -30,6 +30,10 @@ export interface Wallpaper {
   purity: 'SFW' | 'Sketchy' | 'NSFW';
   /** 是否已收藏 */
   is_collected?: boolean;
+  /** 审核状态 */
+  audit_status?: 'pending' | 'approved' | 'rejected';
+  /** 审核备注（拒绝原因） */
+  audit_remark?: string;
 }
 
 export interface User {

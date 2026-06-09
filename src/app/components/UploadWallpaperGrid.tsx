@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
-import { Eye, Download, Heart, Trash2 } from 'lucide-react';
+import { Eye, Download, Heart, Trash2, X } from 'lucide-react';
 import { Wallpaper } from '../types';
 import type { WallpaperListNavBase } from '../types/wallpaperListNav';
 import { WALLPAPER_LIST_NAV_KEY } from '../types/wallpaperListNav';
@@ -20,6 +21,8 @@ interface UploadWallpaperGridProps {
   deletingId?: number | string | null;
   /** 平台类型：用于决定图片宽高比 */
   platform?: 'PHONE' | 'PC';
+  /** 是否显示审核状态 */
+  showAuditStatus?: boolean;
 }
 
 export function UploadWallpaperGrid({
@@ -30,6 +33,7 @@ export function UploadWallpaperGrid({
   onDelete,
   deletingId,
   platform = 'PHONE', // 默认手机端
+  showAuditStatus = true,
 }: UploadWallpaperGridProps) {
   return (
     <div
@@ -48,6 +52,7 @@ export function UploadWallpaperGrid({
           onDelete={onDelete}
           isDeleting={deletingId === wallpaper.id}
           platform={platform}
+          showAuditStatus={showAuditStatus}
         />
       ))}
     </div>
@@ -62,6 +67,7 @@ function UploadWallpaperCard({
   onDelete,
   isDeleting,
   platform = 'PHONE', // 默认手机端
+  showAuditStatus = true,
 }: {
   wallpaper: Wallpaper;
   index: number;
@@ -70,6 +76,7 @@ function UploadWallpaperCard({
   onDelete: (id: number | string) => void;
   isDeleting: boolean;
   platform?: 'PHONE' | 'PC';
+  showAuditStatus?: boolean;
 }) {
   const { rootRef, onClickTrack, onHoverTrack } = useWallpaperListCardTracking(
     wallpaper.id,
@@ -80,79 +87,198 @@ function UploadWallpaperCard({
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
       : undefined;
 
+  const [showRejectModal, setShowRejectModal] = useState(false);
+
   // 根据平台决定宽高比：手机9:16，电脑16:9
   const aspectRatio = platform === 'PHONE' ? 'aspect-[3/4]' : 'aspect-[16/9]';
 
+  const isRejected = wallpaper.audit_status === 'rejected';
+  const isPending = wallpaper.audit_status === 'pending';
+  const shouldBlockClick = isRejected || isPending;
+
+  const handleRejectedClick = () => {
+    setShowRejectModal(true);
+  };
+
   return (
-    <motion.div
-      ref={rootRef}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      onMouseEnter={onHoverTrack}
-      className="relative"
-    >
-      {/* 删除按钮 */}
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onDelete(wallpaper.id);
-        }}
-        disabled={isDeleting}
-        className="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isDeleting ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        ) : (
-          <Trash2 size={16} />
-        )}
-      </button>
+    <>
+      {shouldBlockClick ? (
+        <div className="relative">
+          {/* 删除按钮 */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(wallpaper.id);
+            }}
+            disabled={isDeleting}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDeleting ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Trash2 size={16} />
+            )}
+          </button>
 
-      <Link
-        to={`/wallpaper/${wallpaper.id}`}
-        state={listState}
-        className="block"
-        onClick={onClickTrack}
-      >
-        <div className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-muted group`}>
-          <img
-            src={wallpaperListCoverUrl(wallpaper)}
-            alt={wallpaper.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
+          <div 
+            className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-muted group cursor-not-allowed`}
+            onClick={handleRejectedClick}
+          >
+            <img
+              src={wallpaperListCoverUrl(wallpaper)}
+              alt={wallpaper.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
 
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute bottom-0 left-0 right-0 p-3">
-              <h3 className="text-white text-sm font-medium mb-2 line-clamp-1">
-                {wallpaper.title}
-              </h3>
-              <div className="flex items-center gap-3 text-white/90 text-xs">
-                <div className="flex items-center gap-1">
-                  <Eye size={14} />
-                  <span>{formatNumber(wallpaper.views)}</span>
+            {/* Resolution badge - 移到左边 */}
+            <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+              {wallpaper.resolution}
+            </div>
+
+            {/* 审核状态 - 右下角 */}
+            {showAuditStatus && wallpaper.audit_status && (
+              <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded ${
+                isRejected ? 'bg-red-500/90 text-white' : 'bg-green-500/90 text-white'
+              }`}>
+                {isRejected ? '已拒绝' : '待审核'}
+              </div>
+            )}
+          </div>
+
+          {/* 审核状态弹窗 */}
+          {showRejectModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+              onClick={() => setShowRejectModal(false)}
+            >
+              <div
+                className="bg-card rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className={`text-lg font-bold ${isRejected ? 'text-red-500' : 'text-green-500'}`}>
+                    {isRejected ? '审核未通过' : '审核中'}
+                  </h3>
+                  <button
+                    onClick={() => setShowRejectModal(false)}
+                    className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Download size={14} />
-                  <span>{formatNumber(wallpaper.downloads)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Heart size={14} />
-                  <span>{formatNumber(wallpaper.likes)}</span>
-                </div>
+                {isRejected ? (
+                  <>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      该壁纸未通过审核，以下是拒绝原因：
+                    </p>
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                      <p className="text-red-700 whitespace-pre-wrap text-sm">
+                        {wallpaper.audit_remark || '暂无拒绝原因'}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground mb-6 text-sm">
+                    该壁纸正在审核中，请耐心等待审核结果。
+                  </p>
+                )}
+                <button
+                  onClick={() => setShowRejectModal(false)}
+                  className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                >
+                  我知道了
+                </button>
               </div>
             </div>
-          </div>
-
-          {/* Resolution badge - 移到左边 */}
-          <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-            {wallpaper.resolution}
-          </div>
+          )}
         </div>
-      </Link>
-    </motion.div>
+      ) : (
+        <motion.div
+          ref={rootRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05 }}
+          onMouseEnter={onHoverTrack}
+          className="relative"
+        >
+          {/* 删除按钮 */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(wallpaper.id);
+            }}
+            disabled={isDeleting}
+            className="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDeleting ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Trash2 size={16} />
+            )}
+          </button>
+
+          <Link
+            to={`/wallpaper/${wallpaper.id}`}
+            state={listState}
+            className="block"
+            onClick={onClickTrack}
+          >
+            <div className={`relative ${aspectRatio} rounded-lg overflow-hidden bg-muted group`}>
+              <img
+                src={wallpaperListCoverUrl(wallpaper)}
+                alt={wallpaper.title}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h3 className="text-white text-sm font-medium mb-2 line-clamp-1">
+                    {wallpaper.title}
+                  </h3>
+                  <div className="flex items-center gap-3 text-white/90 text-xs">
+                    <div className="flex items-center gap-1">
+                      <Eye size={14} />
+                      <span>{formatNumber(wallpaper.views)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Download size={14} />
+                      <span>{formatNumber(wallpaper.downloads)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Heart size={14} />
+                      <span>{formatNumber(wallpaper.likes)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resolution badge - 移到左边 */}
+              <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                {wallpaper.resolution}
+              </div>
+
+              {/* 审核状态 - 右下角 */}
+              {showAuditStatus && wallpaper.audit_status && (
+                <div className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded ${
+                  wallpaper.audit_status === 'pending'
+                    ? 'bg-green-500/90 text-white'
+                    : wallpaper.audit_status === 'approved'
+                      ? 'bg-blue-500/90 text-white'
+                      : 'bg-red-500/90 text-white'
+                }`}>
+                  {wallpaper.audit_status === 'pending' ? '待审核' : wallpaper.audit_status === 'approved' ? '已通过' : '已拒绝'}
+                </div>
+              )}
+            </div>
+          </Link>
+        </motion.div>
+      )}
+    </>
   );
 }
 

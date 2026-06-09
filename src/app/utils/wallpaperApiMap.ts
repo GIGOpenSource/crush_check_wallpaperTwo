@@ -192,5 +192,7 @@ export function mapRecordToWallpaper(raw: unknown): Wallpaper {
     colors: Array.isArray(item.colors) ? (item.colors as unknown[]).map(String) : [],
     purity: 'SFW',
     is_collected: typeof item.is_collected === 'boolean' ? item.is_collected : undefined,
+    audit_status: pickStr(item, ['audit_status']) || undefined,
+    audit_remark: pickStr(item, ['audit_remark']) || undefined,
   };
 }

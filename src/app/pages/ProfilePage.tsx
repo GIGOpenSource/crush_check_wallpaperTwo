@@ -745,6 +745,7 @@ export default function ProfilePage() {
                   platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                   onDelete={(id) => handleDeleteWallpaper(id)}
                   deletingId={deletingId}
+                  showAuditStatus={!isOtherUser}
                 />
                 {/* 加载更多 */}
                 {uploadsHasMore && (

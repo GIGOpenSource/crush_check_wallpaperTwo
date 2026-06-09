@@ -188,10 +188,8 @@ export function useMyUploads(platform?: 'PHONE' | 'PC', customerId?: number | st
 
   // 当传入的 customerId 参数变化时，重新加载数据
   useEffect(() => {
-    if (customerId !== undefined) {
-      customerIdRef.current = customerId;
-      loadFirstPageRef.current();
-    }
+    customerIdRef.current = customerId;
+    loadFirstPageRef.current();
   }, [customerId]);
 
   return {

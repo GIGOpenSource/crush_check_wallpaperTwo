@@ -561,6 +561,7 @@ export default function DesktopProfilePage() {
                     <DesktopWallpaperGrid 
                       wallpapers={uploadedWallpapers} 
                       platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
+                      showAuditStatus={false}
                     />
                   ) : (
                     // 空状态 - 没有上传的壁纸
@@ -800,6 +801,7 @@ export default function DesktopProfilePage() {
                         platform={wallpaperFilter === 'phone' ? 'PHONE' : 'PC'}
                         onDelete={(id) => handleDeleteWallpaper(id)}
                         deletingId={deletingId}
+                        showAuditStatus={!isOtherUser}
                       />
                       {/* 加载更多 */}
                       {uploadsHasMore && (
