@@ -276,9 +276,9 @@ export default function DesktopWallpaperDetailPage() {
                 )}
 
                 {/* Wallpaper Image */}
-                <div className="bg-card dark:bg-[#0f1f36] rounded-2xl overflow-hidden shadow-lg">
+                <div className="bg-[#101828] dark:bg-[#0f1f36] rounded-2xl overflow-hidden shadow-lg">
                   <div 
-                    className="relative aspect-video bg-card dark:bg-[#0f1f36] cursor-pointer"
+                    className="relative aspect-video bg-[#101828] dark:bg-[#0f1f36] cursor-pointer"
                     onClick={() => setShowPreview(true)}
                   >
                     <img
