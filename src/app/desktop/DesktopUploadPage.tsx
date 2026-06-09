@@ -337,9 +337,9 @@ export default function DesktopUploadPage() {
                         onChange={handleImageSelect}
                         className="hidden"
                       />
-                      <div className="border-2 border-dashed border-blue-300 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
-                        <Upload size={40} className="text-blue-600 mx-auto mb-3" />
-                        <p className="text-lg text-blue-600 font-medium">{t.upload.changeImage}</p>
+                      <div className="border-2 border-dashed border-blue-500/50 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/10 transition-colors">
+                        <Upload size={40} className="text-blue-500 mx-auto mb-3" />
+                        <p className="text-lg text-blue-500 font-medium">{t.upload.changeImage}</p>
                       </div>
                     </label>
                     <button
@@ -357,9 +357,9 @@ export default function DesktopUploadPage() {
                       onChange={handleImageSelect}
                       className="hidden"
                     />
-                    <div className="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors">
+                    <div className="border-2 border-dashed border-border rounded-2xl p-16 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-500/10 transition-colors">
                       <ImageIcon size={64} className="text-muted-foreground mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 mb-2">{t.upload.clickToSelect}</p>
+                      <p className="text-lg text-foreground mb-2">{t.upload.clickToSelect}</p>
                       <p className="text-sm text-muted-foreground">{t.upload.supportedFormats}</p>
                     </div>
                   </label>
@@ -395,8 +395,8 @@ export default function DesktopUploadPage() {
                         onClick={() => setPlatform('PHONE')}
                         className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
                           platform === 'PHONE'
-                            ? 'border-blue-600 bg-blue-50 text-blue-600'
-                            : 'border-gray-300 hover:border-blue-300 text-foreground'
+                            ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+                            : 'border-border hover:border-blue-500/50 text-foreground'
                         }`}
                       >
                         📱 {t.profile.phoneWallpaper}
@@ -406,8 +406,8 @@ export default function DesktopUploadPage() {
                         onClick={() => setPlatform('PC')}
                         className={`flex-1 px-4 py-3 border-2 rounded-xl font-medium transition-all ${
                           platform === 'PC'
-                            ? 'border-blue-600 bg-blue-50 text-blue-600'
-                            : 'border-gray-300 hover:border-blue-300 text-foreground'
+                            ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+                            : 'border-border hover:border-blue-500/50 text-foreground'
                         }`}
                       >
                         💻 {t.profile.pcWallpaper}
