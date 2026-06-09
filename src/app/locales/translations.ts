@@ -34,6 +34,7 @@ export const translations = {
       rejectedReason: '该壁纸未通过审核，以下是拒绝原因：',
       noRejectReason: '暂无拒绝原因',
       pendingMessage: '该壁纸正在审核中，请耐心等待审核结果。',
+      reupload: '重新上传',
       gotIt: '我知道了',
     },
 
@@ -490,6 +491,7 @@ export const translations = {
       rejectedReason: "This wallpaper failed review. Here's why:",
       noRejectReason: "No rejection reason provided",
       pendingMessage: "This wallpaper is under review. Please wait for the result.",
+      reupload: "Reupload",
       gotIt: "Got it",
     },
     nav: {
@@ -872,6 +874,7 @@ export const translations = {
       rejectedReason: "この壁紙の審査に失敗しました。理由：",
       noRejectReason: "却下理由がありません",
       pendingMessage: "この壁紙は審査中です。結果をお待ちください。",
+      reupload: "再アップロード",
       gotIt: "わかりました",
     },
     nav: {
@@ -1254,6 +1257,7 @@ export const translations = {
       rejectedReason: "이 배경화면이 검토에 실패했습니다. 이유:",
       noRejectReason: "거부 이유가 제공되지 않았습니다",
       pendingMessage: "이 배경화면은 검토 중입니다. 결과를 기다려주세요.",
+      reupload: "다시 업로드",
       gotIt: "알겠습니다",
     },
     nav: {
@@ -1637,6 +1641,7 @@ export const translations = {
       rejectedReason: 'Este fondo de pantalla no pasó la revisión. Motivo:',
       noRejectReason: 'No se proporcionó motivo de rechazo',
       pendingMessage: 'Este fondo de pantalla está en revisión. Por favor, espera el resultado.',
+      reupload: 'Volver a subir',
       gotIt: 'Entendido',
     },
 
@@ -2031,6 +2036,7 @@ export const translations = {
       rejectedReason: 'Ce fond d\'écran n\'a pas passé la révision. Raison:',
       noRejectReason: 'Aucune raison de rejet fournie',
       pendingMessage: 'Ce fond d\'écran est en cours de révision. Veuillez attendre le résultat.',
+      reupload: 'Recharger',
       gotIt: 'D\'accord',
     },
 

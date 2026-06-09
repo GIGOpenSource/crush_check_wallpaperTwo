@@ -105,6 +105,31 @@ export default function DesktopUploadPage() {
       });
   }, []);
 
+  // 从sessionStorage获取壁纸数据，用于重新上传
+  useEffect(() => {
+    const reuploadData = sessionStorage.getItem('reuploadWallpaper');
+    if (reuploadData) {
+      try {
+        const wallpaper = JSON.parse(reuploadData);
+        // 填充数据
+        const titleValue = wallpaper.title || wallpaper.name;
+        if (titleValue) setTitle(titleValue);
+        if (wallpaper.description) setDescription(wallpaper.description);
+        if (wallpaper.platform) setPlatform(wallpaper.platform === 'PHONE' ? 'PHONE' : 'PC');
+        if (wallpaper.tags && Array.isArray(wallpaper.tags)) {
+          setTags(wallpaper.tags.map((tag: any) => typeof tag === 'object' ? tag.name : tag));
+        }
+        // 设置步骤为详情页
+        setCurrentStep('details');
+        // 清除sessionStorage中的数据
+        sessionStorage.removeItem('reuploadWallpaper');
+      } catch (err) {
+        console.error('Failed to parse reupload wallpaper data:', err);
+        sessionStorage.removeItem('reuploadWallpaper');
+      }
+    }
+  }, []);
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

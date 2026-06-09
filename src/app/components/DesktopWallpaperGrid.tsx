@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import { Eye, Download, Heart, Trash2, X } from 'lucide-react';
 import { Wallpaper } from '../types';
@@ -82,6 +82,7 @@ function DesktopWallpaperCard({
     trackListEvents,
   );
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const listState =
     listNavBase != null
       ? { [WALLPAPER_LIST_NAV_KEY]: { ...listNavBase, listItemPosition: index + 1 } }
@@ -189,18 +190,38 @@ function DesktopWallpaperCard({
                         {wallpaper.audit_remark || t.audit.noRejectReason}
                       </p>
                     </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          setShowRejectModal(false);
+                          sessionStorage.setItem('reuploadWallpaper', JSON.stringify(wallpaper));
+                          navigate('/upload');
+                        }}
+                        className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                      >
+                        {t.audit.reupload}
+                      </button>
+                      <button
+                        onClick={() => setShowRejectModal(false)}
+                        className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-colors"
+                      >
+                        {t.audit.gotIt}
+                      </button>
+                    </div>
                   </>
                 ) : (
-                  <p className="text-muted-foreground mb-6">
-                    {t.audit.pendingMessage}
-                  </p>
+                  <>
+                    <p className="text-muted-foreground mb-6">
+                      {t.audit.pendingMessage}
+                    </p>
+                    <button
+                      onClick={() => setShowRejectModal(false)}
+                      className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                    >
+                      {t.audit.gotIt}
+                    </button>
+                  </>
                 )}
-                <button
-                  onClick={() => setShowRejectModal(false)}
-                  className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
-                >
-                  {t.audit.gotIt}
-                </button>
               </div>
             </div>
           )}
