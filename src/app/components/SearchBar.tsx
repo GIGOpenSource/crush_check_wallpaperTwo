@@ -43,7 +43,8 @@ export function SearchBar({
     if (trackSearchClick) umengclick('search_click');
     if (onSearch) {
       onSearch(query);
-    } else if (query.trim()) {
+    } else {
+      // 无论查询是否为空，都导航到搜索页面
       navigate(`/search?q=${encodeURIComponent(query)}`);
     }
   };

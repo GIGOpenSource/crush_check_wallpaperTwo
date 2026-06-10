@@ -168,7 +168,7 @@ export default function DesktopSearchPage() {
                   </button>
                 </div>
                 <div className="max-w-2xl">
-                  <SearchBar onSearch={(q) => setQuery(q)} initialQuery={query} />
+                  <SearchBar initialQuery={query} />
                 </div>
               </div>
             </div>
