@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { Search, TrendingUp, Hash, Grid3x3, SlidersHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
@@ -14,6 +14,7 @@ const TRENDING_DISPLAY = 8;
 
 export default function DesktopTagsPage() {
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -127,7 +128,7 @@ export default function DesktopTagsPage() {
       <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">

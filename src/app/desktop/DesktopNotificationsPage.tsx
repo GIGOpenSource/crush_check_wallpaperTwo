@@ -6,7 +6,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, type NotificationItem } from '../../api/wallpaper';
 import { App, Modal } from 'antd';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { getAuthToken } from '../../api/request';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -17,6 +17,7 @@ export default function DesktopNotificationsPage() {
   const navigate = useNavigate();
   const token = getAuthToken();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
 
   // 如果未登录，显示需要登录的提示
   if (!token) {
@@ -24,7 +25,7 @@ export default function DesktopNotificationsPage() {
       <div className="flex min-h-screen bg-background dark:bg-gray-900">
         <DesktopSidebar />
 
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <div className="text-center max-w-md">
             <div className="w-24 h-24 bg-muted dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
               <Lock className="w-12 h-12 text-muted-foreground" />
@@ -173,7 +174,7 @@ export default function DesktopNotificationsPage() {
     <div className="flex min-h-screen bg-background dark:bg-gray-900">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* 顶部导航 */}
         <header className="bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700 sticky top-0 z-30">
           <div className="px-8 py-6">

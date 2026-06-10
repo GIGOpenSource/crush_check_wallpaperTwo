@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { Settings, Upload, Image as ImageIcon, Heart, Award, Users, UserCheck, UserPlus } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -31,6 +31,7 @@ type TabType = 'uploaded' | 'favorites' | 'following' | 'followers';
 export default function DesktopProfilePage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const { message } = App.useApp();
   const { userId } = useParams();
   const [searchParams] = useSearchParams();
@@ -277,7 +278,7 @@ export default function DesktopProfilePage() {
     <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 dark:text-gray-100">
           <div className="px-8 py-12">

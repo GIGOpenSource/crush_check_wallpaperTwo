@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { Modal } from 'antd';
 import {
   Upload,
@@ -23,6 +23,7 @@ type UploadStep = 'select' | 'details' | 'tags' | 'review' | 'uploading' | 'succ
 export default function DesktopUploadPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const token = getAuthToken();
 
   // 如果未登录，显示需要登录的提示
@@ -31,7 +32,7 @@ export default function DesktopUploadPage() {
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
 
-        <main className="flex-1 ml-64">
+        <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           {/* 顶部导航 */}
           <header className="bg-card border-b border-border">
             <div className="px-8 py-6">
@@ -230,7 +231,7 @@ export default function DesktopUploadPage() {
     return (
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <div className="text-center">
             <motion.div
               animate={{ rotate: 360 }}
@@ -251,7 +252,7 @@ export default function DesktopUploadPage() {
     return (
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -273,7 +274,7 @@ export default function DesktopUploadPage() {
     <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">

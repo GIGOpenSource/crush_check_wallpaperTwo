@@ -21,7 +21,7 @@ import {
   Reply,
   UserPlus,
 } from 'lucide-react';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
@@ -35,6 +35,7 @@ export default function DesktopSettingsPage() {
   const { modal } = App.useApp();
   const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const { isDarkMode, setTheme } = useTheme();
   const { profile } = useUserProfile();
   const { settings: notificationSettings, loading: settingsLoading, updateSetting } = useNotificationSettings();
@@ -110,7 +111,7 @@ export default function DesktopSettingsPage() {
     <div className="min-h-screen bg-background flex">
       <DesktopSidebar />
       
-      <div className="flex-1 ml-64">
+      <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-card border-b border-border sticky top-0 z-30">
           <div className="px-8 py-6">

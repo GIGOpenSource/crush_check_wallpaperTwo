@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { SearchBar } from '../components/SearchBar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { SlidersHorizontal, X } from 'lucide-react';
@@ -18,6 +18,7 @@ interface Filters {
 
 export default function DesktopSearchPage() {
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const [searchParams] = useSearchParams();
   
   const columns = 3;
@@ -143,7 +144,7 @@ export default function DesktopSearchPage() {
       <div className="flex h-screen overflow-hidden bg-background">
         <DesktopSidebar />
 
-        <main className="flex-1 ml-64 overflow-y-auto">
+        <main className={`flex-1 transition-all duration-300 overflow-y-auto ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           {/* Header */}
           <header className="bg-card border-b border-border sticky top-0 z-30">
             <div className="px-8 py-6">

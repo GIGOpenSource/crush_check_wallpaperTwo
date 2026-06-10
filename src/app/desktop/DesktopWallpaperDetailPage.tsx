@@ -1,7 +1,7 @@
 import { App } from 'antd';
 import { useState,useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import { currentUser } from '../mockData';
 import { trackAndRunDetailShare } from '../analytics/detailPageShareTrack';
@@ -36,6 +36,7 @@ import { motion, AnimatePresence } from 'motion/react';
 export default function DesktopWallpaperDetailPage() {
   const { message } = App.useApp();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const { id } = useParams();
   const navigate = useNavigate();
   const { wallpaper, loading, error, refresh } = useWallpaperDetailFromRoute();
@@ -95,7 +96,7 @@ export default function DesktopWallpaperDetailPage() {
     return (
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
@@ -106,7 +107,7 @@ export default function DesktopWallpaperDetailPage() {
     return (
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <div className="text-center">
             <p className="text-muted-foreground mb-4">{t.wallpaperDetail.wallpaperNotFound}</p>
             <button
@@ -228,7 +229,7 @@ export default function DesktopWallpaperDetailPage() {
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
 
-        <main className="flex-1 ml-64">
+        <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           {/* Header */}
           <header className="bg-card border-b border-border sticky top-0 z-30">
             <div className="px-8 py-4">

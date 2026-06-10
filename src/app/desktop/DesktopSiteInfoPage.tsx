@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getSiteInfo, type SiteInfo } from '../../api/wallpaper';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 
 type InfoType = 'privacy' | 'help' | 'about';
 
@@ -11,6 +11,7 @@ export default function DesktopSiteInfoPage() {
   const { type } = useParams<{ type: InfoType }>();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const [info, setInfo] = useState<SiteInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +59,7 @@ export default function DesktopSiteInfoPage() {
       <DesktopSidebar />
 
       {/* 主内容区 */}
-      <div className="flex-1 ml-64">
+      <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* 顶部导航栏 */}
         <div className="sticky top-0 z-40 bg-card border-b border-border">
           <div className="flex items-center gap-3 px-6 py-4">

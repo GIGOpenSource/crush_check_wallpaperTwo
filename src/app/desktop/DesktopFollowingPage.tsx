@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { App } from 'antd';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Users, UserPlus } from 'lucide-react';
 import { useFollowingList } from '../hooks/useFollowingList';
@@ -11,6 +11,7 @@ export default function DesktopFollowingPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { message } = App.useApp();
+  const { isCollapsed } = useSidebar();
   const { users = [], loading, loadingMore, error, hasMore, loadMore, refresh } = useFollowingList();
 
   // 每次进入页面时重新请求数据
@@ -36,7 +37,7 @@ export default function DesktopFollowingPage() {
     <div className="flex min-h-screen bg-background">
       <DesktopSidebar />
 
-      <main className="flex-1 ml-64">
+      <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {/* Header */}
         <header className="bg-card border-b border-border">
           <div className="px-8 py-6">

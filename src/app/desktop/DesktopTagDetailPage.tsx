@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
-import { DesktopSidebar } from '../components/DesktopSidebar';
+import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { DesktopWallpaperGrid } from '../components/DesktopWallpaperGrid';
 import type { Tag } from '../types';
 import type { TagDetailLocationState } from '../types/tagDetailNav';
@@ -14,6 +14,7 @@ type SortOption = 'relevance' | 'latest' | 'views' | 'downloads';
 
 export default function DesktopTagDetailPage() {
   const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
   const { tagId: tagIdParam } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,7 +72,7 @@ export default function DesktopTagDetailPage() {
     return (
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
-        <div className="flex-1 ml-64 flex items-center justify-center">
+        <div className={`flex-1 transition-all duration-300 flex items-center justify-center ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <p className="text-muted-foreground">{t.tags.tagNotFound}</p>
         </div>
       </div>
@@ -102,7 +103,7 @@ export default function DesktopTagDetailPage() {
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />
 
-        <main className="flex-1 ml-64">
+        <main className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
           <header className="bg-card border-b border-border sticky top-0 z-30">
             <div className="px-8 py-6">
               <div className="max-w-7xl mx-auto">
