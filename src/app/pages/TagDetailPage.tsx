@@ -35,11 +35,11 @@ export default function TagDetailPage() {
 
   const displayTag: Tag | null = decodedId
     ? {
-        tag: decodedId,
-        name: meta?.name ?? decodedId,
-        description: meta?.description,
-        wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
-      }
+      tag: decodedId,
+      name: meta?.name ?? decodedId,
+      description: meta?.description,
+      wallpaperCount: meta?.wallpaperCount ?? total ?? wallpapers.length,
+    }
     : null;
 
   // 获取SEO数据
@@ -48,7 +48,7 @@ export default function TagDetailPage() {
 
     // 构建当前页面的完整URL
     const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
-    
+
     console.log('🔍 [TagDetailPage] 请求SEO数据:', currentUrl);
 
     getSeoTdk(currentUrl)
@@ -88,117 +88,115 @@ export default function TagDetailPage() {
     <>
       <Helmet>
         {/* 优先使用API返回的SEO数据，如果没有则使用默认数据 */}
-        <title>{seoData?.title || (displayTag?.name ? `${displayTag.name} - 标签` : '加载中...')}</title>
-        <meta 
-          name="description" 
-          content={seoData?.description || displayTag?.description || `查看"${displayTag?.name || ''}"标签下的壁纸，共${formatNumber(displayTag?.wallpaperCount || 0)}张`} 
+        <title>{seoData?.title || (displayTag?.name ? `${displayTag.name} - Tag` : 'Loading...')}</title>
+        <meta
+          name="description"
+          content={seoData?.description || displayTag?.description || `View wallpapers tagged "${displayTag?.name || ''}", ${formatNumber(displayTag?.wallpaperCount || 0)} total`}
         />
-        <meta name="keywords" content={seoData?.keywords || `${displayTag?.name || ''}, 标签, 壁纸, 高清壁纸`} />
-        <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - 壁纸标签`} />
-        <meta property="og:description" content={seoData?.description || displayTag?.description || `发现"${displayTag?.name || ''}"标签的精美壁纸`} />
+        <meta name="keywords" content={seoData?.keywords || `${displayTag?.name || ''}, tag, wallpaper, HD wallpaper`} />
+        <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - Wallpaper Tag`} />
+        <meta property="og:description" content={seoData?.description || displayTag?.description || `Discover beautiful wallpapers tagged "${displayTag?.name || ''}"`} />
         <meta property="og:image" content="/default-og-image.jpg" />
         <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
       </Helmet>
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
-      <header className="bg-card border-b border-border sticky top-0 z-40">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full"
-          >
-            <ChevronLeft size={24} className="text-foreground" />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">#{displayTag.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              {formatNumber(displayTag.wallpaperCount)} {t.tags.wallpapers}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowFilters(!showFilters)}
-            className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
-              showFilters ? 'bg-blue-100 text-blue-600' : 'hover:bg-muted text-gray-600'
-            }`}
-          >
-            <SlidersHorizontal size={20} />
-          </button>
-        </div>
-
-        {displayTag.description && (
-          <div className="px-4 pb-3">
-            <p className="text-sm text-gray-600">{displayTag.description}</p>
-          </div>
-        )}
-
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-border"
+        <header className="bg-card border-b border-border sticky top-0 z-40">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full"
             >
-              <div className="px-4 py-3">
-                <h3 className="text-sm font-semibold text-foreground mb-2">{t.tags.sortBy}</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {sortOptions.map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <button
-                        type="button"
-                        key={option.value}
-                        onClick={() => {
-                          setSortBy(option.value);
-                          setShowFilters(false);
-                        }}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                          sortBy === option.value
+              <ChevronLeft size={24} className="text-foreground" />
+            </button>
+            <div className="flex-1">
+              <h1 className="text-xl font-bold text-foreground">#{displayTag.name}</h1>
+              <p className="text-sm text-muted-foreground">
+                {formatNumber(displayTag.wallpaperCount)} {t.tags.wallpapers}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${showFilters ? 'bg-blue-100 text-blue-600' : 'hover:bg-muted text-gray-600'
+                }`}
+            >
+              <SlidersHorizontal size={20} />
+            </button>
+          </div>
+
+          {displayTag.description && (
+            <div className="px-4 pb-3">
+              <p className="text-sm text-gray-600">{displayTag.description}</p>
+            </div>
+          )}
+
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden border-t border-border"
+              >
+                <div className="px-4 py-3">
+                  <h3 className="text-sm font-semibold text-foreground mb-2">{t.tags.sortBy}</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {sortOptions.map((option) => {
+                      const Icon = option.icon;
+                      return (
+                        <button
+                          type="button"
+                          key={option.value}
+                          onClick={() => {
+                            setSortBy(option.value);
+                            setShowFilters(false);
+                          }}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${sortBy === option.value
                             ? 'bg-blue-600 text-white'
                             : 'bg-muted text-foreground hover:bg-muted'
-                        }`}
-                      >
-                        <Icon size={16} />
-                        <span className="text-sm">{option.label}</span>
-                      </button>
-                    );
-                  })}
+                            }`}
+                        >
+                          <Icon size={16} />
+                          <span className="text-sm">{option.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
-
-      <div className="py-4">
-        {loading && wallpapers.length === 0 && (
-          <p className="text-center text-muted-foreground py-12">{t.common.loading}</p>
-        )}
-        {error && wallpapers.length === 0 && !loading && (
-          <p className="text-center text-red-500 py-12 px-4">{t.common.loadFailed}</p>
-        )}
-        {!loading && !error && wallpapers.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <SlidersHorizontal size={32} className="text-muted-foreground" />
-            </div>
-            <p className="text-muted-foreground text-center">{t.tags.noWallpapersWithTag}</p>
-          </div>
-        )}
-        {wallpapers.length > 0 && (
-          <>
-            <WallpaperGrid wallpapers={wallpapers} listNavBase={listNavBase} />
-            {loadingMore && (
-              <p className="text-center text-sm text-muted-foreground py-4">{t.common.loading}</p>
+              </motion.div>
             )}
-            <div ref={sentinelRef} className="h-10" aria-hidden />
-          </>
-        )}
-      </div>
+          </AnimatePresence>
+        </header>
 
-      <BottomNav />
-    </div>
+        <div className="py-4">
+          {loading && wallpapers.length === 0 && (
+            <p className="text-center text-muted-foreground py-12">{t.common.loading}</p>
+          )}
+          {error && wallpapers.length === 0 && !loading && (
+            <p className="text-center text-red-500 py-12 px-4">{t.common.loadFailed}</p>
+          )}
+          {!loading && !error && wallpapers.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <SlidersHorizontal size={32} className="text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground text-center">{t.tags.noWallpapersWithTag}</p>
+            </div>
+          )}
+          {wallpapers.length > 0 && (
+            <>
+              <WallpaperGrid wallpapers={wallpapers} listNavBase={listNavBase} />
+              {loadingMore && (
+                <p className="text-center text-sm text-muted-foreground py-4">{t.common.loading}</p>
+              )}
+              <div ref={sentinelRef} className="h-10" aria-hidden />
+            </>
+          )}
+        </div>
+
+        <BottomNav />
+      </div>
     </>
   );
 }
