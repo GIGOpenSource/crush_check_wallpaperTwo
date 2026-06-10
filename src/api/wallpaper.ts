@@ -298,10 +298,12 @@ export function getTagList() {
  * POST /api/wallpapers/wallpaper/upload-person/
  */
 export type UploadWallpaperParams = {
+  /** 壁纸ID（重新上传时使用） */
+  id?: string;
   /** 平台类型 */
   platform: 'PC' | 'PHONE';
   /** 壁纸文件 */
-  file: File;
+  file?: File;
   /** 壁纸标题 */
   title: string;
   /** 描述（可选） */
@@ -318,8 +320,19 @@ export type UploadWallpaperParams = {
  */
 export function uploadWallpaper(data: UploadWallpaperParams) {
   const formData = new FormData();
+  
+  // 重新上传时携带壁纸ID
+  if (data.id) {
+    formData.append('id', data.id);
+  }
+  
   formData.append('platform', data.platform);
-  formData.append('file', data.file);
+  
+  // 文件可选（重新上传时可能不更换图片）
+  if (data.file) {
+    formData.append('file', data.file);
+  }
+  
   formData.append('title', data.title);
   
   if (data.description) {

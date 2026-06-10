@@ -76,6 +76,7 @@ export default function UploadPage() {
   const [tagList, setTagList] = useState<TagItem[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [wallpaperId, setWallpaperId] = useState<string | null>(null);
 
   const steps: { id: UploadStep; label: string; icon: typeof ImageIcon }[] = [
     { id: 'select', label: t.upload.selectImage, icon: ImageIcon },
@@ -109,6 +110,10 @@ export default function UploadPage() {
     if (reuploadData) {
       try {
         const wallpaper = JSON.parse(reuploadData);
+        // 保存壁纸ID用于重新上传
+        if (wallpaper.id) {
+          setWallpaperId(String(wallpaper.id));
+        }
         // 填充数据
         const titleValue = wallpaper.title || wallpaper.name;
         if (titleValue) setTitle(titleValue);
@@ -116,6 +121,11 @@ export default function UploadPage() {
         if (wallpaper.platform) setPlatform(wallpaper.platform === 'PHONE' ? 'PHONE' : 'PC');
         if (wallpaper.tags && Array.isArray(wallpaper.tags)) {
           setTags(wallpaper.tags.map((tag: any) => typeof tag === 'object' ? tag.name : tag));
+        }
+        // 回显图片
+        const imageUrl = wallpaper.url || wallpaper.thumbUrl || wallpaper.imageUrl || wallpaper.thumb_url || wallpaper.image_url;
+        if (imageUrl) {
+          setSelectedImage(imageUrl);
         }
         // 设置步骤为详情页
         setCurrentStep('details');
@@ -168,11 +178,17 @@ export default function UploadPage() {
   };
 
   const handleSubmit = async () => {
-    if (!selectedFile || !title.trim()) {
+    // 验证：必须有图片（选择的文件或回显的图片）和标题
+    const hasImage = selectedFile || selectedImage;
+    if (!hasImage || !title.trim()) {
       setUploadError(t.upload.selectImageAndTitle);
       return;
     }
 
+    await doUpload();
+  };
+
+  const doUpload = async () => {
     setCurrentStep('uploading');
     setIsUploading(true);
     setUploadError(null);
@@ -189,6 +205,7 @@ export default function UploadPage() {
       );
 
       await uploadWallpaper({
+        id: wallpaperId || undefined,
         platform: platform,
         file: selectedFile,
         title: title.trim(),
