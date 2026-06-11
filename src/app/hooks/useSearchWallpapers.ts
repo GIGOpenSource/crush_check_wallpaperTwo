@@ -32,9 +32,10 @@ export function useSearchWallpapers(
       platform,
     };
 
-    // 搜索关键词
+    // 搜索关键词 - 同时传递 name 和 tag_name
     if (query.trim()) {
       params.name = query.trim();
+      params.tag_name = query.trim();
     }
 
     // 分辨率筛选（多个值用逗号分隔）

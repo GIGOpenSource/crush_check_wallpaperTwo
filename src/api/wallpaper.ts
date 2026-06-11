@@ -71,6 +71,8 @@ export type WallpapersListParams = {
   pageSize: number;
   /** 模糊搜索 */
   name?: string;
+  /** 标签名称搜索 */
+  tag_name?: string;
   /** 标签 id */
   tag_id?: number | string;
   /** Static → false，Live → true */
