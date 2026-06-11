@@ -568,7 +568,8 @@ export default function DesktopWallpaperDetailPage() {
       {/* Fullscreen Preview Modal */}
       {showPreview && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 overflow-hidden"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 overflow-hidden"
+          style={{ zIndex: 100 }}
           onClick={() => setShowPreview(false)}
         >
           <div className="relative">
