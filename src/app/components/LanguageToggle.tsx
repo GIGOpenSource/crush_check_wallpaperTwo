@@ -6,7 +6,7 @@ import { Language } from '../locales/translations';
 import { useTheme } from '../contexts/ThemeContext';
 
 const languageOptions: { code: Language; name: string; flag: string }[] = [
-  { code: 'zh-CN', name: '简体中文', flag: 'CN' },
+  // { code: 'zh-CN', name: '简体中文', flag: 'CN' },
   { code: 'en', name: 'English', flag: 'EN' },
   { code: 'ja', name: '日本語', flag: 'JP' },
   { code: 'ko', name: '한국어', flag: 'KR' },
