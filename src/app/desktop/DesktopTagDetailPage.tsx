@@ -98,7 +98,7 @@ export default function DesktopTagDetailPage() {
         <meta name="keywords" content={seoData?.keywords || `${displayTag?.name || ''}, tag, wallpaper, HD wallpaper`} />
         <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - Wallpaper Tag`} />
         <meta property="og:description" content={seoData?.description || displayTag?.description || `Discover beautiful wallpapers for the "${displayTag?.name || ''}" tag`} />
-        <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
+        <link rel="canonical" href={`${window.location.origin}/tag/${encodeURIComponent(displayTag?.name || '')}`} />
       </Helmet>
       <div className="flex min-h-screen bg-background">
         <DesktopSidebar />

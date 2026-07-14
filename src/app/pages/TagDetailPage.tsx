@@ -97,7 +97,7 @@ export default function TagDetailPage() {
         <meta property="og:title" content={seoData?.title || `${displayTag?.name || ''} - Wallpaper Tag`} />
         <meta property="og:description" content={seoData?.description || displayTag?.description || `Discover beautiful wallpapers tagged "${displayTag?.name || ''}"`} />
         <meta property="og:image" content="/default-og-image.jpg" />
-        <link rel="canonical" href={`${window.location.origin}/markwallpapers/tag/${encodeURIComponent(displayTag?.name || '')}`} />
+        <link rel="canonical" href={`${window.location.origin}/tag/${encodeURIComponent(displayTag?.name || '')}`} />
       </Helmet>
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
         <header className="bg-card border-b border-border sticky top-0 z-40">

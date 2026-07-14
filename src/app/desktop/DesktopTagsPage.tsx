@@ -123,7 +123,7 @@ export default function DesktopTagsPage() {
         <meta name="keywords" content={seoData?.keywords || 'wallpaper tags, hd wallpaper, desktop wallpaper, photo tags'} />
         <meta property="og:title" content={seoData?.title || 'Tags - HD Wallpaper Collection'} />
         <meta property="og:description" content={seoData?.description || 'Discover amazing collections of HD wallpapers organized by tags'} />
-        <link rel="canonical" href={`${window.location.origin}/markwallpapers/tags`} />
+        <link rel="canonical" href={`${window.location.origin}/tags`} />
       </Helmet>
       <div className="flex min-h-screen bg-background">
       <DesktopSidebar />

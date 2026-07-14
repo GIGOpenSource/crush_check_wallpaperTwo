@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 全局基础配置：默认允许明文HTTP -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- 单独域名规则：必须和base-config同级，不能嵌套 -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">www.markwallpapers.com</domain>
+    </domain-config>
+</network-security-config>

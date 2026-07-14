@@ -124,7 +124,7 @@ export default function SearchPage() {
         <meta name="keywords" content={seoData?.keywords || 'wallpaper, search, HD wallpaper, mobile wallpaper'} />
         <meta property="og:title" content={seoData?.title || (query ? `${query} - Wallpaper Search` : 'Search Wallpapers')} />
         <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
-        <link rel="canonical" href={`${window.location.origin}/markwallpapers/search`} />
+        <link rel="canonical" href={`${window.location.origin}/search`} />
       </Helmet>
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}

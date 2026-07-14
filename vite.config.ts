@@ -6,8 +6,7 @@ import react from '@vitejs/plugin-react'
 const MARK_WALLPAPERS_ORIGIN = 'https://www.markwallpapers.com'
 
 export default defineConfig({
-  base: '/markwallpapers/',
-    // BrowserRouter 模式下移除 base 配置,使用 basename 在路由器中配置
+  base: './',
     build: {
       outDir: 'markwallpapers',
     },
@@ -25,22 +24,12 @@ export default defineConfig({
     },
   },
   plugins: [
-    // The React and Tailwind plugins are both required for Make, even if
-    // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
     {
-      name: 'force-trailing-slash',
-      configureServer(server) {
-        server.middlewares.use((req: any, res: any, next: any) => {
-          // 如果请求路径是 /markwallpapers（没有尾部斜杠），重定向到 /markwallpapers/
-          if (req.url === '/markwallpapers') {
-            res.writeHead(301, { Location: '/markwallpapers/' });
-            res.end();
-            return;
-          }
-          next();
-        });
+      name: 'remove-crossorigin',
+      transformIndexHtml(html) {
+        return html.replace(/crossorigin /g, '');
       },
     },
   ],
