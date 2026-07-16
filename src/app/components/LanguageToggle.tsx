@@ -12,6 +12,7 @@ const languageOptions: { code: Language; name: string; flag: string }[] = [
   { code: 'ko', name: '한국어', flag: 'KR' },
   { code: 'es', name: 'Español', flag: 'ES' },
   { code: 'fr', name: 'Français', flag: 'FR' },
+  { code: 'pt', name: 'Português', flag: 'PT' },
 ];
 
 export function LanguageToggle() {

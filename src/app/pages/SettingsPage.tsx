@@ -86,6 +86,7 @@ export default function SettingsPage() {
     { code: 'ko', name: '한국어', flag: 'KR' },
     { code: 'es', name: 'Español', flag: 'ES' },
     { code: 'fr', name: 'Français', flag: 'FR' },
+    { code: 'pt', name: 'Português', flag: 'PT' },
   ];
 
   const handleLogout = async () => {
@@ -338,7 +339,7 @@ export default function SettingsPage() {
                     key={lang.code}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr');
+                      setLanguage(lang.code as 'zh-CN' | 'en' | 'ja' | 'ko' | 'es' | 'fr' | 'pt');
                       setShowLanguageModal(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all ${

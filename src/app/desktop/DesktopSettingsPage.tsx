@@ -105,6 +105,7 @@ export default function DesktopSettingsPage() {
     { code: 'ko', name: '한국어', flag: 'KR' },
     { code: 'es', name: 'Español', flag: 'ES' },
     { code: 'fr', name: 'Français', flag: 'FR' },
+    { code: 'pt', name: 'Português', flag: 'PT' },
   ];
 
   return (
