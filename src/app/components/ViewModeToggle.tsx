@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
 import { useView } from '../contexts/ViewContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { CustomModal } from './CustomModal';
+import { AppDownloadModal } from './AppDownloadModal';
 
 export function ViewModeToggle() {
   const { viewMode } = useView();
@@ -32,12 +32,9 @@ export function ViewModeToggle() {
         <Smartphone size={18} className="text-foreground" />
         <span className="text-sm font-medium text-foreground">{t.nav.mobile}</span>
       </motion.button>
-      <CustomModal
+      <AppDownloadModal
         visible={showModal}
         onClose={handleClose}
-        title={t.common.tip}
-        content={t.common.appDownloadInProgress}
-        okText={t.common.gotIt}
       />
     </>
   );

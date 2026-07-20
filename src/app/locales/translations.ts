@@ -22,6 +22,12 @@ export const translations = {
       tip: '提示',
       gotIt: '知道了',
       appDownloadInProgress: '下载app开发中',
+      downloadAppTitle: '下载 App',
+      downloadAppSubtitle: '扫码下载移动应用',
+      googlePlay: 'Google Play',
+      appStore: 'App Store',
+      scanToDownload: '扫码下载',
+      scanTip: '提示：使用手机扫码即可下载应用',
     },
 
     // Audit Status
@@ -479,6 +485,12 @@ export const translations = {
       tip: "Tip",
       gotIt: "Got it",
       appDownloadInProgress: "App download is in progress",
+      downloadAppTitle: "Download App",
+      downloadAppSubtitle: "Scan to download the mobile app",
+      googlePlay: "Google Play",
+      appStore: "App Store",
+      scanToDownload: "Scan to download",
+      scanTip: "Tip: Use your phone to scan the QR code to download the app",
     },
 
     // Audit Status
@@ -862,6 +874,12 @@ export const translations = {
       tip: "ヒント",
       gotIt: "了解",
       appDownloadInProgress: "アプリダウンロード進行中",
+      downloadAppTitle: "アプリをダウンロード",
+      downloadAppSubtitle: "QRコードをスキャンしてアプリをダウンロード",
+      googlePlay: "Google Play",
+      appStore: "App Store",
+      scanToDownload: "スキャンしてダウンロード",
+      scanTip: "ヒント：スマートフォンでQRコードをスキャンしてアプリをダウンロードしてください",
     },
 
     // Audit Status
@@ -1245,6 +1263,12 @@ export const translations = {
       tip: "팁",
       gotIt: "확인",
       appDownloadInProgress: "앱 다운로드 진행 중",
+      downloadAppTitle: "앱 다운로드",
+      downloadAppSubtitle: "QR 코드를 스캔하여 모바일 앱을 다운로드",
+      googlePlay: "Google Play",
+      appStore: "App Store",
+      scanToDownload: "스캔하여 다운로드",
+      scanTip: "팁: 휴대폰으로 QR 코드를 스캔하여 앱을 다운로드하세요",
     },
 
     // Audit Status
@@ -1629,6 +1653,12 @@ export const translations = {
       tip: 'Aviso',
       gotIt: 'Entendido',
       appDownloadInProgress: 'La descarga de la aplicación está en desarrollo',
+      downloadAppTitle: 'Descargar App',
+      downloadAppSubtitle: 'Escanea para descargar la aplicación móvil',
+      googlePlay: 'Google Play',
+      appStore: 'App Store',
+      scanToDownload: 'Escanear para descargar',
+      scanTip: 'Consejo: Usa tu teléfono para escanear el código QR y descargar la aplicación',
     },
 
     // Audit Status
@@ -2024,6 +2054,12 @@ export const translations = {
       tip: 'Information',
       gotIt: 'OK',
       appDownloadInProgress: 'Le téléchargement de l\'application est en cours de développement',
+      downloadAppTitle: 'Télécharger l\'App',
+      downloadAppSubtitle: 'Scannez pour télécharger l\'application mobile',
+      googlePlay: 'Google Play',
+      appStore: 'App Store',
+      scanToDownload: 'Scanner pour télécharger',
+      scanTip: 'Conseil : utilisez votre téléphone pour scanner le code QR et télécharger l\'application',
     },
 
     // Audit Status
@@ -2419,6 +2455,12 @@ export const translations = {
       tip: 'Dica',
       gotIt: 'Entendido',
       appDownloadInProgress: 'Download do aplicativo em desenvolvimento',
+      downloadAppTitle: 'Baixar App',
+      downloadAppSubtitle: 'Escaneie para baixar o aplicativo móvel',
+      googlePlay: 'Google Play',
+      appStore: 'App Store',
+      scanToDownload: 'Escanear para baixar',
+      scanTip: 'Dica: Use seu telefone para escanear o código QR e baixar o aplicativo',
     },
 
     audit: {
