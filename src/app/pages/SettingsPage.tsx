@@ -201,7 +201,7 @@ export default function SettingsPage() {
         {
           icon: Shield,
           label: t.settings.privacyPolicy,
-          onClick: () => window.open('https://www.markwallpapers.com/privacy/pages/privacy/privacy', '_blank'),
+          onClick: () => window.open('https://www.markwallpapers.com/agreement/MarkWallpapers%20Privacy%20Policy.html', '_blank'),
           chevron: true,
         },
          {

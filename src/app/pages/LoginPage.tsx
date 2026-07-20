@@ -216,6 +216,21 @@ export default function LoginPage() {
           className="mt-6 text-center text-xs text-muted-foreground"
         >
           {t.login.termsAgreement}
+          <a
+            href="https://www.markwallpapers.com/agreement/MarkWallpapers%20Privacy%20Policy.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-700 underline transition-colors"
+          >
+            {t.login.privacyPolicy}
+          </a>
+          <span className="ml-1">{t.login.and}</span>
+          <Link
+            to="/site-info/privacy"
+            className="text-blue-600 hover:text-blue-700 underline transition-colors ml-1"
+          >
+            {t.settings.privacySecurity}
+          </Link>
         </motion.p>
       </main>
 
