@@ -155,7 +155,7 @@ export default function DesktopSettingsPage() {
                 </motion.div>
                 
                 <div 
-                  onClick={() => navigate('/site-info/privacy')}
+                  onClick={() => window.open('https://www.markwallpapers.com/privacy/pages/privacy/privacy', '_blank')}
                   className="px-6 py-4 flex items-center justify-between hover:bg-muted transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
@@ -163,8 +163,8 @@ export default function DesktopSettingsPage() {
                       <Shield size={24} className="text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground">{t.settings.privacySecurity}</h3>
-                      <p className="text-sm text-muted-foreground">{t.settings.privacySecurityDesc}</p>
+                      <h3 className="font-semibold text-foreground">{t.settings.privacyPolicy}</h3>
+                      <p className="text-sm text-muted-foreground">{t.settings.privacyPolicy}</p>
                     </div>
                   </div>
                   <ChevronRight size={20} className="text-muted-foreground" />

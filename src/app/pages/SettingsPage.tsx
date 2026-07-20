@@ -200,6 +200,12 @@ export default function SettingsPage() {
       items: [
         {
           icon: Shield,
+          label: t.settings.privacyPolicy,
+          onClick: () => window.open('https://www.markwallpapers.com/privacy/pages/privacy/privacy', '_blank'),
+          chevron: true,
+        },
+         {
+          icon: Shield,
           label: t.settings.privacySecurity,
           onClick: () => navigate('/site-info/privacy'),
           chevron: true,
