@@ -414,7 +414,7 @@ export default function ProfilePage() {
       {/* Tabs - 只有自己的页面才显示Tab栏 */}
       {!isOtherUser && (
         <>
-          <div className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
+          <div className="bg-card border-b border-border sticky top-0 z-40">
             <div className="flex">
               <button
                 onClick={() => setActiveTab('uploaded')}
