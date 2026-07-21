@@ -25,7 +25,7 @@ export const MobileQuickActions: React.FC<MobileQuickActionsProps> = ({
     }
   };
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 12, y: 8 }); // 调整按钮位置，往上移动
+  const [position, setPosition] = useState({ x: 12, y: 8 });
   const buttonRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const hasDraggedRef = useRef(false);
@@ -48,8 +48,8 @@ export const MobileQuickActions: React.FC<MobileQuickActionsProps> = ({
   // 判断是否是 trending 路由
   const isTrendingRoute = currentPath === '/trending';
 
-  // 只在首页显示语言切换按钮，排除 /trending 路由
-  const shouldShowLanguageToggle = isHomePage && !isTrendingRoute;
+  // 首页不显示语言切换按钮（header中已集成），只在搜索页面显示
+  const shouldShowLanguageToggle = isSearchPage;
 
   const languageOptions = [
     // { code: 'zh-CN', name: '简体中文', flag: 'CN' },
@@ -63,10 +63,11 @@ export const MobileQuickActions: React.FC<MobileQuickActionsProps> = ({
 
   const currentLanguage = languageOptions.find((lang) => lang.code === language);
 
-  // 首页固定位置在右上角
+  // 首页固定位置在右上角，考虑安全区域
   useEffect(() => {
     if (shouldShowLanguageToggle) {
-      setPosition({ x: 12, y: 8 }); // 同步更新 useEffect 中的位置
+      const safeAreaTop = parseInt(window.getComputedStyle(document.body).paddingTop) || 0;
+      setPosition({ x: 12, y: safeAreaTop + 8 });
     }
   }, [shouldShowLanguageToggle]);
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { App as AntdApp, ConfigProvider, theme } from 'antd';
 import { RouterProvider } from 'react-router';
 import { HelmetProvider } from 'react-helmet-async';
@@ -7,6 +8,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { SidebarProvider } from './components/DesktopSidebar';
 import { UnreadCountProvider } from './contexts/UnreadCountContext';
+import { initCapacitorStatusBar } from './utils/capacitorInit';
 
 function AntdThemeWrapper({ children }: { children: React.ReactNode }) {
   const { theme: currentTheme } = useTheme();
@@ -30,6 +32,10 @@ function AntdThemeWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    initCapacitorStatusBar();
+  }, []);
+
   return (
     <HelmetProvider>
       <LanguageProvider>

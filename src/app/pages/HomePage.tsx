@@ -5,7 +5,7 @@ import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { BottomNav } from '../components/BottomNav';
-import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, Languages } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useView } from '../contexts/ViewContext';
 import { useHomePopularWallpapers } from '../hooks/useHomePopularWallpapers';
@@ -13,10 +13,39 @@ import { useHomeFeaturedWallpapers } from '../hooks/useHomeFeaturedWallpapers';
 import { wallpaperListCoverUrl } from '../utils/wallpaperApiMap';
 import { getSeoTdk } from '../../api/wallpaper';
 import { formatNumber } from '../utils/format';
+import { Language } from '../locales/translations';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
+  const { isDarkMode } = useTheme();
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  const languageOptions: { code: Language; name: string; flag: string }[] = [
+    { code: 'en', name: 'English', flag: 'EN' },
+    { code: 'ja', name: '日本語', flag: 'JP' },
+    { code: 'ko', name: '한국어', flag: 'KR' },
+    { code: 'es', name: 'Español', flag: 'ES' },
+    { code: 'fr', name: 'Français', flag: 'FR' },
+    { code: 'pt', name: 'Português', flag: 'PT' },
+  ];
+
+  const currentLanguage = languageOptions.find((lang) => lang.code === language);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false);
+      }
+    }
+
+    if (isLanguageMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isLanguageMenuOpen]);
   /** 与首页共用路由的「热门」页不展示编辑精选 Banner */
   const showEditorsBanner = location.pathname !== '/trending';
   const { viewMode } = useView();
@@ -115,7 +144,44 @@ export default function HomePage() {
         {/* Header */}
         <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
           <div className="px-4 py-3">
-            <h1 className="text-xl font-bold text-foreground mb-3">{t.home.title}</h1>
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-xl font-bold text-foreground">{t.home.title}</h1>
+              <div ref={languageMenuRef} className="relative">
+                <button
+                  onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-background border border-border rounded-full hover:bg-muted transition-colors"
+                  title="Change language"
+                >
+                  <span className="text-sm font-semibold">{currentLanguage?.flag}</span>
+                  <Languages size={16} className="text-foreground" />
+                </button>
+                {isLanguageMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 bg-background rounded-xl shadow-xl border border-border overflow-hidden min-w-[200px] z-50">
+                    {languageOptions.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code);
+                          setIsLanguageMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all ${
+                          language === lang.code
+                            ? isDarkMode ? 'bg-slate-700' : 'bg-blue-50'
+                            : isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className={`text-sm font-bold w-8 text-center ${language === lang.code ? (isDarkMode ? 'text-white' : 'text-blue-700') : (isDarkMode ? 'text-gray-300' : 'text-gray-800')}`}>
+                          {lang.flag}
+                        </span>
+                        <span className={`text-sm ${language === lang.code ? (isDarkMode ? 'text-white font-semibold' : 'text-blue-700 font-semibold') : (isDarkMode ? 'text-gray-200' : 'text-gray-700')}`}>
+                          {lang.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             <SearchBar />
           </div>
         </header>
