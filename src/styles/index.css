@@ -104,3 +104,11 @@ a.profile-upload-btn svg {
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-top-margin {
+  margin-top: env(safe-area-inset-top);
+}

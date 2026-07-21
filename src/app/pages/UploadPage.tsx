@@ -31,7 +31,7 @@ export default function UploadPage() {
     return (
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
         {/* 顶部导航 */}
-        <div className="sticky top-0 z-10 bg-card border-b border-border">
+        <div className="sticky top-0 z-10 bg-card border-b border-border safe-area-pt">
           <div className="px-4 py-4 flex items-center gap-2">
             <Upload className="w-5 h-5 text-blue-500" />
             <h1 className="text-lg font-semibold text-foreground">
@@ -267,7 +267,7 @@ export default function UploadPage() {
   return (
     <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => navigate(-1)}

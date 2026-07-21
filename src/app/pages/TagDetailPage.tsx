@@ -100,7 +100,7 @@ export default function TagDetailPage() {
         <link rel="canonical" href={`${window.location.origin}/tag/${encodeURIComponent(displayTag?.name || '')}`} />
       </Helmet>
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
-        <header className="bg-card border-b border-border sticky top-0 z-40">
+        <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
               type="button"

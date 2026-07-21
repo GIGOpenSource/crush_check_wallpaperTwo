@@ -234,7 +234,7 @@ export default function WallpaperDetailPage() {
       </Helmet>
       <div className="min-h-screen bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pb-20 max-w-md mx-auto">
         {/* Header */}
-        <header className="bg-gradient-to-b from-black/50 to-transparent">
+        <header className="bg-gradient-to-b from-black/50 to-transparent safe-area-pt">
           <div className="flex p-4">
             <button
               type="button"

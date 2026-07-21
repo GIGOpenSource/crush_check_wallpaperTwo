@@ -61,7 +61,7 @@ export default function MobileNotificationsPage() {
     return (
       <div className="min-h-screen bg-background dark:bg-gray-900 pb-20 max-w-md mx-auto">
         {/* 顶部导航 */}
-        <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700">
+        <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700 safe-area-pt">
           <div className="px-4 py-4 flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
             <h1 className="text-lg font-semibold text-foreground dark:text-white">
@@ -219,7 +219,7 @@ export default function MobileNotificationsPage() {
   return (
     <div className="min-h-screen bg-background dark:bg-gray-900 pb-20">
       {/* 顶部导航 */}
-      <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700">
+      <div className="sticky top-0 z-10 bg-card dark:bg-gray-800 border-b border-border dark:border-gray-700 safe-area-pt">
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />

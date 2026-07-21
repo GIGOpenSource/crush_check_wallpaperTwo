@@ -127,7 +127,7 @@ export default function TagsPage() {
       </Helmet>
       <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
         <div className="px-4 py-3">
           <h1 className="text-xl font-bold text-foreground mb-3">{t.tags.browseTags}</h1>
           <form onSubmit={handleSearchSubmit} className="flex gap-2 items-stretch w-full">

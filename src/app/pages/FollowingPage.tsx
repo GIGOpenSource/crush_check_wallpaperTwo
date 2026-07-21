@@ -35,7 +35,7 @@ export default function FollowingPage() {
   return (
     <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
+      <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
         <div className="px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}

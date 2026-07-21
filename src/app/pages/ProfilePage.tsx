@@ -414,7 +414,7 @@ export default function ProfilePage() {
       {/* Tabs - 只有自己的页面才显示Tab栏 */}
       {!isOtherUser && (
         <>
-          <div className="bg-card border-b border-border sticky top-0 z-40">
+          <div className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
             <div className="flex">
               <button
                 onClick={() => setActiveTab('uploaded')}
@@ -507,7 +507,7 @@ export default function ProfilePage() {
           <div className="px-4 py-3 bg-card border-b border-border">
             <h2 className="text-lg font-bold text-foreground">{t.profile.uploaded}</h2>
           </div>
-          <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-card border-b border-border sticky top-0 z-40">
+          <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
             <button
               onClick={() => setWallpaperFilter('phone')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'phone'

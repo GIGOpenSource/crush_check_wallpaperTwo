@@ -55,7 +55,7 @@ export default function SiteInfoPage() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-background pb-20">
       {/* 顶部导航栏 */}
-      <div className="sticky top-0 z-40 bg-card border-b border-border">
+      <div className="sticky top-0 z-40 bg-card border-b border-border safe-area-pt">
         <div className="flex items-center gap-3 px-4 py-3">
           <button
             onClick={() => navigate(-1)}
