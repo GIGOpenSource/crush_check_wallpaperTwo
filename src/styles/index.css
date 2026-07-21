@@ -112,3 +112,9 @@ a.profile-upload-btn svg {
 .safe-area-top-margin {
   margin-top: env(safe-area-inset-top);
 }
+
+@media (max-width: 768px) {
+  .ant-message {
+    top: calc(env(safe-area-inset-top) + 60px) !important;
+  }
+}
