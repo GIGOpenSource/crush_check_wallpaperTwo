@@ -1,10 +1,8 @@
 {
-  "appId": "com.ios.markwallpapers",
-  "appName": "Mark Wallpapers",
+  "appId": "com.gig.markwallpapers",
+  "appName": "markwallpapers",
   "webDir": "markwallpapers",
   "server": {
-    "url":"http://192.168.77.219:5174",
-    "cleartext": true,
     "androidScheme": "https",
     "allowNavigation": [
       "markwallpapers.com",
