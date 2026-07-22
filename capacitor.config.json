@@ -3,10 +3,10 @@
   "appName": "markwallpapers",
   "webDir": "markwallpapers",
   "server": {
-    "androidScheme": "https",
     "allowNavigation": [
       "markwallpapers.com",
-      "www.markwallpapers.com"
+      "www.markwallpapers.com",
+      "192.168.77.219"
     ]
   },
   "bundledWebRuntime": false,

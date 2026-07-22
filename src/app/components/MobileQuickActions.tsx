@@ -48,8 +48,8 @@ export const MobileQuickActions: React.FC<MobileQuickActionsProps> = ({
   // 判断是否是 trending 路由
   const isTrendingRoute = currentPath === '/trending';
 
-  // 首页不显示语言切换按钮（header中已集成），只在搜索页面显示
-  const shouldShowLanguageToggle = isSearchPage;
+  // 移动端搜索页面不显示语言切换按钮
+  const shouldShowLanguageToggle = false;
 
   const languageOptions = [
     // { code: 'zh-CN', name: '简体中文', flag: 'CN' },
