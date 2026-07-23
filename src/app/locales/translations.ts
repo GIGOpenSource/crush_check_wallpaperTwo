@@ -647,7 +647,7 @@ export const translations = {
     searchPage: {
       title: "Search",
       searchWallpapers: "Search Wallpapers",
-      searchPlaceholder: "Search wallpapers, tags...",
+      searchPlaceholder: "Search wallpapers",
       filters: "Filters",
       clearAll: "Clear all",
       resolution: "Resolution",
@@ -1039,7 +1039,7 @@ export const translations = {
     searchPage: {
       title: "検索",
       searchWallpapers: "壁紙を検索",
-      searchPlaceholder: "壁紙、タグを検索...",
+      searchPlaceholder: "検索壁紙",
       filters: "フィルター",
       clearAll: "すべてクリア",
       resolution: "解像度",
@@ -1432,7 +1432,7 @@ export const translations = {
     searchPage: {
       title: "검색",
       searchWallpapers: "배경화면 검색",
-      searchPlaceholder: "배경화면, 태그 검색...",
+      searchPlaceholder: "배경화면",
       filters: "필터",
       clearAll: "전체 초기화",
       resolution: "해상도",
@@ -1832,7 +1832,7 @@ export const translations = {
     searchPage: {
       title: 'Buscar',
       searchWallpapers: 'Buscar fondos',
-      searchPlaceholder: 'Buscar fondos, etiquetas...',
+      searchPlaceholder: 'Buscar fondos',
       filters: 'Filtros',
       clearAll: 'Borrar todo',
       resolution: 'Resolución',
@@ -2236,7 +2236,7 @@ export const translations = {
     searchPage: {
       title: 'Rechercher',
       searchWallpapers: 'Rechercher des fonds',
-      searchPlaceholder: 'Rechercher des fonds, des étiquettes...',
+      searchPlaceholder: 'Rechercher des fonds',
       filters: 'Filtres',
       clearAll: 'Réinitialiser tout',
       resolution: 'Résolution',
@@ -2637,7 +2637,7 @@ export const translations = {
     searchPage: {
       title: 'Pesquisar',
       searchWallpapers: 'Pesquisar papéis',
-      searchPlaceholder: 'Pesquisar papéis de parede, tags...',
+      searchPlaceholder: 'Pesquisar papéis de parede',
       filters: 'Filtros',
       clearAll: 'Limpar tudo',
       resolution: 'Resolução',
