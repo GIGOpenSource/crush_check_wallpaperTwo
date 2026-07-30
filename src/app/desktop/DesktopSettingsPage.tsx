@@ -20,6 +20,7 @@ import {
   MessageCircle,
   Reply,
   UserPlus,
+  UserX,
 } from 'lucide-react';
 import { DesktopSidebar, useSidebar } from '../components/DesktopSidebar';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -27,7 +28,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken, getAuthToken } from '../../api/request';
-import { logoutUser } from '../../api/auth';
+import { logoutUser, deleteAccount } from '../../api/auth';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { motion } from 'motion/react';
 
@@ -93,6 +94,35 @@ export default function DesktopSettingsPage() {
           }
           // 跳转到登录页（保持当前视图模式）
           navigate('/login', { replace: true });
+        }
+      },
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    modal.confirm({
+      title: t.settings.deleteAccount,
+      content: t.settings.deleteAccountConfirm,
+      okText: t.common.confirm,
+      cancelText: t.common.cancel,
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          const userId = localStorage.getItem('user_id');
+          if (userId) {
+            await deleteAccount(userId);
+          }
+          // 清除本地 token 和 user_id
+          setAuthToken('');
+          clearUnreadCount();
+          try {
+            localStorage.removeItem('user_id');
+          } catch (e) {
+            console.error('清除 user_id 失败:', e);
+          }
+          navigate('/login', { replace: true });
+        } catch (err) {
+          console.error('注销账号失败:', err);
         }
       },
     });
@@ -380,7 +410,7 @@ export default function DesktopSettingsPage() {
               <div className="px-6 py-4 border-b border-destructive/30">
                 <h2 className="text-xl font-bold text-destructive">{t.settings.dangerZone}</h2>
               </div>
-              <div className="px-6 py-4">
+              <div className="px-6 py-4 space-y-3">
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={handleLogout}
@@ -388,6 +418,15 @@ export default function DesktopSettingsPage() {
                 >
                   <LogOut size={20} />
                   <span>{t.settings.logOut}</span>
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDeleteAccount}
+                  className="flex items-center gap-3 px-6 py-3 bg-red-500/10 border-2 border-red-500/40 text-red-500 rounded-xl font-semibold hover:bg-red-500/20 transition-colors"
+                >
+                  <UserX size={20} />
+                  <span>{t.settings.deleteAccount}</span>
                 </motion.button>
               </div>
             </section>

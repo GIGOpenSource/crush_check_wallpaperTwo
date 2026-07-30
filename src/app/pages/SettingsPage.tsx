@@ -18,6 +18,7 @@ import {
   Reply,
   UserPlus,
   Globe,
+  UserX,
 } from 'lucide-react';
 import { BottomNav } from '../components/BottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -25,7 +26,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
 import { setAuthToken, getAuthToken } from '../../api/request';
-import { logoutUser } from '../../api/auth';
+import { logoutUser, deleteAccount } from '../../api/auth';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -127,6 +128,35 @@ export default function SettingsPage() {
           }
           // 跳转到登录页（保持当前视图模式）
           navigate('/login', { replace: true });
+        }
+      },
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    modal.confirm({
+      title: t.settings.deleteAccount,
+      content: t.settings.deleteAccountConfirm,
+      okText: t.common.confirm,
+      cancelText: t.common.cancel,
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          const userId = localStorage.getItem('user_id');
+          if (userId) {
+            await deleteAccount(userId);
+          }
+          // 清除本地 token 和 user_id
+          setAuthToken('');
+          clearUnreadCount();
+          try {
+            localStorage.removeItem('user_id');
+          } catch (e) {
+            console.error('清除 user_id 失败:', e);
+          }
+          navigate('/login', { replace: true });
+        } catch (err) {
+          console.error('注销账号失败:', err);
         }
       },
     });
@@ -302,7 +332,7 @@ export default function SettingsPage() {
         ))}
 
         {/* Logout Button */}
-        <div className="px-4">
+        <div className="px-4 space-y-3">
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
@@ -310,6 +340,16 @@ export default function SettingsPage() {
           >
             <LogOut size={20} />
             <span>{t.settings.logOut}</span>
+          </motion.button>
+
+          {/* Delete Account Button */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={handleDeleteAccount}
+            className="w-full bg-card border-2 border-red-500/40 text-red-500 py-4 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-red-500/10 transition-colors"
+          >
+            <UserX size={20} />
+            <span>{t.settings.deleteAccount}</span>
           </motion.button>
         </div>
 

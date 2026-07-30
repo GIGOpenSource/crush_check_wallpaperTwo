@@ -24,6 +24,11 @@ export function logoutUser() {
   return http.post('/api/client/users/logout/');
 }
 
+/** 注销账号 */
+export function deleteAccount(user_id: string | number) {
+  return http.post('/api/users/deactivate/', { user_id });
+}
+
 /** 从后端错误响应里尽量提取可展示的错误文案 */
 export function extractApiErrorMessage(data: unknown): string | undefined {
   if (typeof data === 'string') {
