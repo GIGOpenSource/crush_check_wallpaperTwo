@@ -118,7 +118,7 @@ export default function RegisterPage() {
       {shouldShowReturnButton && (
         <button
           onClick={handleGoBack}
-          className="fixed top-[calc(env(safe-area-inset-top)+1.5rem)] left-4 z-50 bg-card/10 backdrop-blur-sm border  rounded-full p-2 hover:bg-card/30 transition-colors shadow-md"
+          className="fixed top-[calc(max(env(safe-area-inset-top),var(--status-bar-height,0px))+1.5rem)] left-4 z-50 bg-card/10 backdrop-blur-sm border  rounded-full p-2 hover:bg-card/30 transition-colors shadow-md"
           aria-label={t.common.back}
         >
           <ArrowLeft size={20} className="text-white" />
@@ -131,7 +131,7 @@ export default function RegisterPage() {
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-card/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-card/10 rounded-full blur-3xl"></div>
 
-        <div className="relative px-6 pt-[calc(env(safe-area-inset-top)+3rem)] pb-16">
+        <div className="relative px-6 pt-[calc(max(env(safe-area-inset-top),var(--status-bar-height,0px))+3rem)] pb-16">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

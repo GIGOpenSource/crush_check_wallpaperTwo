@@ -319,7 +319,7 @@ export default function ProfilePage() {
         {shouldShowReturnButton && (
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-[calc(env(safe-area-inset-top)+1.5rem)] left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10 dark:bg-white/10 dark:hover:bg-white/20"
+            className="absolute top-[calc(max(env(safe-area-inset-top),var(--status-bar-height,0px))+1.5rem)] left-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10 dark:bg-white/10 dark:hover:bg-white/20"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -331,7 +331,7 @@ export default function ProfilePage() {
         {!shouldShowReturnButton && (
           <button
             onClick={() => navigate('/settings')}
-            className="absolute top-[calc(env(safe-area-inset-top)+1.5rem)] right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10 dark:bg-white/10 dark:hover:bg-white/20"
+            className="absolute top-[calc(max(env(safe-area-inset-top),var(--status-bar-height,0px))+1.5rem)] right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-10 dark:bg-white/10 dark:hover:bg-white/20"
           >
             <Settings size={20} />
           </button>
