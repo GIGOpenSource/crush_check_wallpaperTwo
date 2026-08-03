@@ -1,8 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
 import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
+import { PullToRefresh } from '../components/PullToRefresh';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
@@ -19,6 +21,7 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const initialQuery = searchParams.get('q') || '';
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const [query, setQuery] = useState(initialQuery);
   const [showFilters, setShowFilters] = useState(false);
@@ -67,7 +70,22 @@ export default function SearchPage() {
     loadMore,
     totalCount,
     currentPage,
+    refresh: refreshSearch,
   } = useSearchWallpapers(query, filters, 1, 20, 'PHONE');
+
+  // 下拉刷新
+  const handleRefresh = async () => {
+    return new Promise<void>((resolve) => {
+      refreshSearch();
+      setTimeout(resolve, 500);
+    });
+  };
+
+  const { refreshing, pullDistance, isPulling, threshold } = usePullToRefresh(
+    containerRef,
+    handleRefresh,
+    { threshold: 70, maxDistance: 120 }
+  );
 
   // 搜索建议标签 - 暂时禁用
   const suggestedTags: any[] = [];
@@ -126,7 +144,14 @@ export default function SearchPage() {
         <meta property="og:description" content={seoData?.description || 'Discover beautiful HD wallpapers'} />
         <link rel="canonical" href={`${window.location.origin}/search`} />
       </Helmet>
-      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
+      <PullToRefresh
+        pullDistance={pullDistance}
+        threshold={threshold}
+        refreshing={refreshing}
+        isPulling={isPulling}
+        className="max-w-md mx-auto"
+      >
+        <div ref={containerRef} className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
         <div className="px-4 py-3">
@@ -289,8 +314,9 @@ export default function SearchPage() {
         )}
       </div>
 
+        </div>
+      </PullToRefresh>
       <BottomNav />
-    </div>
     </>
   );
 }

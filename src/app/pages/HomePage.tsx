@@ -5,6 +5,8 @@ import { SearchBar } from '../components/SearchBar';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { EditorsPickWallpaperLink } from '../components/EditorsPickWallpaperLink';
 import { BottomNav } from '../components/BottomNav';
+import { PullToRefresh } from '../components/PullToRefresh';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { ChevronLeft, ChevronRight, ChevronDown, Languages } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useView } from '../contexts/ViewContext';
@@ -21,6 +23,7 @@ export default function HomePage() {
   const { isDarkMode } = useTheme();
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const languageMenuRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   const languageOptions: { code: Language; name: string; flag: string }[] = [
@@ -88,6 +91,7 @@ export default function HomePage() {
     error: popularError,
     hasMore: popularHasMore,
     sentinelRef: popularSentinelRef,
+    refresh: refreshPopular,
   } = useHomePopularWallpapers({ isHotRoute: isTrendingRoute });
 
   // 使用真实 API 获取精选壁纸
@@ -95,7 +99,28 @@ export default function HomePage() {
     wallpapers: featuredWallpapers,
     loading: featuredLoading,
     error: featuredError,
+    refresh: refreshFeatured,
   } = useHomeFeaturedWallpapers();
+
+  // 下拉刷新
+  const handleRefresh = async () => {
+    await Promise.all([
+      new Promise<void>((resolve) => {
+        refreshPopular();
+        setTimeout(resolve, 500);
+      }),
+      new Promise<void>((resolve) => {
+        refreshFeatured();
+        setTimeout(resolve, 500);
+      }),
+    ]);
+  };
+
+  const { refreshing, pullDistance, isPulling, threshold } = usePullToRefresh(
+    containerRef,
+    handleRefresh,
+    { threshold: 70, maxDistance: 120 }
+  );
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -115,6 +140,33 @@ export default function HomePage() {
       behavior: 'smooth',
     });
   }, [currentSlide, showEditorsBanner, featuredWallpapers.length]);
+
+  // 手动滑动轮播图时，同步更新指示点
+  useEffect(() => {
+    if (!showEditorsBanner || !carouselRef.current || featuredWallpapers.length === 0) return;
+    const container = carouselRef.current;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleScroll = () => {
+      if (scrollTimer) clearTimeout(scrollTimer);
+      // 等待滚动停止后再计算当前索引，避免与程序化 smooth 滚动互相干扰
+      scrollTimer = setTimeout(() => {
+        const index = Math.round(container.scrollLeft / container.offsetWidth);
+        setCurrentSlide((prev) => {
+          if (index >= 0 && index < featuredWallpapers.length && index !== prev) {
+            return index;
+          }
+          return prev;
+        });
+      }, 150);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    };
+  }, [showEditorsBanner, featuredWallpapers.length]);
 
   const handlePrev = () => {
     if (featuredWallpapers.length === 0) return;
@@ -140,7 +192,14 @@ export default function HomePage() {
         <meta property="og:description" content={seoData?.description || 'Massive collection of HD wallpapers waiting for you to discover'} />
         <link rel="canonical" href={`${window.location.origin}/`} />
       </Helmet>
-      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
+      <PullToRefresh
+        pullDistance={pullDistance}
+        threshold={threshold}
+        refreshing={refreshing}
+        isPulling={isPulling}
+        className="max-w-md mx-auto"
+      >
+        <div ref={containerRef} className="min-h-screen bg-background pb-20">
         {/* Header */}
         <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
           <div className="px-4 py-3">
@@ -295,8 +354,9 @@ export default function HomePage() {
           )}
         </section>
 
-        <BottomNav />
-      </div>
+        </div>
+      </PullToRefresh>
+      <BottomNav />
     </>
   );
 }

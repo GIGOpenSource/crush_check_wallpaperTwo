@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Wallpaper } from '../types';
 import { getFeaturedWallpapers } from '../../api/wallpaper';
 import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
@@ -13,20 +13,25 @@ export function useHomeFeaturedWallpapers() {
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const fetchingRef = useRef(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(false);
+  const fetchData = useCallback((silent = false) => {
+    if (fetchingRef.current) return;
+    
+    fetchingRef.current = true;
+    if (!silent) {
+      setLoading(true);
+      setError(false);
+    }
 
-    // 根据 viewMode 转换 platform 参数
     const platform = viewMode === 'mobile' ? 'PHONE' : 'PC';
+
+    let cancelled = false;
 
     getFeaturedWallpapers(platform)
       .then((raw) => {
         if (cancelled) return;
 
-        // 提取数据数组
         const data = extractWallpaperItemsFromResponse(raw);
         const items = data.map(mapRecordToWallpaper);
 
@@ -38,7 +43,8 @@ export function useHomeFeaturedWallpapers() {
         }
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        fetchingRef.current = false;
+        if (!cancelled && !silent) setLoading(false);
       });
 
     return () => {
@@ -46,9 +52,18 @@ export function useHomeFeaturedWallpapers() {
     };
   }, [viewMode]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const refresh = useCallback(() => {
+    fetchData(true);
+  }, [fetchData]);
+
   return {
     wallpapers,
     loading,
     error,
+    refresh,
   };
 }

@@ -208,6 +208,56 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
     return () => ob.disconnect();
   }, [enabled, loading, error, hasMore, loadingMore, loadNextPage, wallpapers.length]);
 
+  /** 刷新：清除缓存并重新加载第一页 */
+  const refresh = useCallback(() => {
+    delete homePopularCache[cacheKey];
+    pageRef.current = 1;
+    setWallpapers([]);
+    setHasMore(true);
+    setError(false);
+    setLoading(true);
+    fetchingRef.current = true;
+
+    let cancelled = false;
+
+    getWallpapersList({
+      currentPage: 1,
+      pageSize: PAGE_SIZE,
+      platform,
+      media_live: false,
+      order: isHotRoute ? 'hot' : 'home',
+    })
+      .then((raw) => {
+        if (cancelled) return;
+        const mapped = mapResponse(raw);
+        const nextHasMore = mapped.length >= PAGE_SIZE;
+        setWallpapers(mapped);
+        setHasMore(nextHasMore);
+        homePopularCache[cacheKey] = {
+          wallpapers: mapped,
+          page: 1,
+          hasMore: nextHasMore,
+          ready: true,
+        };
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError(true);
+        setWallpapers([]);
+        setHasMore(false);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+          fetchingRef.current = false;
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [platform, isHotRoute]);
+
   return {
     wallpapers,
     loading,
@@ -215,5 +265,6 @@ export function useHomePopularWallpapers(options?: UseHomePopularOptions) {
     error,
     hasMore,
     sentinelRef,
+    refresh,
   };
 }

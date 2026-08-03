@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
+import { PullToRefresh } from '../components/PullToRefresh';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { WallpaperGrid } from '../components/WallpaperGrid';
 import { UploadWallpaperGrid } from '../components/UploadWallpaperGrid';
 import { mockWallpapers } from '../mockData';
@@ -55,6 +57,7 @@ export default function ProfilePage() {
   const [deletingId, setDeletingId] = useState<number | string | null>(null);
   const [followingActionId, setFollowingActionId] = useState<number | string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   // 壁纸筛选：'phone' | 'pc'，默认为当前设备类型（移动端默认手机）
   const [wallpaperFilter, setWallpaperFilter] = useState<'phone' | 'pc'>('phone');
 
@@ -104,14 +107,16 @@ export default function ProfilePage() {
     loadingMore: favoritesLoadingMore,
     error: favoritesError,
     hasMore: favoritesHasMore,
-    loadMore: favoritesLoadMore 
+    loadMore: favoritesLoadMore,
+    refresh: refreshFavorites
   } = isOtherUser ? { 
     wallpapers: [], 
     loading: false, 
     loadingMore: false,
     error: null,
     hasMore: false,
-    loadMore: () => {}
+    loadMore: () => {},
+    refresh: () => {}
   } : myCollectionsResult;
 
   // 无论是否查看他人主页，都使用 myUploadsResult 的数据
@@ -199,6 +204,43 @@ export default function ProfilePage() {
     }
   }, [profileLoading, otherId, navigate, message]);
 
+  // 下拉刷新
+  const handleRefresh = async () => {
+    return new Promise<void>((resolve) => {
+      // 刷新用户信息
+      refreshProfile();
+      
+      if (isOtherUser) {
+        // 查看他人主页时，只刷新上传列表
+        refreshUploads();
+      } else {
+        // 查看自己主页时，根据当前tab刷新对应数据
+        switch (activeTab) {
+          case 'uploaded':
+            refreshUploads();
+            break;
+          case 'favorites':
+            refreshFavorites();
+            break;
+          case 'following':
+            refreshFollowing();
+            break;
+          case 'followers':
+            refreshFollowers();
+            break;
+        }
+      }
+      
+      setTimeout(resolve, 500);
+    });
+  };
+
+  const { refreshing, pullDistance, isPulling, threshold } = usePullToRefresh(
+    containerRef,
+    handleRefresh,
+    { threshold: 70, maxDistance: 120 }
+  );
+
   // 删除壁纸
   const handleDeleteWallpaper = async (id: number | string) => {
     Modal.confirm({
@@ -262,7 +304,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
+    <>
+      <PullToRefresh
+        pullDistance={pullDistance}
+        threshold={threshold}
+        refreshing={refreshing}
+        isPulling={isPulling}
+        className="max-w-md mx-auto"
+      >
+        <div ref={containerRef} className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="relative bg-gradient-to-br from-blue-600 to-purple-600 text-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 dark:text-gray-100 safe-area-pt">
         {/* 返回按钮 - 只要有other_id参数就显示 */}
@@ -821,7 +871,9 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <BottomNav />
-    </div>
+      </div>
+    </PullToRefresh>
+    <BottomNav />
+    </>
   );
 }

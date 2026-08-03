@@ -1,6 +1,8 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { BottomNav } from '../components/BottomNav';
+import { PullToRefresh } from '../components/PullToRefresh';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { Search, TrendingUp, Hash, SlidersHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import { umengclick } from '../analytics/aplusTracking';
@@ -19,6 +21,7 @@ export default function TagsPage() {
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [allTagsLoading, setAllTagsLoading] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [seoData, setSeoData] = useState<{ title?: string; description?: string; keywords?: string } | null>(null);
 
   // 获取标签页面SEO数据，使用当前页面URL
@@ -60,6 +63,7 @@ export default function TagsPage() {
     tags: hotTags,
     loading: hotLoading,
     error: hotError,
+    refresh: refreshHotTags,
   } = useNavigationTags({
     isHot: true,
   });
@@ -68,9 +72,25 @@ export default function TagsPage() {
     tags: allTags,
     loading: allLoading,
     error: allError,
+    refresh: refreshAllTags,
   } = useNavigationTags({
     isHot: false,
   });
+
+  // 下拉刷新
+  const handleRefresh = async () => {
+    return new Promise<void>((resolve) => {
+      refreshHotTags();
+      refreshAllTags();
+      setTimeout(resolve, 500);
+    });
+  };
+
+  const { refreshing, pullDistance, isPulling, threshold } = usePullToRefresh(
+    containerRef,
+    handleRefresh,
+    { threshold: 70, maxDistance: 120 }
+  );
 
   const popularTags = useMemo(() => {
     // 如果有搜索关键词，则对热门标签也进行过滤
@@ -125,7 +145,14 @@ export default function TagsPage() {
         <meta property="og:description" content={seoData?.description || 'Discover amazing collections of HD wallpapers organized by tags'} />
         <link rel="canonical" href={`${window.location.origin}/tags`} />
       </Helmet>
-      <div className="min-h-screen bg-background pb-20 max-w-md mx-auto">
+      <PullToRefresh
+        pullDistance={pullDistance}
+        threshold={threshold}
+        refreshing={refreshing}
+        isPulling={isPulling}
+        className="max-w-md mx-auto"
+      >
+        <div ref={containerRef} className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
         <div className="px-4 py-3">
@@ -261,8 +288,9 @@ export default function TagsPage() {
         </div>
       </section>
 
+        </div>
+      </PullToRefresh>
       <BottomNav />
-    </div>
     </>
   );
 }
