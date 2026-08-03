@@ -7,6 +7,11 @@ import { extractApiErrorMessage, extractApiToken, extractApiUserId, isApiSuccess
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
+import { analytics } from '../utils/firebase';  // ← 路径改成这个
+import { logEvent } from 'firebase/analytics';
+import { getDeviceType } from '../utils/device';
+
+
 export default function DesktopLoginPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
@@ -58,7 +63,11 @@ export default function DesktopLoginPage() {
           console.error('保存 user_id 失败:', e);
         }
       }
-
+      logEvent(analytics, 'login_success', {
+        userId: userId,
+        page_title: 'login',  // ← 加上这个
+        device_type: getDeviceType()
+      });
       message.success(t.login.loginSuccess);
       navigate('/');
     } catch (error) {
