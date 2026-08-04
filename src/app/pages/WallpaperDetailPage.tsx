@@ -315,7 +315,8 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="px-4 py-4 flex gap-3 border-t border-border fixed bottom-0 left-0 right-0 bg-card z-50 safe-area-pb">
+          <div className="px-4 pt-4 border-t border-border fixed bottom-0 left-0 right-0 bg-card z-50 safe-area-pb">
+            <div className="flex gap-3 items-center w-full pb-4">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleDownload}
@@ -342,6 +343,7 @@ export default function WallpaperDetailPage() {
             >
               <Share2 size={20} />
             </motion.button>
+            </div>
           </div>
 
           {/* Wallpaper Details */}

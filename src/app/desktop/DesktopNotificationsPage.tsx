@@ -161,11 +161,25 @@ export default function DesktopNotificationsPage() {
     }
   };
 
-  // 点击消息跳转壁纸详情
+  // 点击消息：如果会跳转到详情页，则自动标记为已读
   const handleMessageClick = (notification: NotificationItem) => {
     const type = notification.notification_type;
-    // 如果是 comment 或 like 类型，且有 target_id（壁纸ID），则跳转到壁纸详情页
-    if ((type === 'comment' || type === 'like' || type === 'wallpaper_like') && notification.target_id) {
+    const willNavigate =
+      (type === 'comment' || type === 'like' || type === 'wallpaper_like') &&
+      !!notification.target_id;
+
+    if (willNavigate) {
+      // 自动标记已读（静默，不提示成功）
+      if (!notification.is_read) {
+        markNotificationAsRead(notification.id)
+          .then(() => {
+            refresh();
+            refreshUnreadCount();
+          })
+          .catch(() => {
+            // 静默失败，不打扰用户
+          });
+      }
       navigate(`/wallpaper/${notification.target_id}`);
     }
   };
