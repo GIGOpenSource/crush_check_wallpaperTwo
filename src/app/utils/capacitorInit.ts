@@ -29,10 +29,10 @@ export async function initCapacitorStatusBar(isDark: boolean = false) {
       overlay: true,
     });
 
-    // Android WebView 不会通过 env(safe-area-inset-top) 暴露状态栏高度，
-    // overlay: true 时页面顶部内容会被状态栏遮挡（无可视区域）。
-    // 这里读取实际状态栏高度（CSS px）写入 CSS 变量，供 .safe-area-pt 等工具类兜底使用。
-    // iOS 的 env(safe-area-inset-top) 本身返回正确值，无需此处理。
+    // Android WebView 不会通过 env(safe-area-inset-top/bottom) 暴露真实高度，
+    // 在 overlay: true 下内容会被系统状态栏 / 导航栏遮挡。
+    // 这里读取实际状态栏高度（CSS px）写入 CSS 变量，供 .safe-area-pt / .safe-area-pb 兜底使用。
+    // iOS 的 env(safe-area-inset-*) 本身返回正确值，无需此处理。
     if (Capacitor.getPlatform() === 'android') {
       try {
         const info = await StatusBar.getInfo();
@@ -45,6 +45,21 @@ export async function initCapacitorStatusBar(isDark: boolean = false) {
         }
       } catch (e) {
         console.log('Failed to read Android status bar height', e);
+      }
+
+      // Android 底部导航栏（手势条或三按钮）高度通过 window.innerHeight 与
+      // screen 的实际可用高度差值估算（status bar 同理）。这里同样写入 CSS 变量。
+      try {
+        const navBarHeight =
+          (window.outerHeight - window.innerHeight) / window.devicePixelRatio || 0;
+        if (navBarHeight > 0) {
+          document.documentElement.style.setProperty(
+            '--nav-bar-height',
+            `${navBarHeight}px`
+          );
+        }
+      } catch (e) {
+        console.log('Failed to read Android nav bar height', e);
       }
     }
   } catch (error) {

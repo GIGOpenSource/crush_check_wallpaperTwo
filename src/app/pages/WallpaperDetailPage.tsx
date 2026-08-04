@@ -232,7 +232,7 @@ export default function WallpaperDetailPage() {
         {wallpaper?.imageUrl && <meta property="og:image" content={wallpaper.imageUrl} />}
         <link rel="canonical" href={`${window.location.origin}/wallpaper/${wallpaper?.id}`} />
       </Helmet>
-      <div className="min-h-screen bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pb-20 max-w-md mx-auto">
+      <div className="min-h-screen bg-background dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pb-20 safe-area-pb max-w-md mx-auto">
         {/* Header */}
         <header className="bg-gradient-to-b from-black/50 to-transparent safe-area-pt">
           <div className="flex p-4">
@@ -315,7 +315,7 @@ export default function WallpaperDetailPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="px-4 py-4 flex gap-3 border-t border-border fixed bottom-0 left-0 right-0 bg-card z-50">
+          <div className="px-4 py-4 flex gap-3 border-t border-border fixed bottom-0 left-0 right-0 bg-card z-50 safe-area-pb">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleDownload}
@@ -440,7 +440,7 @@ export default function WallpaperDetailPage() {
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl z-50 p-6"
+                className="fixed bottom-0 left-0 right-0 bg-card rounded-t-3xl z-50 p-6 safe-area-pb"
               >
                 <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6" />
                 <h3 className="text-lg font-semibold text-foreground mb-4">

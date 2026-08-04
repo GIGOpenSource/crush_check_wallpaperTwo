@@ -1,6 +1,8 @@
 // 存储 navigate 函数的引用，用于在 request.ts 中跳转
 let navigateFunction: ((path: string, options?: any) => void) | null = null;
 
+import { nativeFetch, isCapacitorNative } from './nativeFetch';
+
 // 从 localStorage 读取初始语言（如果有的话），否则默认为 'en'
 const getInitialLanguage = (): string => {
   if (typeof window !== 'undefined') {
@@ -239,7 +241,13 @@ export async function request<T = unknown>(
     console.log('⚠️ [request] data 参数为空:', { data, isUndefined: data === undefined, isNull: data === null });
   }
 
-  const response = await fetch(url, init);
+  // 在原生 Capacitor 环境下，FormData（文件上传）使用原生 fetch 绕过 CapacitorHttp
+  // 因为 CapacitorHttp 对 multipart/form-data 支持不完善，会导致上传失败。
+  const shouldUseNativeFetch =
+    data instanceof FormData && isCapacitorNative();
+  const fetchFn = shouldUseNativeFetch ? nativeFetch : fetch;
+
+  const response = await fetchFn(url, init);
   const payload = await parseResponse(response);
 
   if (!response.ok) {

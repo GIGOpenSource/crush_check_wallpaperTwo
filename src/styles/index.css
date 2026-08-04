@@ -118,6 +118,19 @@ a.profile-upload-btn svg {
   margin-top: max(env(safe-area-inset-top), var(--status-bar-height, 0px));
 }
 
+/*
+ * 底部安全区域：iOS 用 env(safe-area-inset-bottom)，
+ * Android 用 --nav-bar-height CSS 变量（手势导航条/三按钮导航栏高度）。
+ * 浏览器/未注入时为 0。
+ */
+.safe-area-pb {
+  padding-bottom: max(env(safe-area-inset-bottom), var(--nav-bar-height, 0px));
+}
+
+.safe-area-bottom-margin {
+  margin-bottom: max(env(safe-area-inset-bottom), var(--nav-bar-height, 0px));
+}
+
 @media (max-width: 768px) {
   .ant-message {
     top: calc(max(env(safe-area-inset-top), var(--status-bar-height, 0px)) + 60px) !important;
