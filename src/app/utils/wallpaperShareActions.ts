@@ -1,5 +1,3 @@
-import { PUBLIC_SITE_ORIGIN } from '../config/publicSite';
-
 export type WallpaperShareChannel = 'twitter' | 'facebook' | 'whatsapp' | 'pinterest';
 
 export async function copyTextToClipboard(text: string): Promise<boolean> {

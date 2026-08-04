@@ -14,6 +14,7 @@ import { useWallpaperComments } from '../hooks/useWallpaperComments';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { tpl } from '../utils/format';
 import { downloadWallpaperImage, openImageUrlInNewTab } from '../utils/downloadWallpaperImage';
+import { PUBLIC_SITE_ORIGIN } from '../config/publicSite';
 import { recordWallpaperDownload, recordWallpaperCollect, getWallpaperSeoTdk } from '../../api/wallpaper';
 import { getAuthToken } from '../../api/request';
 import { DownloadNoticeAlert } from '../components/DownloadNoticeAlert';
@@ -463,7 +464,7 @@ export default function WallpaperDetailPage() {
                       type="button"
                       className="flex flex-col items-center gap-2"
                       onClick={async () => {
-                        const shareUrl = window.location.href;
+                        const shareUrl = `${PUBLIC_SITE_ORIGIN}/wallpaper/${id}`;
                         await trackAndRunDetailShare(key, shareUrl, () =>
                           message.success(t.wallpaperDetail.linkCopied),
                           wallpaper.imageUrl,
