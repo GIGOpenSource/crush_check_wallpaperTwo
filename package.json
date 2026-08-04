@@ -10,6 +10,7 @@
     "headify": "node headify.server.js"
   },
   "dependencies": {
+    "@babel/runtime": "7.23.9",
     "@capacitor/android": "^8.4.1",
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.2",
