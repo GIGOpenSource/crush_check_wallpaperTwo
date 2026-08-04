@@ -65,12 +65,11 @@ export default function SearchPage() {
   const {
     wallpapers: filteredWallpapers,
     loading,
+    loadingMore,
     error,
     hasMore,
-    loadMore,
-    totalCount,
-    currentPage,
     refresh: refreshSearch,
+    sentinelRef,
   } = useSearchWallpapers(query, filters, 1, 20, 'PHONE');
 
   // 下拉刷新
@@ -292,16 +291,12 @@ export default function SearchPage() {
         ) : filteredWallpapers.length > 0 ? (
           <>
             <WallpaperGrid wallpapers={filteredWallpapers} />
-            {hasMore && (
-              <div className="flex justify-center mt-4">
-                <button 
-                  onClick={loadMore}
-                  className="px-4 py-2 bg-card border border-gray-300 rounded-md text-sm text-foreground hover:bg-background"
-                >
-                   {t.common.loadMore}
-                </button>
-              </div>
-            )}
+            {hasMore ? (
+              <div ref={sentinelRef} className="h-1 w-full shrink-0" aria-hidden />
+            ) : null}
+            {loadingMore ? (
+              <p className="px-4 py-4 text-center text-xs text-muted-foreground">{t.common.loading}</p>
+            ) : null}
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 px-4">

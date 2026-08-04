@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Wallpaper } from '../types';
 import { getFeaturedWallpapers } from '../../api/wallpaper';
 import { extractWallpaperItemsFromResponse, mapRecordToWallpaper } from '../utils/wallpaperApiMap';
@@ -29,7 +29,6 @@ export function useHomeFeaturedWallpapers() {
     return !homeFeaturedCache[platform]?.ready;
   });
   const [error, setError] = useState(false);
-  const fetchingRef = useRef(false);
 
   /** 有缓存则恢复；无缓存或切换 platform 时拉取数据 */
   useEffect(() => {
@@ -38,12 +37,9 @@ export function useHomeFeaturedWallpapers() {
       setWallpapers(cached.wallpapers);
       setError(false);
       setLoading(false);
-      fetchingRef.current = false;
       return;
     }
 
-    if (fetchingRef.current) return;
-    fetchingRef.current = true;
     setLoading(true);
     setError(false);
 
@@ -68,7 +64,6 @@ export function useHomeFeaturedWallpapers() {
       .finally(() => {
         if (!cancelled) {
           setLoading(false);
-          fetchingRef.current = false;
         }
       });
 
@@ -82,13 +77,9 @@ export function useHomeFeaturedWallpapers() {
     delete homeFeaturedCache[platform];
     setError(false);
     setLoading(true);
-    fetchingRef.current = true;
-
-    let cancelled = false;
 
     getFeaturedWallpapers(platform)
       .then((raw) => {
-        if (cancelled) return;
         const data = extractWallpaperItemsFromResponse(raw);
         const items = data.map(mapRecordToWallpaper);
         setWallpapers(items);
@@ -98,20 +89,11 @@ export function useHomeFeaturedWallpapers() {
         };
       })
       .catch(() => {
-        if (!cancelled) {
-          setError(true);
-        }
+        setError(true);
       })
       .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-          fetchingRef.current = false;
-        }
+        setLoading(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [platform]);
 
   return {

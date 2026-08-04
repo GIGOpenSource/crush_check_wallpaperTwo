@@ -68,6 +68,7 @@ export function useSearchWallpapers(
   const [loading, setLoading] = useState(() => {
     return !cached?.ready;
   });
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(() => {
     return cached?.hasMore ?? true;
@@ -81,6 +82,7 @@ export function useSearchWallpapers(
 
   const pageRef = useRef(cached?.page ?? initialPage);
   const fetchingRef = useRef(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   /** 构建首页请求参数 */
   const buildFirstPageParams = useCallback((): WallpapersListParams => {
@@ -113,12 +115,11 @@ export function useSearchWallpapers(
       setCurrentPage(hit.page);
       setError(false);
       setLoading(false);
-      fetchingRef.current = false;
       return;
     }
 
-    if (fetchingRef.current) return;
-    fetchingRef.current = true;
+    // 不用 fetchingRef 守卫：快速切换搜索词时前一次请求会被 cleanup 取消，
+    // 由 cancelled 标志忽略过期响应即可；fetchingRef 仅用于 loadMore 防重复。
     pageRef.current = 1;
     setWallpapers([]);
     setHasMore(true);
@@ -157,7 +158,6 @@ export function useSearchWallpapers(
       .finally(() => {
         if (!cancelled) {
           setLoading(false);
-          fetchingRef.current = false;
         }
       });
 
@@ -168,22 +168,19 @@ export function useSearchWallpapers(
 
   /** 加载更多：直接发请求并追加，同步更新缓存 */
   const loadMore = useCallback(() => {
-    if (!hasMore || loading || fetchingRef.current) return;
+    if (!hasMore || loading || loadingMore || fetchingRef.current) return;
 
     const nextPage = pageRef.current + 1;
     fetchingRef.current = true;
-    setLoading(true);
+    setLoadingMore(true);
 
     const params: WallpapersListParams = {
       ...buildFirstPageParams(),
       currentPage: nextPage,
     };
 
-    let cancelled = false;
-
     getWallpapersList(params)
       .then((raw) => {
-        if (cancelled) return;
         const data = extractWallpaperItemsFromResponse(raw);
         const items = data.map(mapRecordToWallpaper);
         const nextHasMore = items.length === pageSize;
@@ -209,16 +206,27 @@ export function useSearchWallpapers(
         setHasMore(false);
       })
       .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-          fetchingRef.current = false;
-        }
+        fetchingRef.current = false;
+        setLoadingMore(false);
       });
+  }, [hasMore, loading, loadingMore, cacheKey, buildFirstPageParams, pageSize]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [hasMore, loading, cacheKey, buildFirstPageParams, pageSize]);
+  /** 哨兵元素进入视口时自动加载下一页 */
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || loading || error || !hasMore || loadingMore) return;
+
+    const ob = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((e) => e.isIntersecting);
+        if (hit) loadMore();
+      },
+      { root: null, rootMargin: '160px', threshold: 0 },
+    );
+
+    ob.observe(el);
+    return () => ob.disconnect();
+  }, [loading, error, hasMore, loadingMore, loadMore, wallpapers.length]);
 
   /** 刷新：清除当前查询的缓存并重新加载第一页 */
   const refresh = useCallback(() => {
@@ -226,18 +234,14 @@ export function useSearchWallpapers(
     const idx = cacheOrder.indexOf(cacheKey);
     if (idx >= 0) cacheOrder.splice(idx, 1);
 
-    fetchingRef.current = true;
     pageRef.current = 1;
     setWallpapers([]);
     setHasMore(true);
     setError(false);
     setLoading(true);
 
-    let cancelled = false;
-
     getWallpapersList(buildFirstPageParams())
       .then((raw) => {
-        if (cancelled) return;
         const data = extractWallpaperItemsFromResponse(raw);
         const items = data.map(mapRecordToWallpaper);
         const totalItems = (raw as any)?.total || (raw as any)?.count || items.length;
@@ -256,32 +260,25 @@ export function useSearchWallpapers(
         });
       })
       .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setWallpapers([]);
-          setHasMore(false);
-        }
+        setError(true);
+        setWallpapers([]);
+        setHasMore(false);
       })
       .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-          fetchingRef.current = false;
-        }
+        setLoading(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [cacheKey, buildFirstPageParams, pageSize]);
 
   return {
     wallpapers,
     loading,
+    loadingMore,
     error,
     hasMore,
     totalCount,
     currentPage,
     loadMore,
     refresh,
+    sentinelRef,
   };
 }
