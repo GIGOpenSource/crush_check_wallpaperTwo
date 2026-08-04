@@ -33,7 +33,11 @@ function AntdThemeWrapper({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useEffect(() => {
-    initCapacitorStatusBar();
+    // 从 localStorage 读取保存的主题，默认为 light
+    const savedTheme = localStorage.getItem('theme');
+    const isDark = savedTheme === 'dark' || 
+      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    initCapacitorStatusBar(isDark);
   }, []);
 
   return (

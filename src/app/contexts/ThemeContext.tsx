@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { updateStatusBarStyle } from '../utils/capacitorInit';
 
 type Theme = 'light' | 'dark';
 
@@ -27,15 +28,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return 'light';
   });
 
-  // 监听主题变化,应用到document并保存到localStorage
+  // 监听主题变化,应用到document、保存到localStorage，并同步更新原生状态栏样式
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
+    const isDark = theme === 'dark';
+    if (isDark) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
     localStorage.setItem('theme', theme);
+    // 同步更新原生状态栏样式（仅在 Capacitor 原生平台生效）
+    updateStatusBarStyle(isDark);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {

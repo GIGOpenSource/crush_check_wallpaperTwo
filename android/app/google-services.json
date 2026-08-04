@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "577266569670",
+    "project_id": "mark-wallpapers---hd",
+    "storage_bucket": "mark-wallpapers---hd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577266569670:android:d7fa18d3a80c02eee5a2c7",
+        "android_client_info": {
+          "package_name": "com.gig.markwallpapers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4aSLjWvznzTQOmP8S5hiACUad6SNpuTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

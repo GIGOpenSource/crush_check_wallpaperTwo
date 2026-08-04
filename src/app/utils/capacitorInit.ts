@@ -1,10 +1,28 @@
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-export async function initCapacitorStatusBar() {
+/**
+ * 根据主题更新状态栏样式
+ * - 深色模式 (dark): 白色文字/图标 (Style.Dark)
+ * - 浅色模式 (light): 黑色文字/图标 (Style.Light)
+ */
+export async function updateStatusBarStyle(isDark: boolean) {
+  if (!Capacitor.isNativePlatform()) return;
+  
   try {
     await StatusBar.setStyle({
-      style: Style.Dark,
+      style: isDark ? Style.Dark : Style.Light,
+    });
+  } catch (error) {
+    console.log('Failed to update status bar style', error);
+  }
+}
+
+export async function initCapacitorStatusBar(isDark: boolean = false) {
+  try {
+    // 设置状态栏样式（根据主题）
+    await StatusBar.setStyle({
+      style: isDark ? Style.Dark : Style.Light,
     });
 
     await StatusBar.setOverlaysWebView({
