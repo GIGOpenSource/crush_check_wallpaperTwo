@@ -28,6 +28,9 @@ export const translations = {
       appStore: 'App Store',
       scanToDownload: '扫码下载',
       scanTip: '提示：使用手机扫码即可下载应用',
+      pullToRefreshPulling: '下拉刷新',
+      pullToRefreshRelease: '释放刷新',
+      pullToRefreshRefreshing: '正在刷新...',
     },
 
     // Audit Status
@@ -496,6 +499,9 @@ export const translations = {
       appStore: "App Store",
       scanToDownload: "Scan to download",
       scanTip: "Tip: Use your phone to scan the QR code to download the app",
+      pullToRefreshPulling: "Pull to refresh",
+      pullToRefreshRelease: "Release to refresh",
+      pullToRefreshRefreshing: "Refreshing...",
     },
 
     // Audit Status
@@ -888,6 +894,9 @@ export const translations = {
       appStore: "App Store",
       scanToDownload: "スキャンしてダウンロード",
       scanTip: "ヒント：スマートフォンでQRコードをスキャンしてアプリをダウンロードしてください",
+      pullToRefreshPulling: "下にスワイプして更新",
+      pullToRefreshRelease: "指を離して更新",
+      pullToRefreshRefreshing: "更新中...",
     },
 
     // Audit Status
@@ -1280,6 +1289,9 @@ export const translations = {
       appStore: "App Store",
       scanToDownload: "스캔하여 다운로드",
       scanTip: "팁: 휴대폰으로 QR 코드를 스캔하여 앱을 다운로드하세요",
+      pullToRefreshPulling: "당겨서 새로고침",
+      pullToRefreshRelease: "놓아서 새로고침",
+      pullToRefreshRefreshing: "새로고침 중...",
     },
 
     // Audit Status
@@ -1673,6 +1685,9 @@ export const translations = {
       appStore: 'App Store',
       scanToDownload: 'Escanear para descargar',
       scanTip: 'Consejo: Usa tu teléfono para escanear el código QR y descargar la aplicación',
+      pullToRefreshPulling: 'Tirar para actualizar',
+      pullToRefreshRelease: 'Soltar para actualizar',
+      pullToRefreshRefreshing: 'Actualizando...',
     },
 
     // Audit Status
@@ -2077,6 +2092,9 @@ export const translations = {
       appStore: 'App Store',
       scanToDownload: 'Scanner pour télécharger',
       scanTip: 'Conseil : utilisez votre téléphone pour scanner le code QR et télécharger l\'application',
+      pullToRefreshPulling: 'Tirer pour actualiser',
+      pullToRefreshRelease: 'Relâcher pour actualiser',
+      pullToRefreshRefreshing: 'Actualisation...',
     },
 
     // Audit Status
@@ -2479,6 +2497,9 @@ export const translations = {
       appStore: 'App Store',
       scanToDownload: 'Escanear para baixar',
       scanTip: 'Dica: Use seu telefone para escanear o código QR e baixar o aplicativo',
+      pullToRefreshPulling: 'Puxar para atualizar',
+      pullToRefreshRelease: 'Liberar para atualizar',
+      pullToRefreshRefreshing: 'Atualizando...',
     },
 
     audit: {

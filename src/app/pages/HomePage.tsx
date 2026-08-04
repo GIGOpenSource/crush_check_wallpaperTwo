@@ -133,6 +133,8 @@ export default function HomePage() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const programmaticScrollRef = useRef(false);
+  const lastComputedIndexRef = useRef(-1);
 
   useEffect(() => {
     if (!showEditorsBanner || featuredWallpapers.length === 0) return;
@@ -144,36 +146,36 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!showEditorsBanner || !carouselRef.current || featuredWallpapers.length === 0) return;
+    programmaticScrollRef.current = true;
     carouselRef.current.scrollTo({
       left: currentSlide * carouselRef.current.offsetWidth,
       behavior: 'smooth',
     });
+    // 平滑滚动完成后清除标志
+    setTimeout(() => {
+      programmaticScrollRef.current = false;
+    }, 350);
   }, [currentSlide, showEditorsBanner, featuredWallpapers.length]);
 
-  // 手动滑动轮播图时，同步更新指示点
+  // 手动滑动轮播图时，实时同步更新指示点
   useEffect(() => {
     if (!showEditorsBanner || !carouselRef.current || featuredWallpapers.length === 0) return;
     const container = carouselRef.current;
-    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
 
     const handleScroll = () => {
-      if (scrollTimer) clearTimeout(scrollTimer);
-      // 等待滚动停止后再计算当前索引，避免与程序化 smooth 滚动互相干扰
-      scrollTimer = setTimeout(() => {
-        const index = Math.round(container.scrollLeft / container.offsetWidth);
-        setCurrentSlide((prev) => {
-          if (index >= 0 && index < featuredWallpapers.length && index !== prev) {
-            return index;
-          }
-          return prev;
-        });
-      }, 150);
+      // 跳过程序化滚动期间的事件
+      if (programmaticScrollRef.current) return;
+
+      const index = Math.round(container.scrollLeft / container.offsetWidth);
+      if (index >= 0 && index < featuredWallpapers.length && index !== lastComputedIndexRef.current) {
+        lastComputedIndexRef.current = index;
+        setCurrentSlide(index);
+      }
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       container.removeEventListener('scroll', handleScroll);
-      if (scrollTimer) clearTimeout(scrollTimer);
     };
   }, [showEditorsBanner, featuredWallpapers.length]);
 

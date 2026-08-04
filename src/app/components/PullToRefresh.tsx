@@ -1,5 +1,6 @@
 import React from 'react';
 import { RefreshCw, ArrowDown } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PullToRefreshProps {
   pullDistance: number;
@@ -24,10 +25,17 @@ export function PullToRefresh({
   isPulling,
   children,
   className = '',
-  pullText = '下拉刷新',
-  releaseText = '释放刷新',
-  refreshingText = '正在刷新...',
+  pullText,
+  releaseText,
+  refreshingText,
 }: PullToRefreshProps) {
+  const { t } = useLanguage();
+
+  // 使用翻译文本，如果 props 中传入了自定义文本则优先使用
+  const localizedPullText = pullText ?? t.common.pullToRefreshPulling;
+  const localizedReleaseText = releaseText ?? t.common.pullToRefreshRelease;
+  const localizedRefreshingText = refreshingText ?? t.common.pullToRefreshRefreshing;
+
   // 计算指示器高度
   let indicatorHeight = 0;
   let status: 'pulling' | 'can-release' | 'refreshing' | 'idle' = 'idle';
@@ -43,11 +51,11 @@ export function PullToRefresh({
   const getStatusText = () => {
     switch (status) {
       case 'pulling':
-        return pullText;
+        return localizedPullText;
       case 'can-release':
-        return releaseText;
+        return localizedReleaseText;
       case 'refreshing':
-        return refreshingText;
+        return localizedRefreshingText;
       default:
         return '';
     }
