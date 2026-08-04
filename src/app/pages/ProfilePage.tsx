@@ -557,7 +557,7 @@ export default function ProfilePage() {
           <div className="px-4 py-3 bg-card border-b border-border">
             <h2 className="text-lg font-bold text-foreground">{t.profile.uploaded}</h2>
           </div>
-          <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-card border-b border-border sticky top-0 z-40 safe-area-pt">
+          <div className="px-4 py-3 flex gap-2 overflow-x-auto bg-card border-b border-border sticky z-40" style={{ top: 'max(env(safe-area-inset-top), var(--status-bar-height, 0px))' }}>
             <button
               onClick={() => setWallpaperFilter('phone')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${wallpaperFilter === 'phone'
